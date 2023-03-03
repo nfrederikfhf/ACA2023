@@ -27,6 +27,7 @@ class MemTest extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.wren.poke(false)
       dut.io.rden.poke(true)
       dut.io.rdAddr1.poke(1.U)
+      dut.clock.step(1)
       println("addr 0x0000 0001 is: " + dut.io.rdData1.peek())
       dut.io.rdData1.expect(1234.U)
     }
