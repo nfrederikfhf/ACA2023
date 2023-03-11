@@ -12,27 +12,31 @@ class ALU() extends Module {
     val a: UInt = Input(UInt(bitWidth.W))
     val b: UInt = Input(UInt(bitWidth.W))
 
-    val result = WireDefault(0.U(bitWidth.W))
+    val result = Output(UInt(bitWidth.W))
   })
+
+  val out = WireDefault(0.U(bitWidth.W))
 
   switch(io.instruction) {
     // Arithmetic
-    is(ADD)(io.result := io.a + io.b)
-    is(SUB)(io.result := io.a - io.b)
+    is(ADD)(out := io.a + io.b)
+    is(SUB)(out := io.a - io.b)
     // Shifts
-    is(SLL)(io.result := io.a << io.b(4, 0).asUInt)
-    is(SRL)(io.result := io.a >> io.b(4, 0).asUInt)
-    is(SRA)(io.result := (io.a.asSInt >> io.b(4, 0).asUInt).asUInt) // Signed
+    is(SLL)(out := io.a << io.b(4, 0).asUInt)
+    is(SRL)(out := io.a >> io.b(4, 0).asUInt)
+    is(SRA)(out := (io.a.asSInt >> io.b(4, 0).asUInt).asUInt) // Signed
     // Logical
-    is(AND)(io.result := io.a & io.b)
-    is(OR)(io.result := io.a | io.b)
-    is(XOR)(io.result := io.a ^ io.b)
+    is(AND)(out := io.a & io.b)
+    is(OR)(out := io.a | io.b)
+    is(XOR)(out := io.a ^ io.b)
     // Compare
-    is(SLTU)(io.result := Mux(io.a < io.b, 1.U, 0.U))
-    is(SLT)(io.result := Mux(io.a.asSInt < io.b.asSInt, 1.U, 0.U)) // Signed
-    is(EQ)(io.result := Mux(io.a === io.b, 1.U, 0.U))
-    is(NEQ)(io.result := Mux(io.a =/= io.b, 1.U, 0.U))
-    is(GTE)(io.result := Mux(io.a.asSInt >= io.b.asSInt, 1.U, 0.U))
-    is(GTEU)(io.result := Mux(io.a >= io.b, 1.U, 0.U))
+    is(SLTU)(out := Mux(io.a < io.b, 1.U, 0.U))
+    is(SLT)(out := Mux(io.a.asSInt < io.b.asSInt, 1.U, 0.U)) // Signed
+    is(EQ)(out := Mux(io.a === io.b, 1.U, 0.U))
+    is(NEQ)(out := Mux(io.a =/= io.b, 1.U, 0.U))
+    is(GTE)(out := Mux(io.a.asSInt >= io.b.asSInt, 1.U, 0.U))
+    is(GTEU)(out := Mux(io.a >= io.b, 1.U, 0.U))
   }
+
+  io.result := out
 }

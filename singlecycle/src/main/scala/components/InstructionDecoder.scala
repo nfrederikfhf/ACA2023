@@ -6,7 +6,7 @@ import common.Params._
 import components.Instruction._
 import components.InstructionType._
 
-class InstructionDecoder {
+class InstructionDecoder extends Module  {
   val io = IO(new Bundle {
     val instructionIn: UInt = Input(UInt(instructionLen.W))
     val decodedInstruction = Output(Instruction()) // Instruction is the decoded instruction
@@ -16,7 +16,7 @@ class InstructionDecoder {
     val destinationRegister: UInt = Output(UInt(registerAddressLen.W))
 
     val useImmediate: Bool = Output(Bool())
-    val immediate: UInt = Output(UInt(instructionLen.W))
+    val immediate: SInt = Output(SInt(bitWidth.W))
 
     val useALU: Bool = Output(Bool())
     val branch: Bool = Output(Bool()) // jump and link
@@ -93,6 +93,11 @@ class InstructionDecoder {
     )
   )
 
+  io.destinationRegister := 0.U
+  io.sourceRegister1 := 0.U
+  io.sourceRegister2 := 0.U
+  io.immediate := 0.S
+  
   io.decodedInstruction := lookup(1)
   io.useALU := lookup(2)
   io.branch := lookup(3)
@@ -102,32 +107,38 @@ class InstructionDecoder {
   io.store := lookup(7)
 
   // TODO I am not sure if it is the best way to do this
-  io.sourceRegister1 := io.instructionIn(19, 15)
-  io.sourceRegister2 := io.instructionIn(24, 20)
-  io.destinationRegister := io.instructionIn(11, 7)
+
 
   switch(lookup.head) {
     is(INST_R) {
-      io.immediate := 0.S
+      io.destinationRegister := io.instructionIn(11, 7)
+      io.sourceRegister1 := io.instructionIn(19, 15)
+      io.sourceRegister2 := io.instructionIn(24, 20)
     }
     is(INST_I) {
+      io.destinationRegister := io.instructionIn(11, 7)
+      io.sourceRegister1 := io.instructionIn(19, 15)
       io.immediate := Cat(Fill(20, io.instructionIn(31)), io.instructionIn(31, 20)).asSInt
     }
     is(INST_S) {
+      io.sourceRegister1 := io.instructionIn(19, 15)
+      io.sourceRegister2 := io.instructionIn(24, 20)
       io.immediate := Cat(Fill(20, io.instructionIn(31)), io.instructionIn(31, 25), io.instructionIn(11, 7)).asSInt
     }
     is(INST_B) {
+      io.sourceRegister1 := io.instructionIn(19, 15)
+      io.sourceRegister2 := io.instructionIn(24, 20)
       io.immediate := Cat(Fill(19, io.instructionIn(31)), io.instructionIn(31), io.instructionIn(7), io.instructionIn(30, 25), io.instructionIn(11, 8), 0.U(1.W)).asSInt
     }
     is(INST_U) {
+      io.destinationRegister := io.instructionIn(11, 7)
       io.immediate := Cat(io.instructionIn(31, 12), Fill(12, 0.U)).asSInt
     }
     is(INST_J) {
+      io.destinationRegister := io.instructionIn(11, 7)
       io.immediate := Cat(Fill(11, io.instructionIn(31)), io.instructionIn(31), io.instructionIn(19, 12), io.instructionIn(20), io.instructionIn(30, 25), io.instructionIn(24, 21), 0.U(1.W)).asSInt
     }
-    is(INST_Z) {
-      io.immediate := 0.S
-    }
+    // INST_Z is not covered
   }
 }
 

@@ -13,12 +13,12 @@ class RegisterFile extends Module {
 
     // Write
     val writeEnable: Bool = Input(Bool())
-    val writeData: UInt = Input(UInt(bitWidth.W))
+    val writeData: SInt = Input(SInt(bitWidth.W))
     val destinationRegister: UInt = Input(UInt(registerAddressLen.W))
 
     // Output register values
-    val out1: UInt = Output(UInt(bitWidth.W))
-    val out2: UInt = Output(UInt(bitWidth.W))
+    val out1: SInt = Output(SInt(bitWidth.W))
+    val out2: SInt = Output(SInt(bitWidth.W))
   })
 
   val registers = RegInit(VecInit(Seq.fill(Params.registers)(0.S(bitWidth.W))))

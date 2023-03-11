@@ -3,7 +3,7 @@ package components
 import chisel3._
 import common.Params._
 
-class ProgramCounter {
+class ProgramCounter extends Module {
   val io = IO(new Bundle {
     val enable = Input(Bool()) // 1 => Increment PC, 0 => Hold PC
 

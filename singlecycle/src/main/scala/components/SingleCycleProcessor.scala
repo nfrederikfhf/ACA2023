@@ -7,15 +7,15 @@ class SingleCycleProcessor extends Module {
   /*
    * Memory
    */
-  val dualMemory = new DualReadMem()
-  val memory = new DataMemory(dualMemory)
+  val dualMemory = Module(new DualReadMem())
+  val memory = Module(new DataMemory(dualMemory))
 
   //val controller = new Controller()
 
   /*
    * Program counter
    */
-  val programCounter = new ProgramCounter()
+  val programCounter = Module(new ProgramCounter())
   programCounter.io.writeEnable := false.B
   programCounter.io.writeAdd := false.B
   programCounter.io.dataIn := 0.U
@@ -24,19 +24,19 @@ class SingleCycleProcessor extends Module {
   /*
    * Instruction memory
    */
-  val instructionMemory = new InstructionMemory(dualMemory)
+  val instructionMemory = Module(new InstructionMemory(dualMemory))
   instructionMemory.io.readAddress := programCounter.io.counter
 
   /*
    * Instruction decoder
    */
-  val decoder = new InstructionDecoder()
+  val decoder = Module(new InstructionDecoder())
   decoder.io.instructionIn := instructionMemory.io.instruction
 
   /*
    * Register File
    */
-  val registerFile = new RegisterFile()
+  val registerFile = Module(new RegisterFile())
   registerFile.io.sourceRegister1 := decoder.io.sourceRegister1
   registerFile.io.sourceRegister2 := decoder.io.sourceRegister2
   registerFile.io.destinationRegister := decoder.io.destinationRegister
@@ -45,7 +45,7 @@ class SingleCycleProcessor extends Module {
   /*
    * ALU
    */
-  val alu = new ALU()
+  val alu = Module(new ALU())
 
   when(decoder.io.useALU) {
     alu.io.instruction := decoder.io.decodedInstruction
@@ -69,6 +69,7 @@ class SingleCycleProcessor extends Module {
   }
 
   when(decoder.io.load) {
+    memory.io.readEnable := true.B
     registerFile.io.writeData := memory.io.readData
   }
 

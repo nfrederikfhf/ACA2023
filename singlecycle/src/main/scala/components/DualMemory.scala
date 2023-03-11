@@ -1,7 +1,8 @@
 package components
 
 import chisel3._
-import common.Params.{instructionLen, memoryAddressLen, bitWidth}
+import chisel3.util.experimental.loadMemoryFromFileInline
+import common.Params.{bitWidth, instructionLen, memoryAddressLen}
 
 class DualReadMem() extends Module {
   val io = IO(new Bundle {
@@ -41,20 +42,24 @@ class DualReadMem() extends Module {
 }
 
 
-class InstructionMemory(mem: DualReadMem) extends Module {
+class InstructionMemory(dualMemory: DualReadMem, memoryFile: String = "") extends Module {
   val io = IO(new Bundle {
     val readAddress: UInt = Input(UInt(memoryAddressLen.W))
     val instruction: UInt = Output(UInt(instructionLen.W))
   })
-
-  mem.io.readEnable1 := true.B // TODO Is it okay?
-  mem.io.readAddress1 := io.readAddress
-  io.instruction := mem.io.readData1
+  val words = 16 * 1024 / bitWidth
+  val debugMem = Mem(words, UInt(bitWidth.W))
+  if (memoryFile.trim().nonEmpty) {
+    loadMemoryFromFileInline(debugMem, memoryFile)
+  }
+  dualMemory.io.readEnable1 := true.B // TODO Is it okay?
+  dualMemory.io.readAddress1 := debugMem.read(io.readAddress)
+  io.instruction := dualMemory.io.readData1
 }
 
 class DataMemory(mem: DualReadMem) extends Module {
   val io = IO(new Bundle {
-    val rdEn: Bool = Input(Bool())
+    val readEnable: Bool = Input(Bool())
     val readAddress: UInt = Input(UInt(memoryAddressLen.W))
     val readData: UInt = Output(UInt(bitWidth.W))
 
@@ -63,7 +68,7 @@ class DataMemory(mem: DualReadMem) extends Module {
     val writeData: UInt = Input(UInt(bitWidth.W))
   })
 
-  mem.io.readEnable2 := io.rdEn
+  mem.io.readEnable2 := io.readEnable
   mem.io.readAddress2 := io.readAddress
   io.readData := mem.io.readData2
 

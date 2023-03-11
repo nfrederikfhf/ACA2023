@@ -5,3 +5,5 @@ project/
 *.anno.json
 *.fir
 *.v
+test_run_dir/
+

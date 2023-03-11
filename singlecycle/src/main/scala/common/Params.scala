@@ -8,5 +8,5 @@ object Params {
   val instructionLen = bitWidth
 
   val registers = 32
-  val registerAddressLen = log2Up(registers)
+  val registerAddressLen = 5 // TODO check if it is the same: log2Up(registers)
 }
