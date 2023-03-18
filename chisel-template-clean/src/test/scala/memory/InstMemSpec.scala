@@ -4,7 +4,10 @@ import chisel3._
 import chiseltest._
 import memory.InstructionMemory
 import org.scalatest.flatspec.AnyFlatSpec
-
+/**
+* This is a test suite for the InstructionMemory module.
+* It tests the functionality of the module by writing and reading data to and from the memory.
+ */
 class InstMemSpec extends AnyFlatSpec with ChiselScalatestTester{
   it should "store and retrieve instructions correctly" in {
     test(new InstructionMemory(1000, 32)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
