@@ -17,10 +17,10 @@ import memory.InstructionMemory
   *                  it shouldn't matter. Also readPtr is possibly redundant
   */
 class InstructionMemory(depth: Int, datawidth: Int) extends Module {
-  val bitwidth = log2Ceil(depth) // Calculate the number of bits needed to address the memory
+  val bitwidth = log2Ceil(depth)                // Calculate the number of bits needed to address the memory
   val actualDepth = math.pow(2, bitwidth).toInt // 2^bidwidth
 
-  val io = IO(new Bundle { // Input and Output
+  val io = IO(new Bundle {                      // Input and Output
     val writeMem = Flipped(new DecoupledIO(UInt(datawidth.W))) // Write to memory
     val rdAdd = Flipped(new DecoupledIO(UInt(datawidth.W))) // Read address
     val inst = new DecoupledIO(UInt(datawidth.W)) // Instruction
