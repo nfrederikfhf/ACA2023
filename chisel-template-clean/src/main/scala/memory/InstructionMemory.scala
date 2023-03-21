@@ -34,8 +34,8 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
   val readAddr = WireInit(0.U(bitwidth.W))
 
   // Pointers to handle empty and full logic
-  val readPtr = RegInit(0.U(bitwidth.W)) // Read pointer
-  val writePtr = RegInit(0.U(bitwidth.W)) // Write pointer
+  val readPtr = RegInit(0.U(bitwidth.W))
+  val writePtr = RegInit(0.U(bitwidth.W))
   val count = RegInit(0.U((bitwidth + 1).W)) // Count of the number of elements in the memory
 
   // Ready to receive a read address if memory is not empty
@@ -46,12 +46,12 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
 
   // Read from memory
   when(io.rdAdd.valid && io.inst.ready && count =/= 0.U) {
-    io.inst.valid := true.B // Valid output
+    io.inst.valid := true.B
     io.writeMem.ready := true.B // Ready to receive a write - only for testing
     readAddr := io.rdAdd.bits// Divide by 4 to get the correct read address
-    io.inst.bits := mem(readAddr) // Read from memory
-    readPtr := readPtr + io.inst.bits.asUInt // Increment the read pointer
-    count := count - 1.U // Decrement the count
+    io.inst.bits := mem(readAddr)
+    readPtr := readPtr + io.inst.bits.asUInt
+    count := count - 1.U
 
     when(readPtr >= actualDepth.U) {
       readPtr := readPtr - actualDepth.U // Wrap around
@@ -60,9 +60,9 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
 
   // Write to memory - should only be needed for testing
   when(io.writeMem.valid && !io.rdAdd.valid && count =/= actualDepth.U) {
-    mem(writePtr) := io.writeMem.bits // Write to memory
-    writePtr := writePtr + 1.U // Increment the write pointer
-    count := count + 1.U // Increment the count
+    mem(writePtr) := io.writeMem.bits
+    writePtr := writePtr + 1.U
+    count := count + 1.U
 
     when(writePtr >= actualDepth.U) {
       writePtr := writePtr - actualDepth.U // Wrap around
