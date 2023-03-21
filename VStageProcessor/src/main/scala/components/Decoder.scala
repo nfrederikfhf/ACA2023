@@ -4,14 +4,14 @@ import chisel3.util._
 
 
 
-class Decoder(datawidth: Int, addrWidth: Int)  extends Module{
-  val io = IO(new Bundle{
+class Decoder(datawidth: Int, addrWidth: Int)  extends Module {
+  val io = IO(new Bundle {
     val inst = Flipped(DecoupledIO(UInt(datawidth.W))) // Instruction
     val imm = Output(UInt(datawidth.W)) // Immediate
     val rs1 = Output(UInt(addrWidth.W)) // Source Register 1
     val rs2 = Output(UInt(addrWidth.W)) // Source Register 2
     val rd = Output(UInt(addrWidth.W)) // Destination Register
-    val ctrl = IO(new Bundle{ // Control Signals
+    val ctrl = IO(new Bundle { // Control Signals
       val useImm = Output(Bool())
       val useALU = Output(Bool())
       val branch = Output(Bool())
@@ -34,5 +34,30 @@ class Decoder(datawidth: Int, addrWidth: Int)  extends Module{
   io.ctrl.jump := WireInit(false.B)
   io.ctrl.load := WireInit(false.B)
   io.ctrl.store := WireInit(false.B)
+  io.ctrl.addToPC := WireInit(false.B)
 
+  switch(io.inst.bits(6,0)) {
+    is("0110011".U) {
+      switch(io.inst.bits(30)){
+
+        is("1".U){
+          switch(io.inst.bits(14, 12)){
+            is("000".U){
+
+            }
+          }
+        }
+        is("0".U){
+          switch(io.inst.bits(14, 12)){
+            is("000".U) {
+
+            }
+
+        }
+
+      }
+    }
+
+
+  }
 }

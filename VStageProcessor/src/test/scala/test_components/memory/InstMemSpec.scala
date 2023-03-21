@@ -2,7 +2,7 @@ package memory
 
 import chisel3._
 import chiseltest._
-import memory.InstructionMemory
+import components.memory.InstructionMemory
 import org.scalatest.flatspec.AnyFlatSpec
 /**
 * This is a test suite for the InstructionMemory module.

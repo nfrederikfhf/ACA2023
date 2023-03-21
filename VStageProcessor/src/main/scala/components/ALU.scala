@@ -9,11 +9,11 @@ class ALU (bitWidth: Int = 32) extends Module {
   val io = IO(new Bundle {
     val a = Input(UInt(bitWidth.W))
     val b = Input(UInt(bitWidth.W))
-    val operation = Input(Instruction())
+    //val operation = Input(Instruction())
     val output = WireDefault(UInt(bitWidth.W))
   })
 
-  switch(io.operation){
+  /*switch(io.operation){
     // arithmetics
     is(ADD) {io.output := io.a + io.b}
     is(SUB) {io.output := io.a + io.b}
@@ -22,7 +22,7 @@ class ALU (bitWidth: Int = 32) extends Module {
     is(OR) {io.output := io.a | io.b}
     is(XOR) {io.output := io.a ^ io.b}
     // shifts
-    is(SRA) {io.output := (io.a.asSInt >> io.b(4,0).asUInt).asUInt)}
+    is(SRA) {io.output := (io.a.asSInt >> io.b(4,0).asUInt).asUInt}
     is(SRL) {io.output := io.a >> io.b(4,0)}
     is(SLL) {io.output := io.a << io.b(4,0)}
     // comparisons
@@ -32,5 +32,7 @@ class ALU (bitWidth: Int = 32) extends Module {
     is(NEQ) {io.output := Mux(io.a =/= io.b, 1.U, 0.U)}
     is(GTE) {io.output := Mux(io.a.asSInt > io.b.asSInt, 1.U, 0.U)}
     is(GTEU) {io.output := Mux(io.a > io.b, 1.U, 0.U)}
-  }
+  }*/
+
+  match a
 }

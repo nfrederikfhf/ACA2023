@@ -8,5 +8,5 @@ class ADDER (bitWidth: Int = 32, addrWidth: Int = 4) extends Module {
     val output = WireDefault(UInt(bitWidth.W))
   })
 
-  io.output := io.pc + addrWidth
+  io.output := io.pc + addrWidth.U
 }
