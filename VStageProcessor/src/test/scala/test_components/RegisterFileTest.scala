@@ -1,7 +1,7 @@
 package test_components
 import chisel3._
 import chiseltest._
-import components.RegisterFile
+import components.memory.RegisterFile
 import org.scalatest.flatspec.AnyFlatSpec
 
 class RegisterFileTest extends AnyFlatSpec with ChiselScalatestTester{

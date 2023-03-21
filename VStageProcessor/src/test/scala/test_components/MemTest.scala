@@ -1,7 +1,7 @@
 package test_components
 import chisel3._
 import chiseltest._
-import components.DualReadMem
+import components.memory.DualReadMem
 import org.scalatest.flatspec.AnyFlatSpec
 class MemTest extends AnyFlatSpec with ChiselScalatestTester {
   it should "check if address 0x0000 0000 is always 0" in {
