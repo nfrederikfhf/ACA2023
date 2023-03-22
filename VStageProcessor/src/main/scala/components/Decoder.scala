@@ -36,28 +36,29 @@ class Decoder(datawidth: Int, addrWidth: Int)  extends Module {
   io.ctrl.store := WireInit(false.B)
   io.ctrl.addToPC := WireInit(false.B)
 
-  switch(io.inst.bits(6,0)) {
-    is("0110011".U) {
-      switch(io.inst.bits(30)){
-
-        is("1".U){
-          switch(io.inst.bits(14, 12)){
-            is("000".U){
-
-            }
-          }
-        }
-        is("0".U){
-          switch(io.inst.bits(14, 12)){
-            is("000".U) {
-
-            }
-
-        }
-
-      }
-    }
-
-
-  }
+//  switch(io.inst.bits(6, 0)) {
+//    is("0110011".U) {
+//      switch(io.inst.bits(30)) {
+//
+//        is("1".U) {
+//          switch(io.inst.bits(14, 12)) {
+//            is("000".U) {
+//
+//            }
+//          }
+//        }
+//        is("0".U) {
+//          switch(io.inst.bits(14, 12)) {
+//            is("000".U) {
+//
+//            }
+//
+//          }
+//
+//        }
+//      }
+//
+//
+//    }
+//  }
 }

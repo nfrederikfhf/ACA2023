@@ -34,5 +34,5 @@ class ALU (bitWidth: Int = 32) extends Module {
     is(GTEU) {io.output := Mux(io.a > io.b, 1.U, 0.U)}
   }*/
 
-  match a
+  //match a
 }
