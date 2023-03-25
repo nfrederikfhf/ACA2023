@@ -2,32 +2,33 @@ package components
 
 import Chisel.DecoupledIO
 import chisel3._
-
+import utilities._
 class ProgramCounter(bitWidth: Int) extends Module{
   val io = IO(new Bundle {
-    val data_rd = Flipped(DecoupledIO(UInt(bitWidth.W)))
-    val data_wr = new DecoupledIO(UInt(bitWidth.W))
+    val memIO = new memoryInterface(bitWidth)
+    val in = Flipped(new IF_ID_IO(bitWidth))
+    val out = new IF_ID_IO(bitWidth)
+    val step = Input(Bool())
   })
   //Init signals
-  io.data_wr.valid := WireInit(false.B)
-  io.data_wr.bits := WireInit(0.U(bitWidth.W))
-  io.data_rd.ready := WireInit(false.B)
+  io.memIO.Request.valid := WireInit(false.B)
+  io.memIO.Request.addr := WireInit(0.U(bitWidth.W))
+  io.out.inst := WireInit(0.U(bitWidth.W))
+  io.out.pc := WireInit(0.U(bitWidth.W))
+  io.memIO.Request.writeData := WireInit(0.U(bitWidth.W))
+  io.memIO.Request.store := WireInit(false.B)
+
   val reg = RegInit(0.U(bitWidth.W))
 
-  when(io.data_wr.ready){
-    io.data_wr.valid := true.B
-    io.data_wr.bits := reg
+  when(io.memIO.Response.ready){
+    io.memIO.Request.valid := true.B
+    io.out.pc := reg
   }.otherwise{
-    io.data_wr.valid := false.B
-    io.data_wr.bits := 0.U
-  }
-  when(io.data_rd.valid){
-    reg := io.data_rd.bits
+    io.memIO.Request.valid := false.B
+    io.out.pc := 0.U
   }
 
-
-
-
-
-
+  when(io.step){
+    reg := io.in.pc
+  }
 }

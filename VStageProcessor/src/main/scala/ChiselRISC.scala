@@ -10,7 +10,7 @@ class ChiselRISC extends Module{
   val RegisterFile = Module(new RegisterFile(32, 32))
   val Decoder = Module(new Decoder(32,5))
   val IF = Module(new IF(32))
-  Decoder.io.ctrl.addToPC := IF.io.addToPC
+  Decoder.io.out.ctrl.addToPC := IF.io.addToPC
   /* TODO: Add the rest of the pipeline stages */
   // Connect the pipeline stages
   //InstructionMemory.io.rdAdd <> ProgramCounter.io.rdAdd

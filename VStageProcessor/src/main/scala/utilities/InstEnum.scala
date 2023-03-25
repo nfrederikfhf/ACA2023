@@ -1,4 +1,5 @@
-package components
+package utilities
+
 import chisel3._
 import chisel3.experimental.ChiselEnum
 
@@ -7,8 +8,8 @@ object OP extends ChiselEnum {
   val IM = Value("b0010011".U)
   val AUIPC = Value("b0010111".U)
   val ST = Value("b0100011".U)
+  val AR = Value("b0110011".U)
   val LUI = Value("b0110111".U)
-  //val AR = Value("b0110011".U)
   val BR = Value("b1100011".U)
   val JALR = Value("b1100111".U)
   val JAL = Value("b1101111".U)

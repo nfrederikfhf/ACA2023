@@ -1,6 +1,7 @@
 package components
 import chisel3._
 import chisel3.util._
+import utilities._
 /* This module is used to generate the immediate values for the RISC-V 32I ISA
  * The immediate values are generated based on the opcode
  * The immediate values are sign-extended to 32 bits
