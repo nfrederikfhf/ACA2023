@@ -56,13 +56,13 @@ class ImmediateGenSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.immediate.expect("hFFFF_FFFF".U) // expected sign-extended immediate value 0xFFFFFFFF
 
 
-      dut.io.imm.poke("b00000110000011100000001000000000".U) // opcode=ST, rs1=6, rs2=7, offset=1234
+      dut.io.imm.poke("h81234523".U) // opcode=SW
       dut.clock.step(1)
-      dut.io.immediate.expect("h000004D2".U) // positive offset=1234, sign-extended to 32 bits
+      dut.io.immediate.expect("hFFFFF80A".U)  // Expected negative value
 
-      dut.io.imm.poke("b00000110000011100000001000000000".U) // opcode=ST, rs1=6, rs2=7, offset=-1234
+      dut.io.imm.poke("h1234523".U) // opcode=SW
       dut.clock.step(1)
-      dut.io.immediate.expect("hFFFFFB2E".U) // negative offset=-1234, sign-extended to 32 bits
+      dut.io.immediate.expect("h000000A".U) // Expected positive value
 
 
 
@@ -71,13 +71,13 @@ class ImmediateGenSpec extends AnyFlatSpec with ChiselScalatestTester {
 
   it should "generate the correct immediate value for the BR instruction" in {
     test(new ImmGenerator(32)) { dut =>
-      dut.io.imm.poke("b00011100001100000000010000000000".U) // opcode=BR, rs1=7, rs2=6, offset=1234
+      dut.io.imm.poke("h10812063".U)
       dut.clock.step(1)
-      dut.io.immediate.expect("h000004D2".U) // positive offset=1234, sign-extended to 32 bits
+      dut.io.immediate.expect("h0000100".U)
 
-      dut.io.imm.poke("b00011100001100000000010000000000".U) // opcode=BR, rs1=7, rs2=6, offset=-1234
+      dut.io.imm.poke("h90812063".U)
       dut.clock.step(1)
-      dut.io.immediate.expect("hFFFFFB2E".U) // negative offset=-1234, sign-extended to 32 bits
+      dut.io.immediate.expect("hFFFFF100".U)
     }
   }
 
