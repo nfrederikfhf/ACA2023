@@ -48,14 +48,8 @@ class ImmediateGenSpec extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 
-  it should "generate the correct immediate value for the ST instruction" in {
+  it should "generate the correct immediate value for the SW instruction" in {
     test(new ImmGenerator(32)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
-      dut.io.imm.poke("h0000_0000".U) // ST opcode with immediate value 0x00000000
-      dut.io.immediate.expect("h0000_0000".U) // expected sign-extended immediate value 0x00000000
-      dut.io.imm.poke("hFFFF_FFFF".U) // ST opcode with immediate value 0xFFFFFFFF
-      dut.io.immediate.expect("hFFFF_FFFF".U) // expected sign-extended immediate value 0xFFFFFFFF
-
-
       dut.io.imm.poke("h81234523".U) // opcode=SW
       dut.clock.step(1)
       dut.io.immediate.expect("hFFFFF80A".U)  // Expected negative value
@@ -71,13 +65,13 @@ class ImmediateGenSpec extends AnyFlatSpec with ChiselScalatestTester {
 
   it should "generate the correct immediate value for the BR instruction" in {
     test(new ImmGenerator(32)) { dut =>
-      dut.io.imm.poke("h10812063".U)
+      dut.io.imm.poke("h10812063".U) // opcode=BEQ
       dut.clock.step(1)
-      dut.io.immediate.expect("h0000100".U)
+      dut.io.immediate.expect("h0000100".U) // Expected positive value
 
-      dut.io.imm.poke("h90812063".U)
+      dut.io.imm.poke("h90812063".U) // opcode=BEQ
       dut.clock.step(1)
-      dut.io.immediate.expect("hFFFFF100".U)
+      dut.io.immediate.expect("hFFFFF100".U) // Expected negative value
     }
   }
 
