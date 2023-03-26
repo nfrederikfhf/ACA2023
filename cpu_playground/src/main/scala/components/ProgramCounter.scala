@@ -1,25 +1,25 @@
 package components
 
+import Chisel.DecoupledIO
 import chisel3._
-import chisel3.experimental.IO
 
-class ProgramCounter(bitWidth: Int) {
+class ProgramCounter(bitWidth: Int) extends Module{
   val io = IO(new Bundle {
-    val ready = Input(Bool)
-    val valid = Output(Bool)
     val data_rd = Input(UInt(bitWidth.W))
-    val data_wr = Input(UInt(bitWidth.W))
-    val data_rdEnable = Input(Bool)
+    val data_wr = new DecoupledIO(UInt(bitWidth.W))
+    val data_rdEnable = Input(Bool())
   })
-
+  //Init signals
+  io.data_wr.valid := WireInit(false.B)
+  io.data_wr.bits := WireInit(0.U(bitWidth.W))
   val reg = RegInit(0.U(bitWidth.W))
 
-  when(io.ready){
-    io.valid := true
-    io.data_wr := reg
+  when(io.data_wr.ready){
+    io.data_wr.valid := true.B
+    io.data_wr.bits := reg
   }.otherwise{
-    io.valid := false
-    io.data_wr := 0.U
+    io.data_wr.valid := false.B
+    io.data_wr.bits := 0.U
   }
   when(io.data_rdEnable){
     reg := io.data_rd

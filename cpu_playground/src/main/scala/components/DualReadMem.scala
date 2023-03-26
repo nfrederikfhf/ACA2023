@@ -18,6 +18,10 @@ class DualReadMem(addressSize: Int, bitWidth: Int) extends Module {
     val wrData: UInt = Input(UInt(bitWidth.W))
     val wren: Bool = Input(Bool())
   })
+  //Init
+  io.rdData1 := WireInit(0.U(bitWidth.W))
+  io.rdData2 := WireInit(0.U(bitWidth.W))
+
 
   val mem: SyncReadMem[UInt] = SyncReadMem(addressSize, UInt(bitWidth.W))
   when (io.rdAddr1 === 0.U){

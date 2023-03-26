@@ -1,4 +1,5 @@
-package components
+package components.memory
+
 import chisel3._
 
 class RegisterFile(addressSize: Int, bitWidth: Int) extends Module {
