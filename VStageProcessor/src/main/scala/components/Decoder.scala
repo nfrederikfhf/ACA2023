@@ -103,4 +103,7 @@ class Decoder(datawidth: Int, addrWidth: Int)  extends Module {
       io.out.ctrl.useImm := true.B
     }
   }
+  io.out.rs1 := io.in.inst(19, 15)
+  io.out.rs1 := io.in.inst(24, 20)
+  io.out.rd := io.in.inst(11, 7)
 }
