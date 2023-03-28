@@ -10,21 +10,28 @@ class IF(datawidth: Int, depth: Int) extends Module {
     val out = new IF_ID_IO(datawidth)
     val addrOut = Input(UInt(datawidth.W))
     val addToPC = Input(Bool())
+    val writeMem = Flipped(new DecoupledIO(UInt(datawidth.W))) // testing
   })
 
   val PC = Module(new ProgramCounter(datawidth))
   val InstMem = Module(new InstructionMemory(depth, datawidth))
 
-  // Connect the components
-  PC.io.in := WireInit(0.U(datawidth.W))
-  InstMem.io.out <> io.out
-
   //Init signals
   PC.io.memIO.Response.ready := WireInit(false.B)
+  PC.io.memIO.Response.nonEmpty := WireInit(false.B)
+  PC.io.memIO.Response.data := WireInit(0.U(datawidth.W))
+  InstMem.io.memIO.Request.valid := WireInit(false.B)
   InstMem.io.memIO.Request.addr := WireInit(0.U(datawidth.W))
   InstMem.io.memIO.Request.writeData := WireInit(0.U(datawidth.W))
   InstMem.io.memIO.Request.store := WireInit(false.B)
-  InstMem.io.memIO.Response.ready := WireInit(false.B)
+  io.writeMem.ready := WireInit(false.B)
+
+  // Connect the components
+  PC.io.in := WireInit(0.U(datawidth.W))
+  InstMem.io.out <> io.out
+  InstMem.io.writeMem.valid := io.writeMem.valid
+  InstMem.io.writeMem.bits := io.writeMem.bits
+
   // Initialise the register outputs
   io.out.inst := RegInit(0.U(datawidth.W))
   io.out.pc := RegInit(0.U(datawidth.W))

@@ -20,7 +20,7 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
   val bitwidth = log2Ceil(depth)                // Calculate the number of bits needed to address the memory
   val actualDepth = math.pow(2, bitwidth).toInt // 2^bidwidth
 
-  val io = IO(new Bundle {                      // Input and Output
+  val io = IO(new Bundle {
     val writeMem = Flipped(new DecoupledIO(UInt(datawidth.W))) // Write to memory
     val memIO = Flipped(new memoryInterface(datawidth))   // Memory interface
     // val in = new IF_ID_IO(datawidth)   // input
