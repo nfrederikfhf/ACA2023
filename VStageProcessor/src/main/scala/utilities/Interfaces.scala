@@ -48,6 +48,10 @@ import chisel3._
     val writeEnable = Output(Bool()) // Write to register file
   }
 
+  class WB_ID_IO(datawidth: Int) extends Bundle {
+    //bruh
+  }
+
   class memoryInterface(dataWidth: Int) extends Bundle{ // Interface for memory
     val Request = new Bundle { // Interface for requesting a memory access
       val valid = Output(Bool())
