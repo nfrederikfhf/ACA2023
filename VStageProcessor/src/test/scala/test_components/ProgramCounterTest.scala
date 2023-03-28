@@ -7,8 +7,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 class ProgramCounterTest extends AnyFlatSpec with ChiselScalatestTester{
   it should "check if address 0x0000 0000 is always 0" in {
     test(new ProgramCounter(32)) { dut =>
-      dut.io.step.poke(true.B)
-      dut.io.in.pc.poke(42.U)
+      dut.io.in.poke(42.U)
       dut.io.memIO.Response.ready.poke(false.B)
       dut.io.memIO.Request.valid.expect(false.B)
       dut.clock.step(1)

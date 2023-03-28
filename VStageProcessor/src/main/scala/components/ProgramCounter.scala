@@ -6,9 +6,8 @@ import utilities._
 class ProgramCounter(bitWidth: Int) extends Module{
   val io = IO(new Bundle {
     val memIO = new memoryInterface(bitWidth)
-    val in = Flipped(new IF_ID_IO(bitWidth))
-    //val out = new IF_ID_IO(bitWidth)
-    val step = Input(Bool())
+    val in = Input(UInt(bitWidth.W))
+    //val step = Input(Bool())
   })
   //Init signals
   io.memIO.Request.valid := WireInit(false.B)
@@ -26,7 +25,5 @@ class ProgramCounter(bitWidth: Int) extends Module{
     io.memIO.Request.writeData := 0.U
   }
 
-  when(io.step){
-    reg := io.in.pc
-  }
+    reg := io.in
 }

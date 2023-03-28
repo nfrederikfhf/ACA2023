@@ -30,6 +30,7 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
   // Initialise the signals
   io.memIO.Response.data := WireInit(0.U(datawidth.W))
   io.memIO.Response.ready := WireInit(false.B)
+  io.memIO.Response.nonEmpty := WireInit(false.B)
   io.out.pc := WireInit(0.U(datawidth.W))
   io.out.inst := WireInit(0.U(datawidth.W))
   io.writeMem.ready := WireInit(false.B)
