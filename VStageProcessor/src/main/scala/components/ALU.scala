@@ -19,26 +19,26 @@ class ALU (bitWidth: Int = 32, addrWidth: Int) extends Module {
 
   val (op,_) = ALUOp.safe(io.in.ALUOp)
 
-  switch(op){
-    // arithmetics
-    is(ALUOp.ADD) {io.out.aluOut := io.in.val1 + io.in.val2}
-    is(SUB) {io.output := io.in.val1 + io.in.val2}
-    // logicals
-    is(AND) {io.output := io.in.val1 & io.in.val2}
-    is(OR) {io.output := io.in.val1 | io.in.val2}
-    is(XOR) {io.output := io.in.val1 ^ io.in.val2}
-    // shifts
-    is(SRA) {io.output := (io.in.val1.asSInt >> io.in.val2(4,0).asUInt).asUInt}
-    is(SRL) {io.output := io.in.val1 >> io.in.val2(4,0)}
-    is(SLL) {io.output := io.in.val1 << io.in.val2(4,0)}
-    // comparisons
-    is(SLT) {io.output := Mux(io.in.val1.asSInt < io.in.val2.asSInt, 1.U, 0.U)}
-    is(SLTU) {io.output := Mux(io.in.val1 < io.in.val2, 1.U, 0.U)}
-//    is(EQ) {io.output := Mux(io.a === io.b, 1.U, 0.U)}
-//    is(NEQ) {io.output := Mux(io.a =/= io.b, 1.U, 0.U)}
-//    is(GTE) {io.output := Mux(io.a.asSInt > io.b.asSInt, 1.U, 0.U)}
-//    is(GTEU) {io.output := Mux(io.a > io.b, 1.U, 0.U)}
-  }
+//  switch(op){
+//    // arithmetics
+//    is(ALUOp.ADD) {io.out.aluOut := io.in.val1 + io.in.val2}
+//    is(ALUOp.SUB) {io.output := io.in.val1 + io.in.val2}
+//    // logicals
+//    is(AND) {io.output := io.in.val1 & io.in.val2}
+//    is(OR) {io.output := io.in.val1 | io.in.val2}
+//    is(XOR) {io.output := io.in.val1 ^ io.in.val2}
+//    // shifts
+//    is(SRA) {io.output := (io.in.val1.asSInt >> io.in.val2(4,0).asUInt).asUInt}
+//    is(SRL) {io.output := io.in.val1 >> io.in.val2(4,0)}
+//    is(SLL) {io.output := io.in.val1 << io.in.val2(4,0)}
+//    // comparisons
+//    is(SLT) {io.output := Mux(io.in.val1.asSInt < io.in.val2.asSInt, 1.U, 0.U)}
+//    is(SLTU) {io.output := Mux(io.in.val1 < io.in.val2, 1.U, 0.U)}
+////    is(EQ) {io.output := Mux(io.a === io.b, 1.U, 0.U)}
+////    is(NEQ) {io.output := Mux(io.a =/= io.b, 1.U, 0.U)}
+////    is(GTE) {io.output := Mux(io.a.asSInt > io.b.asSInt, 1.U, 0.U)}
+////    is(GTEU) {io.output := Mux(io.a > io.b, 1.U, 0.U)}
+//  }
 
   //match a
 }

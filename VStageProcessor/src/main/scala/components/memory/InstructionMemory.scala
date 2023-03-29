@@ -63,7 +63,7 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
   // Write to memory - should only be needed for testing
   when(io.writeMem.valid && !io.memIO.Request.valid && count =/= actualDepth.U) {
     mem(writePtr) := io.writeMem.bits
-    writePtr := writePtr + 1.U
+    writePtr := writePtr + 4.U
     count := count + 1.U
 
     when(writePtr >= actualDepth.U) {
