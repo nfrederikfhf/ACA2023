@@ -5,12 +5,14 @@ package test_components
 import chisel3._
 import chiseltest._
 import components.ALU
+import utilities.Funct7
+import utilities.Funct7._
 import org.scalatest.flatspec.AnyFlatSpec
 
 class ALUTest extends AnyFlatSpec with ChiselScalatestTester{
 
-  /*it should "add 2 integers correctly" in {
-    test(new ALU) { dut =>
+  it should "add 2 integers correctly" in {
+    test(new ALU(32)) { dut =>
       dut.io.operation.poke(ADD)
       dut.io.a.poke(3.U)
       dut.io.b.poke(4.U)
@@ -77,5 +79,5 @@ class ALUTest extends AnyFlatSpec with ChiselScalatestTester{
       dut.clock.step()
       dut.io.output.expect(0.U)
     }
-  }*/
+  }
 }

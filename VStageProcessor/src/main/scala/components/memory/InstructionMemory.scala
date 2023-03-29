@@ -24,15 +24,15 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
     val writeMem = Flipped(new DecoupledIO(UInt(datawidth.W))) // Write to memory
     val memIO = Flipped(new memoryInterface(datawidth))   // Memory interface
     // val in = new IF_ID_IO(datawidth)   // input
-    val out = new IF_ID_IO(datawidth) // output
+    //val out = new IF_ID_IO(datawidth) // output
   })
 
   // Initialise the signals
   io.memIO.Response.data := WireInit(0.U(datawidth.W))
   io.memIO.Response.ready := WireInit(false.B)
   io.memIO.Response.nonEmpty := WireInit(false.B)
-  io.out.pc := WireInit(0.U(datawidth.W))
-  io.out.inst := WireInit(0.U(datawidth.W))
+//  io.out.pc := WireInit(0.U(datawidth.W))
+//  io.out.inst := WireInit(0.U(datawidth.W))
   io.writeMem.ready := WireInit(false.B)
   val readAddr = WireInit(0.U(bitwidth.W))
 
@@ -51,8 +51,8 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
   when(io.memIO.Request.valid && count =/= 0.U) {
     io.writeMem.ready := true.B // Ready to receive a write - only for testing
     readAddr := io.memIO.Request.addr// Divide by 4 to get the correct read address
-    io.out.inst := mem(readAddr)
-    readPtr := readPtr + io.out.inst.asUInt
+    io.memIO.Response.data := mem(readAddr)
+    readPtr := readPtr + io.memIO.Response.data.asUInt
     count := count - 1.U
 
     when(readPtr >= actualDepth.U) {

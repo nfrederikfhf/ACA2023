@@ -19,6 +19,7 @@ import chisel3._
     val rs2 = Output(UInt(addrWidth.W))
     val rd = Output(UInt(addrWidth.W))
     val imm = Output(UInt(datawidth.W))
+    val ALUOp = Output(UInt(4.W))
     val ctrl = new Bundle { // Control Signals
       val useImm = Output(Bool())
       val useALU = Output(Bool())

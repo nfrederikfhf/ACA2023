@@ -29,5 +29,12 @@ object Funct3 extends ChiselEnum {
 object Funct7 extends ChiselEnum {
   val SLLI, SRLI, ADD, SLL, SLT, SLTU, XOR, SRL, AND, OR = Value("b0000000".U)
   val SRAI, SUB, SRA = Value("b0100000".U)
+}
+
+object ALUOp extends ChiselEnum {
+  val ADD = Value("b000".U)
+  val SUB = Value("b001".U)
+  val SLI = Value("b010".U)
+  val KILLYOURSELF = Value("b011".U)
 
 }

@@ -13,7 +13,7 @@ class ProgramCounterTest extends AnyFlatSpec with ChiselScalatestTester{
       dut.clock.step(1)
       dut.io.memIO.Response.ready.poke(true.B)
       dut.io.memIO.Request.valid.expect(true.B)
-      dut.io.memIO.Request.writeData.expect(42)
+      dut.io.memIO.Request.addr.expect(42)
 
     }
   }

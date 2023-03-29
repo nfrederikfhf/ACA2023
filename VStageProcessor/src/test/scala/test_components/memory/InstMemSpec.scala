@@ -26,10 +26,10 @@ class InstMemSpec extends AnyFlatSpec with ChiselScalatestTester{
         dut.io.memIO.Request.addr.poke((i.U(dut.bitwidth.W)))
         dut.clock.step(1)
         dut.io.memIO.Request.valid.poke(true.B)
-        dut.io.out.inst.expect(i.U(dut.bitwidth.W))
+        dut.io.memIO.Response.data.expect(i.U(dut.bitwidth.W))
         dut.clock.step(1)
         dut.io.memIO.Request.valid.poke(false.B)
-        dut.io.out.inst.expect(0.U(dut.bitwidth.W))
+        dut.io.memIO.Response.data.expect(0.U(dut.bitwidth.W))
         dut.clock.step(1)
       }
 

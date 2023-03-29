@@ -26,6 +26,7 @@ class Decoder(datawidth: Int, addrWidth: Int)  extends Module {
   val (op,_) = OP.safe(io.in.inst(6,0))
   val (funct3,_) = Funct3.safe(io.in.inst(14,12))
   val (funct7,_) = Funct7.safe(io.in.inst(31,25))
+  io.out.inst := io.in.inst
   switch(op) {
     is(OP.LD) {
       io.out.ctrl.load := true.B
