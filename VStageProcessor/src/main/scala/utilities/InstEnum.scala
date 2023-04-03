@@ -32,9 +32,14 @@ object Funct7 extends ChiselEnum {
 }
 
 object ALUOp extends ChiselEnum {
-  val ADD = Value("b000".U)
-  val SUB = Value("b001".U)
-  val SLI = Value("b010".U)
-  val KILLYOURSELF = Value("b011".U)
-
+  val ADD = Value("b0001".U)
+  val SUB = Value("b0010".U)
+  val AND = Value("b0011".U)
+  val OR  = Value("b0100".U)
+  val XOR = Value("b0101".U)
+  val SRA = Value("b0110".U)
+  val SRL = Value("b0111".U)
+  val SLL = Value("b1000".U)
+  val SLT = Value("b1001".U)
+  val SLTU = Value("b1010".U)
 }
