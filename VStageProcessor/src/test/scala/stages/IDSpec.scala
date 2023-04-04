@@ -45,4 +45,64 @@ class IDSpec extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 
+//  it should "output correct values for the LUI instruction" in {
+//    test(new ID(32,5)) { dut =>
+//
+//    }
+//  }
+//
+//  it should "output correct values for the LUI instruction" in {
+//    test(new ID(32, 5)) { dut =>
+//
+//    }
+//  }
+//
+//  it should "output correct values for the LUI instruction" in {
+//    test(new ID(32, 5)) { dut =>
+//
+//    }
+//  }
+//
+//  it should "output correct values for the LUI instruction" in {
+//    test(new ID(32, 5)) { dut =>
+//
+//    }
+//  }
+//
+//  it should "output correct values for the LUI instruction" in {
+//    test(new ID(32, 5)) { dut =>
+//
+//    }
+//  }
+//
+//  it should "output correct values for the LUI instruction" in {
+//    test(new ID(32, 5)) { dut =>
+//
+//    }
+//  }
+//
+//  it should "output correct values for the LUI instruction" in {
+//    test(new ID(32, 5)) { dut =>
+//
+//    }
+//  }
+//
+//  it should "output correct values for the LUI instruction" in {
+//    test(new ID(32, 5)) { dut =>
+//
+//    }
+//  }
+//
+//  it should "output correct values for the LUI instruction" in {
+//    test(new ID(32, 5)) { dut =>
+//
+//    }
+//  }
+//
+//  it should "output correct values for the LUI instruction" in {
+//    test(new ID(32, 5)) { dut =>
+//
+//    }
+//  }
+
 }
