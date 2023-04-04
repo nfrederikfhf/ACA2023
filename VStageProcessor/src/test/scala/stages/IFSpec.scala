@@ -18,32 +18,25 @@ class IFSpec extends AnyFlatSpec with ChiselScalatestTester{
       dut.clock.step(1)
       dut.io.writeToMem.poke(false.B)
       dut.io.startPC.poke(true.B)
+      dut.clock.step()
+
       dut.io.out.inst.expect("h81234523".U(32.W))
-      dut.clock.step(1)
       dut.io.startPC.poke(false.B)
-      dut.clock.step(1)
+      dut.clock.step()
+
       dut.io.startPC.poke(true.B)
+      dut.clock.step()
+
       dut.io.out.inst.expect("h10812063".U(32.W))
-      dut.clock.step(1)
       dut.io.startPC.poke(false.B)
-      dut.clock.step(1)
+      dut.clock.step()
+
       dut.io.startPC.poke(true.B)
-      dut.io.out.inst.expect("h90812063".U(32.W))
+
       dut.clock.step(1)
+      dut.io.out.inst.expect("h90812063".U(32.W))
       dut.io.startPC.poke(false.B)
 
-
-//      dut.io.addToPC.poke(false.B)
-//      dut.io.addrOut.poke(0.U)
-//      dut.instMem.io.writeMem.valid.poke(true.B)
-//      dut.instMem.io.writeMem.bits.poke("h81234523".U(32.W))
-//      dut.clock.step(1)
-//      dut.instMem.io.writeMem.valid.poke(false.B)
-//      dut.PC.io.memIO.Response.ready.poke(true.B)
-//      dut.clock.step(1)
-//      dut.PC.io.memIO.Response.ready.poke(false.B)
-//      dut.io.out.inst.expect("h81234523".U(32.W))
-//      dut.clock.step(1)
     }
   }
 }

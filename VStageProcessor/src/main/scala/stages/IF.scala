@@ -18,7 +18,6 @@ class IF(datawidth: Int, depth: Int) extends Module {
   // ----- Testing ------------
   val PC = Module(new ProgramCounter(datawidth))
   val instMem = Module(new InstructionMemory(depth, datawidth))
-  val nextPc = Bool()
 
   // Initialise the register outputs
   io.out.inst := RegInit(0.U(datawidth.W))
@@ -41,7 +40,7 @@ class IF(datawidth: Int, depth: Int) extends Module {
 
 
   val pc = WireDefault(PC.io.memIO.Request.addr)
-  val pcNext = pc
+  // val pcNext = pc
 
   val addMux = Mux(io.addToPC === true.B, io.addrOut, pc)
   //---------------------------
@@ -57,42 +56,16 @@ class IF(datawidth: Int, depth: Int) extends Module {
     instMem.io.writeMem.bits := 0.U
   }
 
+
+
   when(io.startPC) {
     PC.io.memIO.Response.ready := true.B
-    PC.io.in := addMux
-    pcNext := addMux + 4.U
+    PC.io.in := addMux + 4.U
+  /// pcNext := addMux + 4.U
   }.otherwise {
     PC.io.memIO.Response.ready := false.B
+    PC.io.in := pc
   }
 
-  io.out.inst := instMem.io.memIO.Response.data
-
-
-  //
-//  // Connect the components
-//  PC.io.in := WireInit(0.U(datawidth.W))
-//  InstMem.io.out <> io.out
-//  InstMem.io.writeMem.valid := io.writeMem.valid
-//  InstMem.io.writeMem.bits := io.writeMem.bits
-//
-//  // Initialise the register outputs
-//  io.out.inst := RegInit(0.U(datawidth.W))
-//  io.out.pc := RegInit(0.U(datawidth.W))
-//
-//  // MUX for selecting the next address
-//  val addMux = Mux(io.addToPC === true.B, io.addrOut, PC.io.memIO.Request.writeData + 4.U)
-//  PC.io.in := addMux
-//
-//
-//
-//  PC.io.memIO.Response.ready := true.B
-//  InstMem.io.memIO.Request.valid := PC.io.memIO.Request.valid
-//  InstMem.io.memIO.Request.addr := PC.io.memIO.Request.writeData // Read the instruction from the memory
-
-
-//  when(InstMem.io.memIO.Response.nonEmpty){ // When the next address is calculated
-//    PC.io.memIO.Response.ready := true.B
-//    InstMem.io.memIO.Request.valid := PC.io.memIO.Request.valid
-//    InstMem.io.memIO.Request.addr := PC.io.memIO.Request.writeData // Read the instruction from the memory
-//  }
+  io.out.inst := RegNext(instMem.io.memIO.Response.data)
 }

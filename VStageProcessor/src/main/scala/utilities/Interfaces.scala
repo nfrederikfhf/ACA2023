@@ -6,7 +6,7 @@ import chisel3._
   // Use flipped to make the interface as input - use as is for output
   class IF_ID_IO(datawidth: Int) extends Bundle {
     val inst = Output(UInt(datawidth.W))
-    val pc = Output(UInt(datawidth.W))
+    val pc = Output(UInt(datawidth.W))  //PassThrough
     //val branchPredict = Output(UInt(datawidth.W)) // TODO: Implement branch prediction
   }
 
@@ -19,7 +19,7 @@ import chisel3._
     val rs2 = Output(UInt(addrWidth.W))
     val rd = Output(UInt(addrWidth.W))
     val imm = Output(UInt(datawidth.W))
-    val ALUOp = Output(UInt(4.W))
+    val aluOp = Output(UInt(4.W))
     val ctrl = new Bundle { // Control Signals
       val useImm = Output(Bool())
       val useALU = Output(Bool())
@@ -35,6 +35,7 @@ import chisel3._
   class EX_MEM_IO(datawidth: Int, addrWidth: Int) extends Bundle { // Output from EX to MEM
     val rd = Output(UInt(addrWidth.W)) // Destination Register
     val aluOut = Output(UInt(datawidth.W)) // Result of ALU
+    val imm = Output(UInt(datawidth.W)) // Immediate
     val ctrl = new Bundle { // Control Signals
       val store = Output(Bool()) // Save to memory
       val load = Output(Bool()) // Load from memory
@@ -49,8 +50,10 @@ import chisel3._
     val writeEnable = Output(Bool()) // Write to register file
   }
 
-  class WB_ID_IO(datawidth: Int) extends Bundle {
-    //bruh
+  class WB_ID_IO(datawidth: Int, addrWidth: Int) extends Bundle {
+    val rd = Output(UInt(addrWidth.W))
+    val muxOut = Output(UInt(datawidth.W))
+    val writeEnable = Output(Bool())
   }
 
   class memoryInterface(dataWidth: Int) extends Bundle{ // Interface for memory

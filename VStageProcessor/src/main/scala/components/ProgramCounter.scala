@@ -19,10 +19,9 @@ class ProgramCounter(bitWidth: Int) extends Module{
 
   when(io.memIO.Response.ready){
     io.memIO.Request.valid := true.B
-    io.memIO.Request.addr := reg
   }.otherwise{
     io.memIO.Request.valid := false.B
-    io.memIO.Request.addr := 0.U
   }
+    io.memIO.Request.addr := reg
     reg := io.in
 }

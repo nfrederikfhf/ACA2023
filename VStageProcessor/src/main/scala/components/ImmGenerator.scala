@@ -9,18 +9,16 @@ import utilities._
  */
 class ImmGenerator(dataWidth: Int) extends Module{
   val io = IO(new Bundle{
-    val imm = Input(UInt(dataWidth.W))
-    val immediate = Output(UInt(dataWidth.W))
+    val immIn = Input(UInt(dataWidth.W))
+    val immOut = Output(UInt(dataWidth.W))
   })
   // Seperate the instruction into different parts corresponding to the RISC-V 32I ISA and sign-extend
-  val (opcode,_) = OP.safe(io.imm(6,0))
-  //val funct3 = io.imm(14,12)
-  //val funct7 = io.imm(31,25)
-  val immI = Cat(Fill(21, io.imm(31)),io.imm(30,20))
-  val immS = Cat(Fill(21, io.imm(31)),io.imm(30,25),io.imm(11,7))
-  val immB = Cat(Fill(20,io.imm(31)),io.imm(7),io.imm(30,25),io.imm(11,8), 0.U)
-  val immU = Cat(io.imm(31,12), Fill(12, 0.U))
-  val immJ = Cat(Fill(11,io.imm(31)),io.imm(19,12),io.imm(20),io.imm(30,21),0.U)
+  val (opcode,_) = OP.safe(io.immIn(6,0))
+  val immI = Cat(Fill(21, io.immIn(31)),io.immIn(30,20))
+  val immS = Cat(Fill(21, io.immIn(31)),io.immIn(30,25),io.immIn(11,7))
+  val immB = Cat(Fill(20,io.immIn(31)),io.immIn(7),io.immIn(30,25),io.immIn(11,8), 0.U)
+  val immU = Cat(io.immIn(31,12), Fill(12, 0.U))
+  val immJ = Cat(Fill(11,io.immIn(31)),io.immIn(19,12),io.immIn(20),io.immIn(30,21),0.U)
 
   val imm = WireDefault(immI) // Default immediate value is immI
 
@@ -42,5 +40,5 @@ class ImmGenerator(dataWidth: Int) extends Module{
     }
   }
 
-  io.immediate := imm
+  io.immOut := imm
 }
