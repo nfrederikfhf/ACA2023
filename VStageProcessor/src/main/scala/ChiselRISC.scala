@@ -22,7 +22,6 @@ class ChiselRISC extends Module{
   val MEM = Module(new MEM(32, 5))
   val WB = Module(new WB(32, 5))
 
-  /* TODO: Add the rest of the pipeline stages */
   // Connect the pipeline stages
   IF.io.out <> ID.io.in
   ID.io.out <> EX.io.in

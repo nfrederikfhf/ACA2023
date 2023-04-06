@@ -4,6 +4,7 @@ import chisel3._
 import chiseltest._
 import stages._
 import org.scalatest.flatspec.AnyFlatSpec
+import utilities.ALUOp
 
 class IDSpec extends AnyFlatSpec with ChiselScalatestTester {
   it should "check if decoder spits out correct " in {
@@ -46,6 +47,9 @@ class IDSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.out.ctrl.useImm.expect(true.B)
       dut.io.out.imm.expect(16.U)
       dut.io.out.pc.expect(0.U)
+      dut.io.out.rs1.expect(0.U)
+      dut.io.out.rs2.expect(16.U)
+      dut.io.out.aluOp.expect(ALUOp.ADD.litValue)
     }
   }
 
@@ -56,11 +60,11 @@ class IDSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.in.pc.poke(0.U(32.W))
       dut.io.test.startTest.poke(true.B)
       dut.clock.step()
-      for (i <- 0 until 5) {
+      /*for (i <- 0 until 5) {
         dut.io.test.wren.poke(true.B)
         dut.io.test.wrAddr.poke(i.U(5.W))
         dut.io.test.wrData.poke(i.U(32.W))
-      }
+      }*/
       dut.clock.step()
       dut.io.test.startTest.poke(false.B)
       dut.io.test.wren.poke(false.B)
@@ -69,15 +73,24 @@ class IDSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.out.ctrl.load.expect(true.B)
       dut.io.out.imm.expect(4.U)
       dut.io.out.rd.expect(7.U)
+      dut.io.out.rs1.expect(2.U)
 
     }
   }
-//
-//  it should "output correct values for the LUI instruction" in {
-//    test(new ID(32, 5)) { dut =>
-//
-//    }
-//  }
+
+  it should "output correct values for the ADD instruction" in {
+    test(new ID(32, 5)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      dut.io.in.inst.poke("h002081b3".U(32.W)) // add x3, x1, x2
+      dut.io.in.pc.poke(0.U(32.W))
+      dut.clock.step(1)
+      dut.io.out.ctrl.useALU.expect(true.B)
+      dut.io.out.ctrl.useImm.expect(false.B)
+      dut.io.out.aluOp.expect(ALUOp.ADD.litValue)
+      dut.io.out.rs1.expect(1.U)
+      dut.io.out.rs2.expect(2.U)
+      dut.io.out.rd.expect(3.U)
+    }
+  }
 //
 //  it should "output correct values for the LUI instruction" in {
 //    test(new ID(32, 5)) { dut =>

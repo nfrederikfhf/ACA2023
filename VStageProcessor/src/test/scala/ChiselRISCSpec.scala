@@ -13,20 +13,24 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
 
       // Fill the instruction memory
       dut.io.test.writeToMem.poke(true.B)
-      dut.io.test.testData.poke("h00500093".U(32.W)) // addi x1, x0, 5
+      //dut.io.test.testData.poke("h00500093".U(32.W)) // addi x1, x0, 5
 
+      dut.io.test.testData.poke("h00108093".U(32.W)) // addi x1, x1, 1
       dut.clock.step(1)
-
+      dut.io.test.testData.poke("h00110113".U(32.W)) // addi x2, x2, 1
+      dut.clock.step(1)
+      dut.io.test.testData.poke("h002081b3".U(32.W)) // add x3, x1, x2
+      dut.clock.step(1)
       // Execute the ADD instruction
       dut.io.test.writeToMem.poke(false.B)
       dut.io.startPipeline.poke(true.B)
 
-      for(i <- 0 until 5) {
+      for(i <- 0 until 10) {
         dut.clock.step(1)
       }
 
       // Check the result
-      dut.io.out.expect(5.U)
+      dut.io.out.expect(2.U)
 
 
     }

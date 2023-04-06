@@ -24,7 +24,6 @@ class IF(datawidth: Int, depth: Int) extends Module {
   io.out.pc := RegInit(0.U(datawidth.W))
 
 
-
   //Init signals
   PC.io.memIO.Response.ready := WireInit(false.B)
   PC.io.memIO.Response.nonEmpty := WireInit(false.B)
@@ -43,9 +42,6 @@ class IF(datawidth: Int, depth: Int) extends Module {
   // val pcNext = pc
 
   val addMux = Mux(io.branch === true.B, io.addrOut, pc)
-  //---------------------------
-  // TODO: Fix PC logic, also it might just be easier to have PC as a register, and just use a seperate wire to increment it
-
 
 
   when(io.writeToMem) {
@@ -67,4 +63,5 @@ class IF(datawidth: Int, depth: Int) extends Module {
   }
 
   io.out.inst := RegNext(instMem.io.memIO.Response.data)
+  io.out.pc := RegNext(PC.io.memIO.Response.data)
 }

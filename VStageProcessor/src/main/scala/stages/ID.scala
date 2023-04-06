@@ -26,6 +26,9 @@ class ID(datawidth: Int, addrWidth: Int) extends Module {
   //Init
   io.out.val1 := RegInit(0.U(datawidth.W))
   io.out.val2 := RegInit(0.U(datawidth.W))
+  io.out.rs1 := RegInit(0.U(addrWidth.W))
+  io.out.rs2 := RegInit(0.U(addrWidth.W))
+  io.out.aluOp := RegInit(0.U(4.W))
   io.out.rd := RegInit(0.U(datawidth.W))
   io.out.ctrl.useImm := RegInit(0.U(datawidth.W))
   io.out.ctrl.useALU := RegInit(0.U(datawidth.W))
@@ -45,7 +48,16 @@ class ID(datawidth: Int, addrWidth: Int) extends Module {
   decoder.io.inInst := io.in.inst
   regfile.io.rdAddr1 := decoder.io.rs1
   regfile.io.rdAddr2 := decoder.io.rs2
-  io.out.ctrl <> decoder.io.ctrl
+  regfile.io.wren := io.wbIn.writeEnable
+  //io.out.ctrl <> decoder.io.ctrl
+  //-----Control signals-----
+  io.out.ctrl.useImm := decoder.io.ctrlSignals.useImm
+  io.out.ctrl.useALU := decoder.io.ctrlSignals.useALU
+  io.out.ctrl.branch := decoder.io.ctrlSignals.branch
+  io.out.ctrl.jump := decoder.io.ctrlSignals.jump
+  io.out.ctrl.load := decoder.io.ctrlSignals.load
+  io.out.ctrl.store := decoder.io.ctrlSignals.store
+  //-----ALU signals-----
   io.out.aluOp := decoder.io.aluOp
   io.out.rs1 := decoder.io.rs1
   io.out.rs2 := decoder.io.rs2
@@ -55,6 +67,7 @@ class ID(datawidth: Int, addrWidth: Int) extends Module {
   io.out.imm := immGenerator.io.immOut
   io.out.pc := io.in.pc
 
+  //------------testing purposes-----------
   when(io.test.startTest) {
     regfile.io.wren := io.test.wren
     regfile.io.wrAddr := io.test.wrAddr

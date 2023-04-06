@@ -12,7 +12,7 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
     val rs1 = Output(UInt(addrWidth.W))
     val rs2 = Output(UInt(addrWidth.W))
     val rd = Output(UInt(addrWidth.W))
-    val ctrl = new Bundle { // Control Signals
+    val ctrlSignals = new Bundle { // Control Signals
       val useImm = Output(Bool())
       val useALU = Output(Bool())
       val branch = Output(Bool())
@@ -26,12 +26,12 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
   io.rs1 := WireInit(0.U(addrWidth.W))
   io.rs2 := WireInit(0.U(addrWidth.W))
   io.rd := WireInit(0.U(addrWidth.W))
-  io.ctrl.useImm := WireInit(false.B)
-  io.ctrl.branch := WireInit(false.B)
-  io.ctrl.useALU := WireInit(false.B)
-  io.ctrl.jump := WireInit(false.B)
-  io.ctrl.load := WireInit(false.B)
-  io.ctrl.store := WireInit(false.B)
+  io.ctrlSignals.useImm := WireInit(false.B)
+  io.ctrlSignals.branch := WireInit(false.B)
+  io.ctrlSignals.useALU := WireInit(false.B)
+  io.ctrlSignals.jump := WireInit(false.B)
+  io.ctrlSignals.load := WireInit(false.B)
+  io.ctrlSignals.store := WireInit(false.B)
   io.aluOp := WireInit(0.U(4.W))
 
   // split instruction into fields
@@ -42,14 +42,14 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
   // Decode instruction
   switch(op) {
     is(OP.LD) {
-      io.ctrl.load := true.B
-      io.ctrl.useImm := true.B
+      io.ctrlSignals.load := true.B
+      io.ctrlSignals.useImm := true.B
       io.aluOp := ALUOp.ADD.asUInt
     }
 
     is(OP.IM) {
-      io.ctrl.useALU := true.B
-      io.ctrl.useImm := true.B
+      io.ctrlSignals.useALU := true.B
+      io.ctrlSignals.useImm := true.B
       switch(funct3) {
         is(Funct3.ADDI) {
           io.aluOp := ALUOp.ADD.asUInt
@@ -85,17 +85,17 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
       }
     }
       is(OP.AUIPC) {
-        io.ctrl.load := true.B
-        io.ctrl.useImm := true.B
+        io.ctrlSignals.load := true.B
+        io.ctrlSignals.useImm := true.B
       }
 
       is(OP.ST) {
-        io.ctrl.store := true.B
-        io.ctrl.useImm := true.B
+        io.ctrlSignals.store := true.B
+        io.ctrlSignals.useImm := true.B
       }
 
       is(OP.AR) {
-        io.ctrl.useALU := true.B
+        io.ctrlSignals.useALU := true.B
         switch(funct3) {
           is(Funct3.ADDSUB) {
             switch(funct7) {
@@ -139,20 +139,20 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
       }
 
       is(OP.LUI) {
-        io.ctrl.useImm := true.B
-        io.ctrl.load := true.B
+        io.ctrlSignals.useImm := true.B
+        io.ctrlSignals.load := true.B
       }
       is(OP.BR) {
-        io.ctrl.branch := true.B
-        io.ctrl.useImm := true.B
+        io.ctrlSignals.branch := true.B
+        io.ctrlSignals.useImm := true.B
       }
       is(OP.JALR) {
-        io.ctrl.jump := true.B
-        io.ctrl.useImm := true.B
+        io.ctrlSignals.jump := true.B
+        io.ctrlSignals.useImm := true.B
       }
       is(OP.JAL) {
-        io.ctrl.jump := true.B
-        io.ctrl.useImm := true.B
+        io.ctrlSignals.jump := true.B
+        io.ctrlSignals.useImm := true.B
       }
     }
 

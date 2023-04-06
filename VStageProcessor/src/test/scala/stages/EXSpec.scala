@@ -79,4 +79,10 @@ class EXSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.out.ctrl.store.expect(false.B)
     }
   }
+
+  it should " ADD correctly" in {
+    test(new EX(32,5)) { dut =>
+
+    }
+  }
 }
