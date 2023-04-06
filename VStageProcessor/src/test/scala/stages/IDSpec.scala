@@ -22,17 +22,21 @@ class IDSpec extends AnyFlatSpec with ChiselScalatestTester {
   }
 
   it should "output correct values for ADDI instruction" in {
-    test(new ID(datawidth = 32, addrWidth = 5)) { dut =>
+    test(new ID(datawidth = 32, addrWidth = 5)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       // Set up input
-      dut.io.in.inst.poke("b00000000001000000001100010010011".U ) // ADDI x3, x0, 16
+      dut.io.in.inst.poke("h01000193".U ) // addi x3, x0, 16
       dut.io.in.pc.poke(0.U(32.W))
 
       // Set up register file
-      dut.regfile.io.rdAddr1.poke(0.U(5.W)) // x0
-      dut.regfile.io.rdAddr2.poke(0.U(5.W)) // x0
-      dut.regfile.io.wrAddr.poke(0.U(5.W)) // x0
-      dut.regfile.io.wrData.poke(0.U(32.W))
-      dut.regfile.io.wren.poke(false.B)
+      //dut.regfile.io.rdAddr1.poke(0.U(5.W)) // x0
+      //dut.regfile.io.rdAddr2.poke(0.U(5.W)) // x0
+      dut.io.test.startTest.poke(true.B)
+      dut.clock.step()
+      dut.io.test.wren.poke(true.B)
+      dut.io.test.wrAddr.poke(0.U(5.W)) // x0
+      dut.io.test.wrData.poke(0.U(32.W))
+      dut.io.test.startTest.poke(false.B)
+      dut.clock.step()
 
       // Check output
       dut.io.out.val1.expect(0.U)
@@ -45,11 +49,29 @@ class IDSpec extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 
-//  it should "output correct values for the LUI instruction" in {
-//    test(new ID(32,5)) { dut =>
-//
-//    }
-//  }
+  it should "output correct values for the LW instruction" in {
+    test(new ID(32,5)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      // Set up input
+      dut.io.in.inst.poke("h00412383".U) // lw x7, 4(x2)
+      dut.io.in.pc.poke(0.U(32.W))
+      dut.io.test.startTest.poke(true.B)
+      dut.clock.step()
+      for (i <- 0 until 5) {
+        dut.io.test.wren.poke(true.B)
+        dut.io.test.wrAddr.poke(i.U(5.W))
+        dut.io.test.wrData.poke(i.U(32.W))
+      }
+      dut.clock.step()
+      dut.io.test.startTest.poke(false.B)
+      dut.io.test.wren.poke(false.B)
+      dut.io.out.ctrl.useALU.expect(false.B)
+      dut.io.out.ctrl.useImm.expect(true.B)
+      dut.io.out.ctrl.load.expect(true.B)
+      dut.io.out.imm.expect(4.U)
+      dut.io.out.rd.expect(7.U)
+
+    }
+  }
 //
 //  it should "output correct values for the LUI instruction" in {
 //    test(new ID(32, 5)) { dut =>

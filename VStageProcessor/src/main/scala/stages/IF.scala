@@ -9,7 +9,7 @@ class IF(datawidth: Int, depth: Int) extends Module {
   val io = IO(new Bundle {
     val out = new IF_ID_IO(datawidth)
     val addrOut = Input(UInt(datawidth.W)) //ALU calculated Addr
-    val addToPC = Input(Bool())
+    val branch = Input(Bool())
     val writeToMem = Input(Bool())
     val startPC = Input(Bool())
     val testData = Input(UInt(datawidth.W))
@@ -42,7 +42,7 @@ class IF(datawidth: Int, depth: Int) extends Module {
   val pc = WireDefault(PC.io.memIO.Request.addr)
   // val pcNext = pc
 
-  val addMux = Mux(io.addToPC === true.B, io.addrOut, pc)
+  val addMux = Mux(io.branch === true.B, io.addrOut, pc)
   //---------------------------
   // TODO: Fix PC logic, also it might just be easier to have PC as a register, and just use a seperate wire to increment it
 
@@ -55,7 +55,6 @@ class IF(datawidth: Int, depth: Int) extends Module {
     instMem.io.writeMem.valid := false.B
     instMem.io.writeMem.bits := 0.U
   }
-
 
 
   when(io.startPC) {

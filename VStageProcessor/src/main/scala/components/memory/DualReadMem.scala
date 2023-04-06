@@ -25,15 +25,19 @@ class DualReadMem(addressSize: Int, bitWidth: Int) extends Module {
   val mem: SyncReadMem[UInt] = SyncReadMem(addressSize, UInt(bitWidth.W))
   when (io.rdAddr1 === 0.U){
     io.rdData1 := 0.U
+  }.elsewhen(io.rden){
+    io.rdData1 := mem.read(io.rdAddr1)
   }
     .otherwise{
-      io.rdData1 := mem.read(io.rdAddr1, io.rden)
+      io.rdData1 := 0.U
     }
   when (io.rdAddr2 === 0.U) {
     io.rdData2 := 0.U
+  }.elsewhen(io.rden) {
+    io.rdData2 := mem.read(io.rdAddr2)
   }
     .otherwise{
-      io.rdData2 := mem.read(io.rdAddr2, io.rden)
+      io.rdData2 := 0.U
     }
 
   when (io.wren){

@@ -13,7 +13,6 @@ class DecoderSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.ctrl.load.expect(false.B)
       dut.io.ctrl.store.expect(false.B)
       dut.io.ctrl.useALU.expect(false.B)
-      dut.io.ctrl.addToPC.expect(false.B)
     }
   }
 
@@ -133,6 +132,7 @@ class DecoderSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.clock.step(1)
       dut.io.ctrl.useALU.expect(true.B)
       dut.io.ctrl.useImm.expect(true.B)
+      dut.io.aluOp.expect(5.U)
       dut.io.rs1.expect(2.U)
       dut.io.rd.expect(5.U)
     }
@@ -175,11 +175,11 @@ class DecoderSpec extends AnyFlatSpec with ChiselScalatestTester {
 
   it should "decode an SRLI instruction" in {
     test(new Decoder(32, 5)) { dut =>
-      dut.io.inInst.poke("h04515293".U) // srli x5, x2, 69
+      dut.io.inInst.poke("h00615293".U) // srli x5, x2, 6
       dut.clock.step(1)
       dut.io.ctrl.useALU.expect(true.B)
       dut.io.ctrl.useImm.expect(true.B)
-      //dut.io.aluOp.expect(6.U)
+      dut.io.aluOp.expect(7.U)
       dut.io.rs1.expect(2.U)
       dut.io.rd.expect(5.U)
     }
@@ -191,7 +191,7 @@ class DecoderSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.clock.step(1)
       dut.io.ctrl.useALU.expect(true.B)
       dut.io.ctrl.useImm.expect(true.B)
-      //dut.io.aluOp.expect(7.U)
+      dut.io.aluOp.expect(6.U)
       dut.io.rs1.expect(8.U)
       dut.io.rd.expect(9.U)
     }

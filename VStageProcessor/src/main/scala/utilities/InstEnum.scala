@@ -43,4 +43,9 @@ object ALUOp extends ChiselEnum {
   val SLL = Value("b1000".U)
   val SLT = Value("b1001".U)
   val SLTU = Value("b1010".U)
+  val BEQ = Value("b1011".U)
+  val BLT = Value("b1100".U)
+  val BGE = Value("b1101".U)
+  val BLTU = Value("b1110".U)
+  val BGEU = Value("b1111".U)
 }

@@ -33,10 +33,11 @@ class ALU (bitWidth: Int = 32, addrWidth: Int) extends Module {
     // comparisons
     is(ALUOp.SLT) {io.aluOut := Mux(io.val1.asSInt < io.val2.asSInt, 1.U, 0.U)}
     is(ALUOp.SLTU) {io.aluOut := Mux(io.val1 < io.val2, 1.U, 0.U)}
-//    is(ALUOp.EQ) {io.output := Mux(io.a === io.b, 1.U, 0.U)}
-//    is(ALUOp.NEQ) {io.output := Mux(io.a =/= io.b, 1.U, 0.U)}
-//    is(ALUOp.GTE) {io.output := Mux(io.a.asSInt > io.b.asSInt, 1.U, 0.U)}
-//    is(ALUOp.GTEU) {io.output := Mux(io.a > io.b, 1.U, 0.U)}
+    is(ALUOp.BEQ) {io.aluOut := Mux(io.val1 === io.val2, 1.U, 0.U)}
+    is(ALUOp.BLT) {io.aluOut := Mux(io.val1.asSInt < io.val2.asSInt, 1.U, 0.U)}       //same as SLT
+    is(ALUOp.BGE) {io.aluOut := Mux(io.val1.asSInt >= io.val2.asSInt, 1.U, 0.U)}
+    is(ALUOp.BLTU) {io.aluOut := Mux(io.val1 < io.val2, 1.U, 0.U)}                    //same as SLTU
+    is(ALUOp.BGEU) {io.aluOut := Mux(io.val1 >= io.val2, 1.U, 0.U)}
   }
 
   //match a

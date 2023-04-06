@@ -19,7 +19,6 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
       val jump = Output(Bool())
       val load = Output(Bool())
       val store = Output(Bool())
-      val addToPC = Output(Bool())
     }
   })
 
@@ -33,7 +32,6 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
   io.ctrl.jump := WireInit(false.B)
   io.ctrl.load := WireInit(false.B)
   io.ctrl.store := WireInit(false.B)
-  io.ctrl.addToPC := WireInit(false.B)
   io.aluOp := WireInit(0.U(4.W))
 
   // split instruction into fields
@@ -46,6 +44,7 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
     is(OP.LD) {
       io.ctrl.load := true.B
       io.ctrl.useImm := true.B
+      io.aluOp := ALUOp.ADD.asUInt
     }
 
     is(OP.IM) {
@@ -78,10 +77,10 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
             is(Funct7.SRLI) {
               io.aluOp := ALUOp.SRL.asUInt
             }
-            is(Funct3.XORI) {
-              io.aluOp := ALUOp.XOR.asUInt
-            }
           }
+        }
+        is(Funct3.XORI) {
+          io.aluOp := ALUOp.XOR.asUInt
         }
       }
     }

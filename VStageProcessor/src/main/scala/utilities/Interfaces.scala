@@ -27,7 +27,6 @@ import chisel3._
       val jump = Output(Bool())
       val load = Output(Bool())
       val store = Output(Bool())
-      val addToPC = Output(Bool())
     }
     //val branchPredict = UInt(32.W) // TODO: Implement branch prediction
   }

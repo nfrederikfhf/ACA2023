@@ -16,9 +16,11 @@ class MEM(dataWidth: Int, addrWidth: Int) extends Module {
   io.out.memOut := RegInit(0.U(dataWidth.W))
   io.out.writeEnable := RegInit(false.B)
 
-
   // Creating the dual read memory module
   val DRMEM = Module(new DualReadMem(addrWidth, dataWidth))
+
+  // Init the unused side of the Dual memory
+  DRMEM.io.rdAddr2 := WireInit(0.U(addrWidth.W))
 
   // Connecting the I/O through
   DRMEM.io.wren := io.in.ctrl.store
@@ -30,4 +32,3 @@ class MEM(dataWidth: Int, addrWidth: Int) extends Module {
   io.out.rd := io.in.rd
   io.out.writeEnable := io.in.ctrl.load
 }
-
