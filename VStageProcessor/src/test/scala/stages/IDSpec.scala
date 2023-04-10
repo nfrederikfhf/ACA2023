@@ -99,6 +99,7 @@ class IDSpec extends AnyFlatSpec with ChiselScalatestTester {
         """addi x3, x0, 16""".stripMargin
 
       val binaryOutput = RISCVAssembler.binOutput(input)
+      println(binaryOutput)
       val inst = "b" + binaryOutput // prefix binary with b to convert to binary
       dut.io.in.inst.poke(inst.U(32.W))
       dut.clock.step(1)
@@ -117,12 +118,7 @@ class IDSpec extends AnyFlatSpec with ChiselScalatestTester {
 
     }
   }
-//
-//  it should "output correct values for the LUI instruction" in {
-//    test(new ID(32, 5)) { dut =>
-//
-//    }
-//  }
+
 //
 //  it should "output correct values for the LUI instruction" in {
 //    test(new ID(32, 5)) { dut =>

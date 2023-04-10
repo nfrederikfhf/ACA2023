@@ -70,6 +70,10 @@ import chisel3._
       val data = Input(UInt(dataWidth.W))
 
     }
+    val write = new Bundle { // Interface for writing to memory
+      val ready = Output(Bool())
+      val data = Output(UInt(dataWidth.W))
+    }
   }
 
 

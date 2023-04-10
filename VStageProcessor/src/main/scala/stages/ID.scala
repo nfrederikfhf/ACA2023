@@ -6,6 +6,17 @@ import components.memory.RegisterFile
 import components.{ImmGenerator, Decoder}
 
 class ID(datawidth: Int, addrWidth: Int) extends Module {
+  /*
+  * This stage is responsible for:
+  * - Generating the immediate
+  * - Decoding the instruction
+  * - Reading the register file
+  * - Writing the register file
+  * - Writing the control signals
+  * - Writing the ALU operation
+  * @param datawidth: The width of the data bus
+  * @param addrWidth: The width of the address bus
+   */
 
   val io = IO(new Bundle {
     val in = Flipped(new IF_ID_IO(datawidth))
@@ -58,14 +69,14 @@ class ID(datawidth: Int, addrWidth: Int) extends Module {
   io.out.ctrl.load := decoder.io.ctrlSignals.load
   io.out.ctrl.store := decoder.io.ctrlSignals.store
   //-----ALU signals-----
-  io.out.aluOp := decoder.io.aluOp
-  io.out.rs1 := decoder.io.rs1
-  io.out.rs2 := decoder.io.rs2
-  io.out.rd := decoder.io.rd
-  io.out.val1 := regfile.io.rdData1
-  io.out.val2 := regfile.io.rdData2
-  io.out.imm := immGenerator.io.immOut
-  io.out.pc := io.in.pc
+  io.out.aluOp := decoder.io.aluOp // ALU operation
+  io.out.rs1 := decoder.io.rs1 // Register address
+  io.out.rs2 := decoder.io.rs2 // Register address
+  io.out.rd := decoder.io.rd // Destination register address
+  io.out.val1 := regfile.io.rdData1 // Value read from register
+  io.out.val2 := regfile.io.rdData2 // Value read from register
+  io.out.imm := immGenerator.io.immOut // Immediate value
+  io.out.pc := io.in.pc // Program counter value
 
   //------------testing purposes-----------
   when(io.test.startTest) {

@@ -32,8 +32,8 @@ class IF(datawidth: Int, depth: Int) extends Module {
   instMem.io.memIO.Request.addr := WireInit(0.U(datawidth.W))
   instMem.io.memIO.Request.writeData := WireInit(0.U(datawidth.W))
   instMem.io.memIO.Request.store := WireInit(false.B)
-  instMem.io.writeMem.valid := WireInit(false.B)
-  instMem.io.writeMem.bits := WireInit(0.U(datawidth.W))
+  instMem.io.memIO.write.ready := WireInit(false.B)
+  instMem.io.memIO.write.data := WireInit(0.U(datawidth.W))
   PC.io.in := WireInit(0.U(datawidth.W))
   instMem.io.memIO <> PC.io.memIO
 
@@ -45,11 +45,11 @@ class IF(datawidth: Int, depth: Int) extends Module {
 
 
   when(io.writeToMem) {
-    instMem.io.writeMem.valid := true.B
-    instMem.io.writeMem.bits := io.testData
+    instMem.io.memIO.write.ready := true.B
+    instMem.io.memIO.write.data := io.testData
   }.otherwise {
-    instMem.io.writeMem.valid := false.B
-    instMem.io.writeMem.bits := 0.U
+    instMem.io.memIO.write.ready := false.B
+    instMem.io.memIO.write.data:= 0.U
   }
 
 
