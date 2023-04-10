@@ -12,6 +12,7 @@ class ChiselRISC extends Module{
       val testData = Input(UInt(32.W))
       val writeToMem = Input(Bool())
     }
+    val memIO = Flipped(new memoryInterface(32))
     val startPipeline = Input(Bool())
   })
   // Pipeline stages
@@ -37,10 +38,13 @@ class ChiselRISC extends Module{
   IF.io.branch := WireInit(false.B)
   ID.io.test.wren := WireInit(false.B)
   IF.io.startPC := io.startPipeline
-
+  IF.io.memIO.Request := DontCare
+  IF.io.memIO.Response := DontCare
   // Connect the testing wires
-  IF.io.writeToMem := io.test.writeToMem
-  IF.io.testData := io.test.testData
+  io.memIO.Request := DontCare
+  io.memIO.Response := DontCare
+  IF.io.memIO.write.ready := io.memIO.write.ready
+  IF.io.memIO.write.data := io.memIO.write.data
 
 
 

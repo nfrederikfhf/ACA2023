@@ -1,11 +1,25 @@
 import chiseltest._
 import org.scalatest.flatspec.AnyFlatSpec
 import chisel3._
-
 import components._
 import stages._
+import utilities.InstMemFiller.FillInstructionMemory
 import utilities._
 class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
+
+  it should "execute an ADDI instruction correctly" in {
+    test(new ChiselRISC).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+        val input = """addi x1, x1, 1"""
+        FillInstructionMemory(input, dut.clock, dut.io.memIO)
+
+        dut.clock.step(1)
+        dut.io.startPipeline.poke(true.B)
+        dut.clock.step(5)
+        dut.io.out.expect(1.U)
+    }
+  }
+
+
 
   it should "execute an ADD instruction correctly" in {
     test(new ChiselRISC).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
@@ -31,7 +45,6 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
 
       // Check the result
       dut.io.out.expect(2.U)
-
 
     }
   }
