@@ -21,5 +21,7 @@ lazy val root = (project in file("."))
       "-P:chiselplugin:genBundleElements",
     ),
     addCompilerPlugin("edu.berkeley.cs" % "chisel3-plugin" % chiselVersion cross CrossVersion.full),
+    // Import libraries
+    libraryDependencies += "com.carlosedp" %% "riscvassembler" % "1.7.1", //ReleaseVerSBT
   )
 

@@ -2,6 +2,7 @@ package stages
 
 import chisel3._
 import chiseltest._
+import com.carlosedp.riscvassembler.RISCVAssembler
 import stages._
 import org.scalatest.flatspec.AnyFlatSpec
 import utilities.ALUOp
@@ -91,12 +92,31 @@ class IDSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.out.rd.expect(3.U)
     }
   }
-//
-//  it should "output correct values for the LUI instruction" in {
-//    test(new ID(32, 5)) { dut =>
-//
-//    }
-//  }
+
+  it should "output correct values for the ADDI with ASM instruction" in {
+    test(new ID(32, 5)) { dut =>
+      val input =
+        """addi x3, x0, 16""".stripMargin
+
+      val binaryOutput = RISCVAssembler.binOutput(input)
+      val inst = "b" + binaryOutput // prefix binary with b to convert to binary
+      dut.io.in.inst.poke(inst.U(32.W))
+      dut.clock.step(1)
+      dut.io.out.val1.expect(0.U)
+      dut.io.out.val2.expect(0.U)
+      dut.io.out.rd.expect(3.U)
+      dut.io.out.ctrl.useALU.expect(true.B)
+      dut.io.out.ctrl.useImm.expect(true.B)
+      dut.io.out.imm.expect(16.U)
+      dut.io.out.pc.expect(0.U)
+      dut.io.out.rs1.expect(0.U)
+      dut.io.out.rs2.expect(16.U)
+      dut.io.out.aluOp.expect(ALUOp.ADD.litValue)
+
+
+
+    }
+  }
 //
 //  it should "output correct values for the LUI instruction" in {
 //    test(new ID(32, 5)) { dut =>
