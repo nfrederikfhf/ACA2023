@@ -19,6 +19,7 @@ class ID(datawidth: Int, addrWidth: Int) extends Module {
    */
 
   val io = IO(new Bundle {
+    val stallReg = Input(Bool())
     val in = Flipped(new IF_ID_IO(datawidth))
     val wbIn = Flipped(new WB_ID_IO(datawidth, addrWidth))
     val out = new ID_EX_IO(datawidth, addrWidth)
@@ -35,20 +36,6 @@ class ID(datawidth: Int, addrWidth: Int) extends Module {
   val regfile = Module(new RegisterFile(addrWidth, datawidth))
 
   //Init
-  io.out.val1 := RegInit(0.U(datawidth.W))
-  io.out.val2 := RegInit(0.U(datawidth.W))
-  io.out.rs1 := RegInit(0.U(addrWidth.W))
-  io.out.rs2 := RegInit(0.U(addrWidth.W))
-  io.out.aluOp := RegInit(0.U(4.W))
-  io.out.rd := RegInit(0.U(datawidth.W))
-  io.out.ctrl.useImm := RegInit(0.U(datawidth.W))
-  io.out.ctrl.useALU := RegInit(0.U(datawidth.W))
-  io.out.ctrl.branch := RegInit(0.U(datawidth.W))
-  io.out.ctrl.jump := RegInit(0.U(datawidth.W))
-  io.out.ctrl.load := RegInit(0.U(datawidth.W))
-  io.out.ctrl.store := RegInit(0.U(datawidth.W))
-  io.out.imm := RegInit(0.U(datawidth.W))
-  io.out.pc := RegInit(0.U(datawidth.W))
   regfile.io.wren := WireInit(false.B)
   regfile.io.wrAddr := WireInit(0.U(addrWidth.W))
   regfile.io.wrData := WireInit(0.U(datawidth.W))
@@ -60,14 +47,8 @@ class ID(datawidth: Int, addrWidth: Int) extends Module {
   regfile.io.rdAddr1 := decoder.io.rs1
   regfile.io.rdAddr2 := decoder.io.rs2
   regfile.io.wren := io.wbIn.writeEnable
-  //io.out.ctrl <> decoder.io.ctrl
   //-----Control signals-----
-  io.out.ctrl.useImm := decoder.io.ctrlSignals.useImm
-  io.out.ctrl.useALU := decoder.io.ctrlSignals.useALU
-  io.out.ctrl.branch := decoder.io.ctrlSignals.branch
-  io.out.ctrl.jump := decoder.io.ctrlSignals.jump
-  io.out.ctrl.load := decoder.io.ctrlSignals.load
-  io.out.ctrl.store := decoder.io.ctrlSignals.store
+  io.out.ctrl <> RegEnable(decoder.io.ctrlSignals, !io.stallReg)
   //-----ALU signals-----
   io.out.aluOp := decoder.io.aluOp // ALU operation
   io.out.rs1 := decoder.io.rs1 // Register address

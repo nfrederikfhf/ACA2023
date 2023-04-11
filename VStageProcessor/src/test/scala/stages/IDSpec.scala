@@ -6,6 +6,7 @@ import com.carlosedp.riscvassembler.RISCVAssembler
 import stages._
 import org.scalatest.flatspec.AnyFlatSpec
 import utilities.ALUOp
+import utilities.helperFunctions.assemblyToHex
 
 class IDSpec extends AnyFlatSpec with ChiselScalatestTester {
   it should "check if decoder spits out correct " in {
@@ -96,11 +97,8 @@ class IDSpec extends AnyFlatSpec with ChiselScalatestTester {
   it should "output correct values for the ADDI with ASM instruction" in {
     test(new ID(32, 5)) { dut =>
       val input =
-        """addi x3, x0, 16""".stripMargin
-
-      val binaryOutput = RISCVAssembler.binOutput(input)
-      println(binaryOutput)
-      val inst = "b" + binaryOutput // prefix binary with b to convert to binary
+        """addi x3, x0, 16"""
+      val inst = assemblyToHex(input)// prefix binary with b to convert to binary
       dut.io.in.inst.poke(inst.U(32.W))
       dut.clock.step(1)
       dut.io.out.val1.expect(0.U)

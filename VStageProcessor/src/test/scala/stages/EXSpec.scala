@@ -17,6 +17,7 @@ class EXSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.in.imm.poke(0.U)
       dut.io.in.ctrl.useImm.poke(false.B)
       dut.io.in.ctrl.branch.poke(false.B)
+      dut.io.in.ctrl.useALU.poke(true.B)
       dut.clock.step(1)
       dut.io.PCout.expect(12.U)
       dut.io.out.aluOut.expect(100.U)
@@ -64,7 +65,7 @@ class EXSpec extends AnyFlatSpec with ChiselScalatestTester {
   }
 
   it should "Check Branch Mode working" in {
-    test(new EX(32, 5)) { dut =>
+    test(new EX(32, 5)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       dut.io.in.val1.poke(96.U)
       dut.io.in.val2.poke(0.U)
       dut.io.in.aluOp.poke(ALUOp.BEQ.litValue)
@@ -76,7 +77,7 @@ class EXSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.in.ctrl.useALU.poke(true.B)
       dut.clock.step(1)
       dut.io.PCout.expect(12.U)
-      dut.io.out.aluOut.expect(100.U)
+      dut.io.out.aluOut.expect(1.U)
       dut.io.out.ctrl.load.expect(false.B)
       dut.io.out.ctrl.store.expect(false.B)
     }

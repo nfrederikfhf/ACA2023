@@ -1,12 +1,13 @@
 package stages
 import chisel3.{util, _}
-import chisel3.util._
+import chisel3.util.{RegEnable, _}
 import components._
 import components.memory._
 import utilities._
 
 class IF(datawidth: Int, depth: Int) extends Module {
   val io = IO(new Bundle {
+    val stallReg = Input(Bool())
     val out = new IF_ID_IO(datawidth)
     val addrOut = Input(UInt(datawidth.W)) //ALU calculated Addr
     val branch = Input(Bool())
@@ -17,10 +18,7 @@ class IF(datawidth: Int, depth: Int) extends Module {
   val PC = Module(new ProgramCounter(datawidth))
   val instMem = Module(new InstructionMemory(depth, datawidth))
 
-  // Initialise the register outputs
-  io.out.inst := RegInit(0.U(datawidth.W))
-  io.out.pc := RegInit(0.U(datawidth.W))
-
+  val outReg = RegEnable(io.out, !io.stallReg)
 
   //Init signals
   PC.io.memIO.Response.ready := WireInit(false.B)
@@ -56,6 +54,9 @@ class IF(datawidth: Int, depth: Int) extends Module {
     PC.io.in := pc
   }
 
-  io.out.inst := RegNext(instMem.io.memIO.Response.data)
-  io.out.pc := RegNext(PC.io.memIO.Response.data)
+  outReg.inst := instMem.io.memIO.Response.data
+  outReg.pc := PC.io.memIO.Response.data
+  io.out.inst := outReg.inst
+  io.out.pc := outReg.pc
+
 }

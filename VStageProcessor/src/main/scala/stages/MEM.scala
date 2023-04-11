@@ -10,17 +10,21 @@ class MEM(dataWidth: Int, addrWidth: Int) extends Module {
     val in = Flipped(new EX_MEM_IO(dataWidth, addrWidth))
     val out = new MEM_WB_IO(dataWidth, addrWidth)
   })
-  // Initialise signals
-  io.out.aluOut := RegInit(0.U(dataWidth.W))
-  io.out.rd := RegInit(0.U(addrWidth.W))
-  io.out.memOut := RegInit(0.U(dataWidth.W))
-  io.out.writeEnable := RegInit(false.B)
+
+  // Initialise the register
+  val outReg = RegEnable(io.out, !io.stallReg)
+
+  //----- Connect the input  ------------
+  outReg.rd := io.in.rd
+  outReg.aluOut := io.in.aluOut
+  outReg.writeEnable := io.in.ctrl.store
+  outReg.memOut := DontCare
 
   // Creating the dual read memory module
   val DRMEM = Module(new DualReadMem(addrWidth, dataWidth))
 
   // Init the unused side of the Dual memory
-  DRMEM.io.rdAddr2 := WireInit(0.U(addrWidth.W))
+  DRMEM.io.rdAddr2 := DontCare
 
   // Connecting the I/O through
   DRMEM.io.wren := io.in.ctrl.store
@@ -28,7 +32,10 @@ class MEM(dataWidth: Int, addrWidth: Int) extends Module {
   DRMEM.io.rdAddr1 := io.in.rd
   DRMEM.io.wrAddr := io.in.rd
   DRMEM.io.wrData := io.in.imm
+
+  // ---------- output---------------
+  io.out.rd := outReg.rd
+  io.out.aluOut := outReg.aluOut
+  io.out.writeEnable := outReg.writeEnable
   io.out.memOut := DRMEM.io.rdData1
-  io.out.rd := io.in.rd
-  io.out.writeEnable := io.in.ctrl.load
 }

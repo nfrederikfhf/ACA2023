@@ -5,7 +5,7 @@ import chiseltest._
 import com.carlosedp.riscvassembler.RISCVAssembler
 import utilities._
 
-object InstMemFiller {
+object helperFunctions {
   def FillInstructionMemory(inputString: String, clock: Clock, interface: memoryInterface): Unit = {
     /**
     * This function fills the instruction memory with the instructions given in the inputString.
@@ -25,6 +25,14 @@ object InstMemFiller {
       clock.step(1)
     }
     interface.write.ready.poke(false.B)
-    clock.step(1)
+    interface.write.data.poke(0.U(32.W))
+  }
+
+
+  def assemblyToHex(inputString: String): String = {
+    val instruction = RISCVAssembler.fromString(inputString.stripMargin) // Remove the leading whitespace
+    val instructionArray = instruction.split("\n") // Split the instructions into an array
+    val inst = "h" + instructionArray(0) // Prefix instruction with "h" to make it a hex string
+    inst
   }
 }

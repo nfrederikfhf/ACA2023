@@ -5,7 +5,7 @@ import chiseltest._
 import com.carlosedp.riscvassembler.RISCVAssembler
 import components.memory.InstructionMemory
 import org.scalatest.flatspec.AnyFlatSpec
-import utilities.InstMemFiller.FillInstructionMemory
+import utilities.helperFunctions.FillInstructionMemory
 import utilities._
 /**
 * This is a test suite for the InstructionMemory module.

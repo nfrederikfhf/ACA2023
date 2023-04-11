@@ -11,13 +11,13 @@ class MEMSpec extends AnyFlatSpec with ChiselScalatestTester {
     test(new MEM(32, 5)).withAnnotations(Seq(WriteVcdAnnotation))  { dut =>
       dut.io.in.ctrl.load.poke(true.B)
       dut.io.in.ctrl.store.poke(false.B)
-      dut.io.in.rd.poke(1.U)
+      dut.io.in.rd.poke(0.U)
       dut.io.in.imm.poke(1234.U)
 
       dut.clock.step(1)
 
       dut.io.out.aluOut.expect(0.U)
-      dut.io.out.rd.expect(1.U)
+      dut.io.out.rd.expect(0.U)
       dut.io.out.memOut.expect(0.U)
 
       dut.io.in.ctrl.load.poke(false.B)
@@ -30,6 +30,7 @@ class MEMSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.in.ctrl.load.poke(true.B)
       dut.io.out.aluOut.expect(0.U)
       dut.io.out.rd.expect(1.U)
+      dut.clock.step(1)
       dut.io.out.memOut.expect(5678.U)
     }
   }
