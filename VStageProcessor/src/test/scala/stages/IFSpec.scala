@@ -21,6 +21,7 @@ class IFSpec extends AnyFlatSpec with ChiselScalatestTester{
       dut.clock.step()
 
       dut.io.out.inst.expect("h81234523".U(32.W))
+      dut.io.out.pc.expect(0.U)
       dut.io.startPC.poke(false.B)
       dut.clock.step()
 
@@ -28,6 +29,7 @@ class IFSpec extends AnyFlatSpec with ChiselScalatestTester{
       dut.clock.step()
 
       dut.io.out.inst.expect("h10812063".U(32.W))
+      dut.io.out.pc.expect(4.U)
       dut.io.startPC.poke(false.B)
       dut.clock.step()
 
@@ -35,6 +37,7 @@ class IFSpec extends AnyFlatSpec with ChiselScalatestTester{
 
       dut.clock.step(1)
       dut.io.out.inst.expect("h90812063".U(32.W))
+      dut.io.out.pc.expect(8.U)
       dut.io.startPC.poke(false.B)
 
     }

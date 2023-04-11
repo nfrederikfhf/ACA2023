@@ -29,6 +29,10 @@ class ChiselRISC extends Module{
   EX.io.out <> MEM.io.in
   MEM.io.out <> WB.io.in
   WB.io.out <> ID.io.wbIn
+  ID.io.stallReg := IF.io.stallReg
+  EX.io.stallReg := ID.io.stallReg
+  MEM.io.stallReg := EX.io.stallReg
+  WB.io.stallReg := MEM.io.stallReg
 
   // Initialise signals
   ID.io.test.startTest := WireInit(false.B)
@@ -37,6 +41,7 @@ class ChiselRISC extends Module{
   IF.io.addrOut := WireInit(0.U(32.W))
   IF.io.branch := WireInit(false.B)
   ID.io.test.wren := WireInit(false.B)
+  IF.io.stallReg := WireInit(false.B)
   IF.io.startPC := io.startPipeline
   IF.io.memIO.Request := DontCare
   IF.io.memIO.Response := DontCare

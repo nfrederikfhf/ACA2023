@@ -55,7 +55,7 @@ class IF(datawidth: Int, depth: Int) extends Module {
   }
 
   outReg.inst := instMem.io.memIO.Response.data
-  outReg.pc := PC.io.memIO.Response.data
+  outReg.pc := addMux
   io.out.inst := outReg.inst
   io.out.pc := outReg.pc
 
