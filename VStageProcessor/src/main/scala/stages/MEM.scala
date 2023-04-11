@@ -7,6 +7,7 @@ import utilities._
 
 class MEM(dataWidth: Int, addrWidth: Int) extends Module {
   val io = IO(new Bundle {
+    val stallReg = Input(Bool())
     val in = Flipped(new EX_MEM_IO(dataWidth, addrWidth))
     val out = new MEM_WB_IO(dataWidth, addrWidth)
   })

@@ -7,6 +7,7 @@ import components.ALU
 
 class EX(datawidth: Int, addrWidth: Int) extends Module {
   val io = IO(new Bundle {
+    val stallReg = Input(Bool())
     val in = Flipped(new ID_EX_IO(datawidth, addrWidth))
     val out = new EX_MEM_IO(datawidth, addrWidth)
     val PCout = Output(UInt(datawidth.W))

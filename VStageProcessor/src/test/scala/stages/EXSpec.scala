@@ -71,21 +71,15 @@ class EXSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.in.aluOp.poke(ALUOp.BEQ.litValue)
       dut.io.in.pc.poke(4.U)
       dut.io.in.imm.poke(4.U)
-      dut.io.in.ctrl.load.poke(true.B)
+      dut.io.in.ctrl.load.poke(false.B)
       dut.io.in.ctrl.useImm.poke(true.B)
-      dut.io.in.ctrl.branch.poke(false.B)
+      dut.io.in.ctrl.branch.poke(true.B)
       dut.io.in.ctrl.useALU.poke(true.B)
       dut.clock.step(1)
       dut.io.PCout.expect(12.U)
       dut.io.out.aluOut.expect(1.U)
       dut.io.out.ctrl.load.expect(false.B)
       dut.io.out.ctrl.store.expect(false.B)
-    }
-  }
-
-  it should " ADD correctly" in {
-    test(new EX(32,5)) { dut =>
-
     }
   }
 }

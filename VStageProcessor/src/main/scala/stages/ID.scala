@@ -50,14 +50,14 @@ class ID(datawidth: Int, addrWidth: Int) extends Module {
   //-----Control signals-----
   io.out.ctrl <> RegEnable(decoder.io.ctrlSignals, !io.stallReg)
   //-----ALU signals-----
-  io.out.aluOp := decoder.io.aluOp // ALU operation
-  io.out.rs1 := decoder.io.rs1 // Register address
-  io.out.rs2 := decoder.io.rs2 // Register address
-  io.out.rd := decoder.io.rd // Destination register address
-  io.out.val1 := regfile.io.rdData1 // Value read from register
-  io.out.val2 := regfile.io.rdData2 // Value read from register
-  io.out.imm := immGenerator.io.immOut // Immediate value
-  io.out.pc := io.in.pc // Program counter value
+  io.out.aluOp := RegEnable(decoder.io.aluOp, !io.stallReg) // ALU operation
+  io.out.rs1 := RegEnable(decoder.io.rs1, !io.stallReg) // Register address
+  io.out.rs2 := RegEnable(decoder.io.rs2, !io.stallReg) // Register address
+  io.out.rd := RegEnable(decoder.io.rd, !io.stallReg) // Destination register address
+  io.out.val1 := RegEnable(regfile.io.rdData1, !io.stallReg) // Value read from register
+  io.out.val2 := RegEnable(regfile.io.rdData2, !io.stallReg) // Value read from register
+  io.out.imm := RegEnable(immGenerator.io.immOut, !io.stallReg) // Immediate value
+  io.out.pc := RegEnable(io.in.pc, !io.stallReg) // Program counter value
 
   //------------testing purposes-----------
   when(io.test.startTest) {
