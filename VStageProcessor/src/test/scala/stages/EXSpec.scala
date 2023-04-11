@@ -8,7 +8,7 @@ import utilities.ALUOp
 
 class EXSpec extends AnyFlatSpec with ChiselScalatestTester {
   it should "Check R2R works as expected " in {
-    test(new EX(32, 5)) { dut =>
+    test(new EX(32, 5)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       //dut.io.in.ctrl.useALU
       dut.io.in.val1.poke(96.U)
       dut.io.in.val2.poke(4.U)
@@ -34,6 +34,7 @@ class EXSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.in.imm.poke(4.U)
       dut.io.in.ctrl.useImm.poke(true.B)
       dut.io.in.ctrl.branch.poke(false.B)
+      dut.io.in.ctrl.useALU.poke(true.B)
       dut.clock.step(1)
       dut.io.PCout.expect(12.U)
       dut.io.out.aluOut.expect(100.U)
@@ -53,6 +54,7 @@ class EXSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.in.ctrl.load.poke(true.B)
       dut.io.in.ctrl.useImm.poke(true.B)
       dut.io.in.ctrl.branch.poke(false.B)
+      dut.io.in.ctrl.useALU.poke(true.B)
       dut.clock.step(1)
       dut.io.PCout.expect(12.U)
       dut.io.out.aluOut.expect(100.U)
@@ -71,7 +73,7 @@ class EXSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.in.ctrl.load.poke(true.B)
       dut.io.in.ctrl.useImm.poke(true.B)
       dut.io.in.ctrl.branch.poke(false.B)
-      dut.io.in.ctrl.useALU.poke(false.B)
+      dut.io.in.ctrl.useALU.poke(true.B)
       dut.clock.step(1)
       dut.io.PCout.expect(12.U)
       dut.io.out.aluOut.expect(100.U)
