@@ -29,17 +29,7 @@ class IDSpec extends AnyFlatSpec with ChiselScalatestTester {
       // Set up input
       dut.io.in.inst.poke("h01000193".U ) // addi x3, x0, 16
       dut.io.in.pc.poke(0.U(32.W))
-
-      // Set up register file
-      //dut.regfile.io.rdAddr1.poke(0.U(5.W)) // x0
-      //dut.regfile.io.rdAddr2.poke(0.U(5.W)) // x0
-      dut.io.test.startTest.poke(true.B)
-      dut.clock.step()
-      dut.io.test.wren.poke(true.B)
-      dut.io.test.wrAddr.poke(0.U(5.W)) // x0
-      dut.io.test.wrData.poke(0.U(32.W))
-      dut.io.test.startTest.poke(false.B)
-      dut.clock.step()
+      dut.clock.step(1)
 
       // Check output
       dut.io.out.val1.expect(0.U)
@@ -60,16 +50,7 @@ class IDSpec extends AnyFlatSpec with ChiselScalatestTester {
       // Set up input
       dut.io.in.inst.poke("h00412383".U) // lw x7, 4(x2)
       dut.io.in.pc.poke(0.U(32.W))
-      dut.io.test.startTest.poke(true.B)
-      dut.clock.step()
-      /*for (i <- 0 until 5) {
-        dut.io.test.wren.poke(true.B)
-        dut.io.test.wrAddr.poke(i.U(5.W))
-        dut.io.test.wrData.poke(i.U(32.W))
-      }*/
-      dut.clock.step()
-      dut.io.test.startTest.poke(false.B)
-      dut.io.test.wren.poke(false.B)
+      dut.clock.step(1)
       dut.io.out.ctrl.useALU.expect(false.B)
       dut.io.out.ctrl.useImm.expect(true.B)
       dut.io.out.ctrl.load.expect(true.B)

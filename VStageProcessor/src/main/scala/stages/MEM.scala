@@ -18,6 +18,7 @@ class MEM(dataWidth: Int, addrWidth: Int) extends Module {
   //----- Connect the input  ------------
   outReg.rd := io.in.rd
   outReg.aluOut := io.in.aluOut
+
   outReg.writeEnable := io.in.ctrl.store
   outReg.memOut := DontCare
 

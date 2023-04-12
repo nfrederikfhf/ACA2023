@@ -35,12 +35,8 @@ class ChiselRISC extends Module{
   WB.io.stallReg := MEM.io.stallReg
 
   // Initialise signals
-  ID.io.test.startTest := WireInit(false.B)
-  ID.io.test.wrAddr := WireInit(0.U(5.W))
-  ID.io.test.wrData := WireInit(0.U(32.W))
   IF.io.addrOut := WireInit(0.U(32.W))
   IF.io.branch := WireInit(false.B)
-  ID.io.test.wren := WireInit(false.B)
   IF.io.stallReg := WireInit(false.B)
   IF.io.startPC := io.startPipeline
   IF.io.memIO.Request := DontCare

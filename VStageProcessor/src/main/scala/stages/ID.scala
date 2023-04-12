@@ -23,12 +23,6 @@ class ID(datawidth: Int, addrWidth: Int) extends Module {
     val in = Flipped(new IF_ID_IO(datawidth))
     val wbIn = Flipped(new WB_ID_IO(datawidth, addrWidth))
     val out = new ID_EX_IO(datawidth, addrWidth)
-    val test = new Bundle { // For testing purposes
-      val wrAddr = Input(UInt(addrWidth.W))
-      val wrData = Input(UInt(datawidth.W))
-      val wren = Input(Bool())
-      val startTest = Input(Bool())
-    }
   })
 
   val immGenerator = Module(new ImmGenerator(datawidth))
@@ -46,7 +40,10 @@ class ID(datawidth: Int, addrWidth: Int) extends Module {
   decoder.io.inInst := io.in.inst
   regfile.io.rdAddr1 := decoder.io.rs1
   regfile.io.rdAddr2 := decoder.io.rs2
-  regfile.io.wren := io.wbIn.writeEnable
+  // Write back
+  regfile.io.wren := !io.wbIn.writeEnable
+  regfile.io.wrAddr := io.wbIn.rd
+  regfile.io.wrData := io.wbIn.muxOut
   //-----Control signals-----
   io.out.ctrl <> RegEnable(decoder.io.ctrlSignals, !io.stallReg)
   //-----ALU signals-----
@@ -59,15 +56,5 @@ class ID(datawidth: Int, addrWidth: Int) extends Module {
   io.out.imm := RegEnable(immGenerator.io.immOut, !io.stallReg) // Immediate value
   io.out.pc := RegEnable(io.in.pc, !io.stallReg) // Program counter value
 
-  //------------testing purposes-----------
-  when(io.test.startTest) {
-    regfile.io.wren := io.test.wren
-    regfile.io.wrAddr := io.test.wrAddr
-    regfile.io.wrData := io.test.wrData
-  }.otherwise {
-    regfile.io.wren := false.B
-    regfile.io.wrAddr := 0.U
-    regfile.io.wrData := 0.U
-  }
 
 }
