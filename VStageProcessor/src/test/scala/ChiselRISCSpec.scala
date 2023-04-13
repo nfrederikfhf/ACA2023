@@ -14,9 +14,7 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
       FillInstructionMemory(input, dut.clock, dut.io.memIO)
 
       dut.io.startPipeline.poke(true.B)
-      for (i <- 0 until 5) {
-        dut.clock.step(1)
-      }
+      dut.clock.step(5)
       dut.io.out.expect(1.U)
     }
   }
@@ -34,17 +32,11 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.clock.step(2)
       dut.io.startPipeline.poke(false.B)
       dut.clock.step(4)
-//      for (_ <- 0 until 6) {
-//        dut.clock.step(1)
-//      }
 
       val input2 = "add x3, x1, x2"
       FillInstructionMemory(input2, dut.clock, dut.io.memIO)
       dut.io.startPipeline.poke(true.B)
-
-      for (_ <- 0 until 5) {
-        dut.clock.step(1)
-      }
+      dut.clock.step(5)
 
       // Check the result
       dut.io.out.expect(2.U)
