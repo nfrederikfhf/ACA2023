@@ -55,7 +55,7 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
   }
 
   // Write to memory - should only be needed for testing
-  when(io.memIO.write.ready && !io.memIO.Request.valid && count =/= actualDepth.U) {
+  when(io.memIO.write.ready && count =/= actualDepth.U) { // && !io.memIO.Request.valid
     mem(writePtr) := io.memIO.write.data
     writePtr := writePtr + 1.U
     count := count + 1.U
