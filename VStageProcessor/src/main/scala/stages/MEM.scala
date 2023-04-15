@@ -5,11 +5,12 @@ import components._
 import components.memory._
 import utilities._
 
-class MEM(dataWidth: Int, addrWidth: Int) extends Module {
+class MEM(dataWidth: Int, addrWidth: Int, simulation: Boolean = false) extends Module {
   val io = IO(new Bundle {
     val stallReg = Input(Bool())
     val in = Flipped(new EX_MEM_IO(dataWidth, addrWidth))
     val out = new MEM_WB_IO(dataWidth, addrWidth)
+    val debug = if(simulation) Some(new debugIO(dataWidth, addrWidth)) else None
   })
 
   // Initialise the register
@@ -34,6 +35,18 @@ class MEM(dataWidth: Int, addrWidth: Int) extends Module {
   DRMEM.io.rdAddr1 := io.in.rd
   DRMEM.io.wrAddr := io.in.rd
   DRMEM.io.wrData := io.in.imm
+
+  if(simulation){ // Debugging
+    io.debug.get.regFile := DontCare
+    io.debug.get.inst := DontCare
+    io.debug.get.pc := DontCare
+    io.debug.get.out := DontCare
+    io.debug.get.memoryIO.wren := DRMEM.io.wren
+    io.debug.get.memoryIO.rden := DRMEM.io.rden
+    io.debug.get.memoryIO.rdAddr1 := DRMEM.io.rdAddr1
+    io.debug.get.memoryIO.wrAddr := DRMEM.io.wrAddr
+    io.debug.get.memoryIO.wrData := DRMEM.io.wrData
+  }
 
   // ---------- output---------------
   io.out.rd := outReg.rd

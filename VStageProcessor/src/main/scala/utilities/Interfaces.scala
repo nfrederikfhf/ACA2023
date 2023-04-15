@@ -55,7 +55,7 @@ import chisel3._
     val writeEnable = Output(Bool())
   }
 
-  class memoryInterface(dataWidth: Int) extends Bundle{ // Interface for memory
+  class memoryInterface(dataWidth: Int) extends Bundle { // Interface for memory
     val Request = new Bundle { // Interface for requesting a memory access
       val valid = Output(Bool())
       val addr = Output(UInt(dataWidth.W))
@@ -74,6 +74,20 @@ import chisel3._
       val ready = Output(Bool())
       val data = Output(UInt(dataWidth.W))
     }
+  }
+
+    class debugIO(dataWidth: Int, addrWidth: Int) extends Bundle { // Debug interface
+      val regFile = Output(Vec(dataWidth, UInt(dataWidth.W))) // Register file
+      val memoryIO = new Bundle { // Memory output and input
+        val rden = Output(Bool())
+        val wren = Output(Bool())
+        val rdAddr1 = Output(UInt(addrWidth.W))
+        val wrAddr = Output(UInt(addrWidth.W))
+        val wrData = Output(UInt(dataWidth.W))
+      }
+      val pc = Output(UInt(dataWidth.W)) // Program counter
+      val inst = Output(UInt(dataWidth.W)) // Instruction
+      val out = Output(UInt(dataWidth.W)) // Output from WB stage
   }
 
 

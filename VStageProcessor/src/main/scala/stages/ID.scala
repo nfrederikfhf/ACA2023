@@ -5,7 +5,7 @@ import chisel3.util._
 import components.memory.RegisterFile
 import components.{ImmGenerator, Decoder}
 
-class ID(datawidth: Int, addrWidth: Int) extends Module {
+class ID(datawidth: Int, addrWidth: Int, simulation: Boolean = false) extends Module {
   /*
   * This stage is responsible for:
   * - Generating the immediate
@@ -23,17 +23,25 @@ class ID(datawidth: Int, addrWidth: Int) extends Module {
     val in = Flipped(new IF_ID_IO(datawidth))
     val wbIn = Flipped(new WB_ID_IO(datawidth, addrWidth))
     val out = new ID_EX_IO(datawidth, addrWidth)
+    val debug = if(simulation) Some(new debugIO(datawidth, addrWidth)) else None // Debugging
   })
 
   val immGenerator = Module(new ImmGenerator(datawidth))
   val decoder = Module(new Decoder(datawidth, addrWidth))
-  val regfile = Module(new RegisterFile(addrWidth, datawidth))
+  val regfile = Module(new RegisterFile(addrWidth, datawidth, simulation))
 
   //Init
   regfile.io.wren := WireInit(false.B)
   regfile.io.wrAddr := WireInit(0.U(addrWidth.W))
   regfile.io.wrData := WireInit(0.U(datawidth.W))
   decoder.io.inInst := WireInit(0.U(datawidth.W))
+  if(simulation){ // Get the register file
+    io.debug.get.out := DontCare
+    io.debug.get.memoryIO := DontCare
+    io.debug.get.regFile := regfile.io.regFile.get
+    io.debug.get.inst := io.in.inst
+    io.debug.get.pc := io.in.pc
+  }
 
   // Connecting the signals through
   immGenerator.io.immIn := io.in.inst

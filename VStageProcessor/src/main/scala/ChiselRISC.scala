@@ -4,23 +4,18 @@ import components._
 import stages._
 import utilities._
 
-class ChiselRISC extends Module{
+class ChiselRISC(simulation: Boolean = false) extends Module{
   val io = IO(new Bundle{
-    val reset = Input(Bool())
-    val out = Output(UInt(32.W))
-    val test = new Bundle{
-      val testData = Input(UInt(32.W))
-      val writeToMem = Input(Bool())
-    }
     val memIO = Flipped(new memoryInterface(32))
     val startPipeline = Input(Bool())
+    val debug = if(simulation) Some(new debugIO(32, 5)) else None
   })
   // Pipeline stages
 
   val IF = Module(new IF(32, 100))
-  val ID = Module(new ID(32, 5))
+  val ID = Module(new ID(32, 5, simulation))
   val EX = Module(new EX(32, 5))
-  val MEM = Module(new MEM(32, 5))
+  val MEM = Module(new MEM(32, 5, simulation))
   val WB = Module(new WB(32, 5))
 
   // Connect the pipeline stages
@@ -41,13 +36,17 @@ class ChiselRISC extends Module{
   IF.io.startPC := io.startPipeline
   IF.io.memIO.Request := DontCare
   IF.io.memIO.Response := DontCare
-  // Connect the testing wires
+  // Connect the write to instruction memory wires
   io.memIO.Request := DontCare
   io.memIO.Response := DontCare
   IF.io.memIO.write.ready := io.memIO.write.ready
   IF.io.memIO.write.data := io.memIO.write.data
 
-
-
-  io.out := WB.io.out.muxOut
+  if(simulation){ // Connect the debug signals
+    io.debug.get.out := WB.io.out.muxOut
+    io.debug.get.pc := ID.io.debug.get.pc
+    io.debug.get.inst := ID.io.debug.get.inst
+    io.debug.get.regFile := ID.io.debug.get.regFile
+    io.debug.get.memoryIO <> MEM.io.debug.get.memoryIO
+  }
 }

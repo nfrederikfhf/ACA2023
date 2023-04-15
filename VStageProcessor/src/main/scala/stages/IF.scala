@@ -48,7 +48,6 @@ class IF(datawidth: Int, depth: Int) extends Module {
   when(io.startPC) {
     PC.io.memIO.Response.ready := true.B
     PC.io.in := addMux + 4.U
-  /// pcNext := addMux + 4.U
   }.otherwise {
     PC.io.memIO.Response.ready := false.B
     PC.io.in := pc

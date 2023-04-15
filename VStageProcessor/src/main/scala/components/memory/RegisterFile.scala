@@ -2,7 +2,7 @@ package components.memory
 
 import chisel3._
 
-class RegisterFile(addressSize: Int, bitWidth: Int) extends Module {
+class RegisterFile(addressSize: Int, bitWidth: Int, simulation: Boolean = false) extends Module {
   val io = IO(new Bundle {
 
     //ReadPort 1
@@ -15,13 +15,15 @@ class RegisterFile(addressSize: Int, bitWidth: Int) extends Module {
     val wrAddr: UInt = Input(UInt(addressSize.W))
     val wrData: UInt = Input(UInt(bitWidth.W))
     val wren: Bool = Input(Bool())
+    // Debug
+    val regFile = if(simulation) Some(Output(Vec(bitWidth, UInt(bitWidth.W)))) else None
   })
   //init
   io.rdData1 := WireInit(0.U(bitWidth.W))
   io.rdData2 := WireInit(0.U(bitWidth.W))
 
 
-  val registers = Reg(Vec(addressSize, UInt(bitWidth.W)))
+  val registers = Reg(Vec(bitWidth, UInt(bitWidth.W)))
   when(io.rdAddr1 === 0.U) {
     io.rdData1 := 0.U
   }
@@ -38,5 +40,7 @@ class RegisterFile(addressSize: Int, bitWidth: Int) extends Module {
   when(io.wren) {
     registers(io.wrAddr) := io.wrData
   }
+  // Debug
+  if(simulation){ io.regFile.get := registers }
 
 }
