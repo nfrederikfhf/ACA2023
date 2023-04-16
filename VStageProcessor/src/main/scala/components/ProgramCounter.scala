@@ -13,7 +13,6 @@ class ProgramCounter(bitWidth: Int) extends Module{
   io.memIO.Request.valid := WireInit(false.B)
   io.memIO.Request.addr := WireInit(0.U(bitWidth.W))
   io.memIO.Request.writeData := WireInit(0.U(bitWidth.W))
-  io.memIO.Request.store := WireInit(false.B)
   io.memIO.write.ready := WireInit(false.B)
   io.memIO.write.data := WireInit(0.U(bitWidth.W))
 

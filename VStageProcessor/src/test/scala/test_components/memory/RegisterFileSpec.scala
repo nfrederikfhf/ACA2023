@@ -5,7 +5,7 @@ import chiseltest._
 import components.memory.RegisterFile
 import org.scalatest.flatspec.AnyFlatSpec
 
-class RegisterFileTest extends AnyFlatSpec with ChiselScalatestTester{
+class RegisterFileSpec extends AnyFlatSpec with ChiselScalatestTester{
   it should "check if address 0x0000 0000 is always 0" in {
     test(new RegisterFile(5, 32)) { dut =>
       dut.io.wrAddr.poke(0.U)

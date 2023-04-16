@@ -11,11 +11,6 @@ import chisel3.util._
  * @param datawidth The width of the data
  *
  */
-
-  /*                 TODO: Handling of full memory might not be optimal,
-  *                  write should however only be for testing purposes so
-  *                  it shouldn't matter. Also readPtr is possibly redundant
-  */
 class InstructionMemory(depth: Int, datawidth: Int) extends Module {
   val bitwidth = log2Ceil(depth)                // Calculate the number of bits needed to address the memory
   val actualDepth = math.pow(2, bitwidth).toInt // 2^bidwidth
@@ -24,6 +19,9 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
     //val writeMem = Flipped(new DecoupledIO(UInt(datawidth.W))) // Write to memory
     val memIO = Flipped(new memoryInterface(datawidth))   // Memory interface
   })
+  // Buffer status signals
+  val bufferEmpty = WireInit(true.B)
+  val bufferFull = WireInit(false.B)
 
   // Initialise the signals
   io.memIO.Response.data := WireInit(0.U(datawidth.W))
@@ -34,34 +32,44 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
   // Pointers to handle empty and full logic
   val readPtr = RegInit(0.U(bitwidth.W))
   val writePtr = RegInit(0.U(bitwidth.W))
-  val count = RegInit(0.U((bitwidth + 1).W)) // Count of the number of elements in the memory
+  val count = WireInit(0.U((bitwidth).W)) // Count of the number of elements in the memory
+
+  // Check instruction memory status
+  bufferEmpty := count === 0.U
+  //--------
+  bufferFull := count >= actualDepth.U - 1.U
 
   // Ready to receive a read address if memory is not empty
-  io.memIO.Response.nonEmpty := count =/= 0.U
+  io.memIO.Response.nonEmpty := bufferEmpty
 
   // Instantiate the memory
   val mem = Mem(actualDepth, UInt(datawidth.W))
 
   // Read from memory
-  when(io.memIO.Request.valid && count =/= 0.U) {
+  when(io.memIO.Request.valid && !bufferEmpty) {
     readAddr := io.memIO.Request.addr >> 2// Divide by 4 to get the correct read address
     io.memIO.Response.data := mem(readAddr)
-    readPtr := readPtr + io.memIO.Response.data.asUInt
-    count := count - 1.U
+    readPtr := readPtr + 1.U
 
     when(readPtr >= actualDepth.U) {
-      readPtr := readPtr - actualDepth.U // Wrap around
+      readPtr := 0.U // Wrap around
     }
   }
 
   // Write to memory - should only be needed for testing
-  when(io.memIO.write.ready && count =/= actualDepth.U) { // && !io.memIO.Request.valid
+  when(io.memIO.write.ready && !bufferFull) {
     mem(writePtr) := io.memIO.write.data
     writePtr := writePtr + 1.U
-    count := count + 1.U
 
     when(writePtr >= actualDepth.U) {
-      writePtr := writePtr - actualDepth.U // Wrap around
+      writePtr := 0.U
     }
   }
-}
+ // Calculate the number of elements in the memory
+  val difference = writePtr - readPtr
+  when(difference <= 0.U){ // Wrap around
+    count := difference + actualDepth.U
+  }.otherwise {
+    count := difference
+  }
+  }

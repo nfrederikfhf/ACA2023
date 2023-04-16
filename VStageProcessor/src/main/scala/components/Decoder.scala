@@ -32,7 +32,7 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
   io.ctrlSignals.jump := WireInit(false.B)
   io.ctrlSignals.load := WireInit(false.B)
   io.ctrlSignals.store := WireInit(false.B)
-  io.aluOp := WireInit(0.U(4.W))
+  io.aluOp := WireDefault(ALUOp.ADD.asUInt)
 
   // split instruction into fields
   val (op, _) = OP.safe(io.inInst(6, 0))
@@ -41,9 +41,10 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
 
   // Decode instruction
   switch(op) {
-    is(OP.LD) {
+    is(OP.LD) { // Load
       io.ctrlSignals.load := true.B
       io.ctrlSignals.useImm := true.B
+      io.ctrlSignals.useALU := true.B
       io.aluOp := ALUOp.ADD.asUInt
     }
 
@@ -89,12 +90,13 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
         io.ctrlSignals.useImm := true.B
       }
 
-      is(OP.ST) {
+      is(OP.ST) { // Store instructions
+        io.ctrlSignals.useALU := true.B
         io.ctrlSignals.store := true.B
         io.ctrlSignals.useImm := true.B
       }
 
-      is(OP.AR) {
+      is(OP.AR) { // Arithmetic instructions
         io.ctrlSignals.useALU := true.B
         switch(funct3) {
           is(Funct3.ADDSUB) {

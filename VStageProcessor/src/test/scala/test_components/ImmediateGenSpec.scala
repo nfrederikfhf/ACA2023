@@ -9,7 +9,7 @@ import org.scalatest.matchers.must.Matchers
 // TODO: Add more complex tests for the immediate generator
 class ImmediateGenSpec extends AnyFlatSpec with ChiselScalatestTester {
   it should "generate the correct immediate value for the LUI instruction" in {
-    test(new ImmGenerator(32)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+    test(new ImmGenerator(32)) { dut =>
       dut.io.immIn.poke("b10000001000000000000000000110111".U) // LUI instruction
       dut.clock.step(1)
       dut.io.immOut.expect("b10000001000000000000000000000000".U)
@@ -17,7 +17,7 @@ class ImmediateGenSpec extends AnyFlatSpec with ChiselScalatestTester {
   }
 
   it should "generate the correct immediate value for the ADDI and an unknown instruction" in {
-    test(new ImmGenerator(32)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+    test(new ImmGenerator(32)) { dut =>
 
       dut.io.immIn.poke("b00000000000010110000111110010011".U) // OP.ADDI
       dut.clock.step(1)
@@ -30,7 +30,7 @@ class ImmediateGenSpec extends AnyFlatSpec with ChiselScalatestTester {
   }
 
   it should "generate the correct immediate value for the AUIPC instruction" in {
-    test(new ImmGenerator(32)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+    test(new ImmGenerator(32)) { dut =>
 
       dut.io.immIn.poke("hA1234517".U) // Set opcode to 0010111 (AUIPC)
       dut.clock.step(1)
@@ -39,7 +39,7 @@ class ImmediateGenSpec extends AnyFlatSpec with ChiselScalatestTester {
   }
 
   it should "generate the correct immediate value for the JAL instruction" in {
-    test(new ImmGenerator(32)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+    test(new ImmGenerator(32)) { dut =>
 
       // Set the input to the ImmGenerator module
       dut.io.immIn.poke("b00000000010011010010000001101111".U)
@@ -49,7 +49,7 @@ class ImmediateGenSpec extends AnyFlatSpec with ChiselScalatestTester {
   }
 
   it should "generate the correct immediate value for the SW instruction" in {
-    test(new ImmGenerator(32)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+    test(new ImmGenerator(32)) { dut =>
       dut.io.immIn.poke("h81234523".U) // opcode=SW
       dut.clock.step(1)
       dut.io.immOut.expect("hFFFFF80A".U)  // Expected negative value

@@ -36,8 +36,8 @@ class ID(datawidth: Int, addrWidth: Int, simulation: Boolean = false) extends Mo
   regfile.io.wrData := WireInit(0.U(datawidth.W))
   decoder.io.inInst := WireInit(0.U(datawidth.W))
   if(simulation){ // Get the register file
-    io.debug.get.out := DontCare
-    io.debug.get.memoryIO := DontCare
+    io.debug.get.out := DontCare // Only used in WB
+    io.debug.get.memoryIO := DontCare // Only used in MEM
     io.debug.get.regFile := regfile.io.regFile.get
     io.debug.get.inst := io.in.inst
     io.debug.get.pc := io.in.pc
@@ -49,15 +49,13 @@ class ID(datawidth: Int, addrWidth: Int, simulation: Boolean = false) extends Mo
   regfile.io.rdAddr1 := decoder.io.rs1
   regfile.io.rdAddr2 := decoder.io.rs2
   // Write back
-  regfile.io.wren := !io.wbIn.writeEnable
+  regfile.io.wren := io.wbIn.writeEnable
   regfile.io.wrAddr := io.wbIn.rd
   regfile.io.wrData := io.wbIn.muxOut
   //-----Control signals-----
   io.out.ctrl <> RegEnable(decoder.io.ctrlSignals, !io.stallReg)
   //-----ALU signals-----
   io.out.aluOp := RegEnable(decoder.io.aluOp, !io.stallReg) // ALU operation
-  io.out.rs1 := RegEnable(decoder.io.rs1, !io.stallReg) // Register address
-  io.out.rs2 := RegEnable(decoder.io.rs2, !io.stallReg) // Register address
   io.out.rd := RegEnable(decoder.io.rd, !io.stallReg) // Destination register address
   io.out.val1 := RegEnable(regfile.io.rdData1, !io.stallReg) // Value read from register
   io.out.val2 := RegEnable(regfile.io.rdData2, !io.stallReg) // Value read from register

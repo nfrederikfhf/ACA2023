@@ -8,7 +8,7 @@ import utilities.ALUOp
 
 class EXSpec extends AnyFlatSpec with ChiselScalatestTester {
   it should "Check R2R works as expected " in {
-    test(new EX(32, 5)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+    test(new EX(32, 5)) { dut =>
       //dut.io.in.ctrl.useALU
       dut.io.in.val1.poke(96.U)
       dut.io.in.val2.poke(4.U)
@@ -65,7 +65,7 @@ class EXSpec extends AnyFlatSpec with ChiselScalatestTester {
   }
 
   it should "Check Branch Mode working" in {
-    test(new EX(32, 5)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+    test(new EX(32, 5)) { dut =>
       dut.io.in.val1.poke(96.U)
       dut.io.in.val2.poke(0.U)
       dut.io.in.aluOp.poke(ALUOp.BEQ.litValue)

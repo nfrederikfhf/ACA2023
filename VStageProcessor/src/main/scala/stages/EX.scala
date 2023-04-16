@@ -24,9 +24,10 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   outReg.aluOut := ALU.io.aluOut
   outReg.ctrl.load := io.in.ctrl.load
   outReg.ctrl.store := io.in.ctrl.store
-  outReg.imm := io.in.imm
+//  outReg.imm := io.in.imm
   outReg.rd := io.in.rd
-
+  outReg.wrData := io.in.val2
+  outReg.ctrl.writeEnable := !(io.in.ctrl.branch || io.in.ctrl.store)
   // Muxes
   val mux1 = Mux(io.in.ctrl.branch, io.in.pc, io.in.val1)
   val mux2 = Mux(io.in.ctrl.useImm, io.in.imm, io.in.val2)
@@ -43,7 +44,9 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   io.out.aluOut := outReg.aluOut
   io.out.ctrl.load := outReg.ctrl.load
   io.out.ctrl.store := outReg.ctrl.store
-  io.out.imm := outReg.imm
+//  io.out.imm := outReg.imm
+  io.out.ctrl.writeEnable := outReg.ctrl.writeEnable
   io.out.rd := outReg.rd
+  io.out.wrData := outReg.wrData
   io.PCout := RegNext(io.in.pc + (mux2 << 1))
 }

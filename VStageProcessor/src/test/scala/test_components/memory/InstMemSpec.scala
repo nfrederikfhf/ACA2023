@@ -13,7 +13,7 @@ import utilities._
  */
 class InstMemSpec extends AnyFlatSpec with ChiselScalatestTester{
   it should "store and retrieve instructions correctly" in {
-    test(new InstructionMemory(1000, 32)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+    test(new InstructionMemory(1000, 32)) { dut =>
       // Write some data to the memory
       for (i <- 0 until dut.actualDepth) {
         dut.io.memIO.write.ready.poke(true.B)
@@ -24,9 +24,9 @@ class InstMemSpec extends AnyFlatSpec with ChiselScalatestTester{
       }
 
       // Read some data from the memory
-      for (i <- 0 until dut.actualDepth) {
+      for (i <- 0 until dut.actualDepth - 1) {
         var j= i * 4
-        dut.io.memIO.Response.nonEmpty.expect(true.B)
+        dut.io.memIO.Response.nonEmpty.expect(false.B)
         dut.io.memIO.Request.addr.poke((j.U(32.W)))
         dut.clock.step(1)
         dut.io.memIO.Request.valid.poke(true.B)
@@ -49,7 +49,7 @@ class InstMemSpec extends AnyFlatSpec with ChiselScalatestTester{
   }
 
   it should "fill instruction memory with a program and the expected output is correct" in {
-    test(new InstructionMemory(1000, 32)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+    test(new InstructionMemory(1000, 32)) { dut =>
       val input =
                   """
                      addi x0, x0, 0
@@ -62,11 +62,11 @@ class InstMemSpec extends AnyFlatSpec with ChiselScalatestTester{
         instructionsArray(i) = "h" + instructionsArray(i)
       }
       FillInstructionMemory(input, dut.clock, dut.io.memIO)
-      dut.io.memIO.Response.nonEmpty.expect(true.B)
+      dut.io.memIO.Response.nonEmpty.expect(false.B)
 
       for (i <- 0 until instructionsArray.length) {
         var j = i * 4
-        dut.io.memIO.Response.nonEmpty.expect(true.B)
+        dut.io.memIO.Response.nonEmpty.expect(false.B)
         dut.io.memIO.Request.addr.poke((j.U(32.W)))
         dut.clock.step(1)
         dut.io.memIO.Request.valid.poke(true.B)

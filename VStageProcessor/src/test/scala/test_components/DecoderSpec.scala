@@ -6,7 +6,7 @@ import utilities._
 import org.scalatest.flatspec.AnyFlatSpec
 class DecoderSpec extends AnyFlatSpec with ChiselScalatestTester {
   it should "check if decoder sets correct control values for BEQ instruction" in {
-    test(new Decoder(32, 5)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+    test(new Decoder(32, 5)) { dut =>
       dut.io.inInst.poke("h10812063".U)
       dut.io.ctrlSignals.useImm.expect(true.B)
       dut.io.ctrlSignals.branch.expect(true.B)

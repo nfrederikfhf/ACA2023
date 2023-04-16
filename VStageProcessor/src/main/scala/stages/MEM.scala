@@ -5,7 +5,7 @@ import components._
 import components.memory._
 import utilities._
 
-class MEM(dataWidth: Int, addrWidth: Int, simulation: Boolean = false) extends Module {
+class MEM(dataWidth: Int, addrWidth: Int, depth: Int, simulation: Boolean = false) extends Module {
   val io = IO(new Bundle {
     val stallReg = Input(Bool())
     val in = Flipped(new EX_MEM_IO(dataWidth, addrWidth))
@@ -19,12 +19,12 @@ class MEM(dataWidth: Int, addrWidth: Int, simulation: Boolean = false) extends M
   //----- Connect the input  ------------
   outReg.rd := io.in.rd
   outReg.aluOut := io.in.aluOut
-
-  outReg.writeEnable := io.in.ctrl.store
+  outReg.writeEnable := io.in.ctrl.writeEnable
+  outReg.load := io.in.ctrl.load
   outReg.memOut := DontCare
 
   // Creating the dual read memory module
-  val DRMEM = Module(new DualReadMem(addrWidth, dataWidth))
+  val DRMEM = Module(new DualReadMem(addrWidth, dataWidth, depth))
 
   // Init the unused side of the Dual memory
   DRMEM.io.rdAddr2 := DontCare
@@ -32,12 +32,12 @@ class MEM(dataWidth: Int, addrWidth: Int, simulation: Boolean = false) extends M
   // Connecting the I/O through
   DRMEM.io.wren := io.in.ctrl.store
   DRMEM.io.rden := io.in.ctrl.load
-  DRMEM.io.rdAddr1 := io.in.rd
-  DRMEM.io.wrAddr := io.in.rd
-  DRMEM.io.wrData := io.in.imm
+  DRMEM.io.rdAddr1 := io.in.aluOut
+  DRMEM.io.wrAddr := io.in.aluOut
+  DRMEM.io.wrData := io.in.wrData
 
   if(simulation){ // Debugging
-    io.debug.get.regFile := DontCare
+    io.debug.get.regFile := DontCare // Only used in ID
     io.debug.get.inst := DontCare
     io.debug.get.pc := DontCare
     io.debug.get.out := DontCare
@@ -51,6 +51,7 @@ class MEM(dataWidth: Int, addrWidth: Int, simulation: Boolean = false) extends M
   // ---------- output---------------
   io.out.rd := outReg.rd
   io.out.aluOut := outReg.aluOut
+  io.out.load := outReg.load
   io.out.writeEnable := outReg.writeEnable
   io.out.memOut := DRMEM.io.rdData1
 }

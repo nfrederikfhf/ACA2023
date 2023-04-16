@@ -15,7 +15,7 @@ class WB(dataWidth: Int, addrWidth: Int) extends Module {
   val outReg = RegEnable(io.out, !io.stallReg)
 
   // THE mux
-  val theMux = Mux(io.in.writeEnable, io.in.memOut, io.in.aluOut)
+  val theMux = Mux(io.in.load, io.in.memOut, io.in.aluOut)
 
   // Connecting the register
   outReg.writeEnable := io.in.writeEnable

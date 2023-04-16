@@ -9,7 +9,7 @@ class IF(datawidth: Int, depth: Int) extends Module {
   val io = IO(new Bundle {
     val stallReg = Input(Bool())
     val out = new IF_ID_IO(datawidth)
-    val addrOut = Input(UInt(datawidth.W)) //ALU calculated Addr
+    val addrIn = Input(UInt(datawidth.W)) //ALU calculated Addr
     val branch = Input(Bool())
     val startPC = Input(Bool())
     val memIO = Flipped(new memoryInterface(datawidth))
@@ -27,7 +27,6 @@ class IF(datawidth: Int, depth: Int) extends Module {
   instMem.io.memIO.Request.valid := WireInit(false.B)
   instMem.io.memIO.Request.addr := WireInit(0.U(datawidth.W))
   instMem.io.memIO.Request.writeData := WireInit(0.U(datawidth.W))
-  instMem.io.memIO.Request.store := WireInit(false.B)
   instMem.io.memIO.write.ready := WireInit(false.B)
   instMem.io.memIO.write.data := WireInit(0.U(datawidth.W))
   PC.io.in := WireInit(0.U(datawidth.W))
@@ -39,13 +38,13 @@ class IF(datawidth: Int, depth: Int) extends Module {
   val pc = WireDefault(PC.io.memIO.Request.addr)
   // val pcNext = pc
 
-  val addMux = Mux(io.branch === true.B, io.addrOut, pc)
+  val addMux = Mux(io.branch === true.B, io.addrIn, pc)
 
   instMem.io.memIO.write.ready := io.memIO.write.ready
   instMem.io.memIO.write.data := io.memIO.write.data
 
 
-  when(io.startPC) {
+  when(!instMem.io.memIO.Response.nonEmpty) {
     PC.io.memIO.Response.ready := true.B
     PC.io.in := addMux + 4.U
   }.otherwise {

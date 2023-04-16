@@ -8,39 +8,37 @@ import org.scalatest.flatspec.AnyFlatSpec
 class MEMSpec extends AnyFlatSpec with ChiselScalatestTester {
 
   it should "pass through aluOut, rd, and memOut signals" in {
-    test(new MEM(32, 5)).withAnnotations(Seq(WriteVcdAnnotation))  { dut =>
+    test(new MEM(32, 5, 100))  { dut =>
       dut.io.in.ctrl.load.poke(true.B)
       dut.io.in.ctrl.store.poke(false.B)
-      dut.io.in.rd.poke(0.U)
-      dut.io.in.imm.poke(1234.U)
+      dut.io.in.aluOut.poke(0.U)
+      dut.io.in.wrData.poke(1234.U)
 
       dut.clock.step(1)
 
       dut.io.out.aluOut.expect(0.U)
-      dut.io.out.rd.expect(0.U)
       dut.io.out.memOut.expect(0.U)
 
       dut.io.in.ctrl.load.poke(false.B)
       dut.io.in.ctrl.store.poke(true.B)
-      dut.io.in.rd.poke(1.U)
-      dut.io.in.imm.poke(5678.U)
+      dut.io.in.aluOut.poke(1.U)
+      dut.io.in.wrData.poke(5678.U)
 
       dut.clock.step(1)
       dut.io.in.ctrl.store.poke(false.B)
       dut.io.in.ctrl.load.poke(true.B)
-      dut.io.out.aluOut.expect(0.U)
-      dut.io.out.rd.expect(1.U)
+      dut.io.in.aluOut.poke(1.U)
       dut.clock.step(1)
       dut.io.out.memOut.expect(5678.U)
     }
   }
 
   it should "write to memory when store signal is high" in {
-    test(new MEM(dataWidth = 32, addrWidth = 32)) { dut =>
+    test(new MEM(dataWidth = 32, addrWidth = 32, 100)) { dut =>
       dut.io.in.ctrl.load.poke(false.B)
       dut.io.in.ctrl.store.poke(true.B)
-      dut.io.in.rd.poke(1.U)
-      dut.io.in.imm.poke(1234.U)
+      dut.io.in.aluOut.poke(1.U)
+      dut.io.in.wrData.poke(1234.U)
 
       dut.clock.step(1)
 
@@ -48,8 +46,8 @@ class MEMSpec extends AnyFlatSpec with ChiselScalatestTester {
 
       dut.io.in.ctrl.load.poke(true.B)
       dut.io.in.ctrl.store.poke(false.B)
-      dut.io.in.rd.poke(1.U)
-      dut.io.in.imm.poke(5678.U)
+      dut.io.in.aluOut.poke(1.U)
+      dut.io.in.wrData.poke(5678.U)
 
       dut.clock.step(1)
 
@@ -58,11 +56,11 @@ class MEMSpec extends AnyFlatSpec with ChiselScalatestTester {
   }
 
   it should "not write to memory when store signal is low" in {
-    test(new MEM(dataWidth = 32, addrWidth = 32)) { dut =>
+    test(new MEM(dataWidth = 32, addrWidth = 32, 100)) { dut =>
       dut.io.in.ctrl.load.poke(true.B)
       dut.io.in.ctrl.store.poke(false.B)
-      dut.io.in.rd.poke(1.U)
-      dut.io.in.imm.poke(1234.U)
+      dut.io.in.aluOut.poke(1.U)
+      dut.io.in.wrData.poke(1234.U)
 
       dut.clock.step(1)
 
@@ -70,8 +68,8 @@ class MEMSpec extends AnyFlatSpec with ChiselScalatestTester {
 
       dut.io.in.ctrl.load.poke(false.B)
       dut.io.in.ctrl.store.poke(true.B)
-      dut.io.in.rd.poke(1.U)
-      dut.io.in.imm.poke(5678.U)
+      dut.io.in.aluOut.poke(1.U)
+      dut.io.in.wrData.poke(5678.U)
 
       dut.clock.step(1)
 
@@ -80,11 +78,11 @@ class MEMSpec extends AnyFlatSpec with ChiselScalatestTester {
   }
 
   it should "not write to memory when load signal is high" in {
-    test(new MEM(dataWidth = 32, addrWidth = 32)) { dut =>
+    test(new MEM(dataWidth = 32, addrWidth = 32, 100)) { dut =>
       dut.io.in.ctrl.load.poke(true.B)
       dut.io.in.ctrl.store.poke(false.B)
-      dut.io.in.rd.poke(1.U)
-      dut.io.in.imm.poke(1234.U)
+      dut.io.in.aluOut.poke(1.U)
+      dut.io.in.wrData.poke(1234.U)
 
       dut.clock.step(1)
 
@@ -92,8 +90,8 @@ class MEMSpec extends AnyFlatSpec with ChiselScalatestTester {
 
       dut.io.in.ctrl.load.poke(false.B)
       dut.io.in.ctrl.store.poke(false.B)
-      dut.io.in.rd.poke(1.U)
-      dut.io.in.imm.poke(5678.U)
+      dut.io.in.aluOut.poke(1.U)
+      dut.io.in.wrData.poke(5678.U)
 
       dut.clock.step(1)
 

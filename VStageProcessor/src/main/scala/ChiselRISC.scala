@@ -11,11 +11,10 @@ class ChiselRISC(simulation: Boolean = false) extends Module{
     val debug = if(simulation) Some(new debugIO(32, 5)) else None
   })
   // Pipeline stages
-
   val IF = Module(new IF(32, 100))
   val ID = Module(new ID(32, 5, simulation))
   val EX = Module(new EX(32, 5))
-  val MEM = Module(new MEM(32, 5, simulation))
+  val MEM = Module(new MEM(32, 5, 100, simulation))
   val WB = Module(new WB(32, 5))
 
   // Connect the pipeline stages
@@ -30,15 +29,15 @@ class ChiselRISC(simulation: Boolean = false) extends Module{
   WB.io.stallReg := MEM.io.stallReg
 
   // Initialise signals
-  IF.io.addrOut := WireInit(0.U(32.W))
+  IF.io.addrIn := WireInit(0.U(32.W))
   IF.io.branch := WireInit(false.B)
   IF.io.stallReg := WireInit(false.B)
   IF.io.startPC := io.startPipeline
-  IF.io.memIO.Request := DontCare
-  IF.io.memIO.Response := DontCare
+  IF.io.memIO.Request := DontCare // Not used
+  IF.io.memIO.Response := DontCare // Not used
   // Connect the write to instruction memory wires
-  io.memIO.Request := DontCare
-  io.memIO.Response := DontCare
+  io.memIO.Request := DontCare // Not used
+  io.memIO.Response := DontCare // Not used
   IF.io.memIO.write.ready := io.memIO.write.ready
   IF.io.memIO.write.data := io.memIO.write.data
 
