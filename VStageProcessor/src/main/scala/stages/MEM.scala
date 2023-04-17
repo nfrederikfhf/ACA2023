@@ -11,6 +11,7 @@ class MEM(dataWidth: Int, addrWidth: Int, depth: Int, simulation: Boolean = fals
     val in = Flipped(new EX_MEM_IO(dataWidth, addrWidth))
     val out = new MEM_WB_IO(dataWidth, addrWidth)
     val debug = if(simulation) Some(new debugIO(dataWidth, addrWidth)) else None
+    val mem_fwd = new forwardingIO(dataWidth, addrWidth)
   })
 
   // Initialise the register
@@ -54,4 +55,9 @@ class MEM(dataWidth: Int, addrWidth: Int, depth: Int, simulation: Boolean = fals
   io.out.load := outReg.load
   io.out.writeEnable := outReg.writeEnable
   io.out.memOut := DRMEM.io.rdData1
+
+  //------------ Forwarding----------------
+  io.mem_fwd.rd := io.in.rd
+  io.mem_fwd.stageOutput := io.in.aluOut
+  io.mem_fwd.writeEnable := io.in.ctrl.writeEnable
 }

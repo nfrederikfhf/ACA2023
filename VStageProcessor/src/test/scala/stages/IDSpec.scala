@@ -51,7 +51,7 @@ class IDSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.in.inst.poke("h00412383".U) // lw x7, 4(x2)
       dut.io.in.pc.poke(0.U(32.W))
       dut.clock.step(1)
-      dut.io.out.ctrl.useALU.expect(false.B)
+      dut.io.out.ctrl.useALU.expect(true.B)
       dut.io.out.ctrl.useImm.expect(true.B)
       dut.io.out.ctrl.load.expect(true.B)
       dut.io.out.imm.expect(4.U)

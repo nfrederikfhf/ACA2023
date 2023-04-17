@@ -61,6 +61,6 @@ class ID(datawidth: Int, addrWidth: Int, simulation: Boolean = false) extends Mo
   io.out.val2 := RegEnable(regfile.io.rdData2, !io.stallReg) // Value read from register
   io.out.imm := RegEnable(immGenerator.io.immOut, !io.stallReg) // Immediate value
   io.out.pc := RegEnable(io.in.pc, !io.stallReg) // Program counter value
-
-
+  io.out.rs1 := RegEnable(decoder.io.rs1, !io.stallReg) // rs1 address
+  io.out.rs2 := RegEnable(decoder.io.rs2, !io.stallReg) // rs2 address
 }

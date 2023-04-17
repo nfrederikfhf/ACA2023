@@ -16,10 +16,19 @@ class ChiselRISC(simulation: Boolean = false) extends Module{
   val EX = Module(new EX(32, 5))
   val MEM = Module(new MEM(32, 5, 100, simulation))
   val WB = Module(new WB(32, 5))
+  // Forwarding and Hazard Control units
+  val forwardingUnit = Module(new ForwardingUnit(32, 5))
+  val hazardControl = Module(new HazardControl(32, 5))
 
   // Connect the pipeline stages
   IF.io.out <> ID.io.in
-  ID.io.out <> EX.io.in
+  EX.io.in.pc := ID.io.out.pc
+  EX.io.in.rs1 := ID.io.out.rs1
+  EX.io.in.rs2 := ID.io.out.rs2
+  EX.io.in.rd := ID.io.out.rd
+  EX.io.in.imm := ID.io.out.imm
+  EX.io.in.aluOp := ID.io.out.aluOp
+  EX.io.in.ctrl := ID.io.out.ctrl
   EX.io.out <> MEM.io.in
   MEM.io.out <> WB.io.in
   WB.io.out <> ID.io.wbIn
@@ -28,6 +37,15 @@ class ChiselRISC(simulation: Boolean = false) extends Module{
   MEM.io.stallReg := EX.io.stallReg
   WB.io.stallReg := MEM.io.stallReg
 
+  // Connect the forwarding unit
+  forwardingUnit.io.id_rs1 := ID.io.out.rs1
+  forwardingUnit.io.id_rs2 := ID.io.out.rs2
+  forwardingUnit.io.id_val1 := ID.io.out.val1
+  forwardingUnit.io.id_val2 := ID.io.out.val2
+  forwardingUnit.io.mem_fwd <> MEM.io.mem_fwd
+  forwardingUnit.io.wb_fwd <> WB.io.wb_fwd
+  EX.io.in.val1 := forwardingUnit.io.val1
+  EX.io.in.val2 := forwardingUnit.io.val2
   // Initialise signals
   IF.io.addrIn := WireInit(0.U(32.W))
   IF.io.branch := WireInit(false.B)

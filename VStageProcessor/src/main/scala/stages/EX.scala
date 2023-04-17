@@ -3,7 +3,7 @@ import chisel3._
 import utilities._
 import chisel3.util._
 import components.memory.RegisterFile
-import components.ALU
+import components.{ALU, ForwardingUnit}
 
 class EX(datawidth: Int, addrWidth: Int) extends Module {
   val io = IO(new Bundle {
@@ -11,23 +11,31 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
     val in = Flipped(new ID_EX_IO(datawidth, addrWidth))
     val out = new EX_MEM_IO(datawidth, addrWidth)
     val PCout = Output(UInt(datawidth.W))
+    val hazardAluOut = Output(UInt(datawidth.W))
+    val wb_fwd = Flipped(new forwardingIO(datawidth, addrWidth))
+    val mem_fwd = Flipped(new forwardingIO(datawidth, addrWidth))
   })
   // Creating the modules
   val ALU = Module(new ALU(datawidth, addrWidth))
 
+
   // Initialise signals
   io.PCout := RegInit(0.U(datawidth.W))
   val outReg = RegEnable(io.out, !io.stallReg)
+  io.hazardAluOut := WireDefault(ALU.io.aluOut)
 
   // Connecting the I/O through
   ALU.io.aluOp := io.in.aluOp
   outReg.aluOut := ALU.io.aluOut
   outReg.ctrl.load := io.in.ctrl.load
   outReg.ctrl.store := io.in.ctrl.store
-//  outReg.imm := io.in.imm
   outReg.rd := io.in.rd
   outReg.wrData := io.in.val2
   outReg.ctrl.writeEnable := !(io.in.ctrl.branch || io.in.ctrl.store)
+  //-------Forwarding Unit----------------
+
+
+
   // Muxes
   val mux1 = Mux(io.in.ctrl.branch, io.in.pc, io.in.val1)
   val mux2 = Mux(io.in.ctrl.useImm, io.in.imm, io.in.val2)
