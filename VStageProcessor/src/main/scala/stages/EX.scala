@@ -12,8 +12,6 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
     val out = new EX_MEM_IO(datawidth, addrWidth)
     val PCout = Output(UInt(datawidth.W))
     val hazardAluOut = Output(UInt(datawidth.W))
-    val wb_fwd = Flipped(new forwardingIO(datawidth, addrWidth))
-    val mem_fwd = Flipped(new forwardingIO(datawidth, addrWidth))
   })
   // Creating the modules
   val ALU = Module(new ALU(datawidth, addrWidth))
@@ -32,8 +30,6 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   outReg.rd := io.in.rd
   outReg.wrData := io.in.val2
   outReg.ctrl.writeEnable := !(io.in.ctrl.branch || io.in.ctrl.store)
-  //-------Forwarding Unit----------------
-
 
 
   // Muxes

@@ -18,7 +18,7 @@ class ChiselRISC(simulation: Boolean = false) extends Module{
   val WB = Module(new WB(32, 5))
   // Forwarding and Hazard Control units
   val forwardingUnit = Module(new ForwardingUnit(32, 5))
-  val hazardControl = Module(new HazardControl(32, 5))
+  //val hazardControl = Module(new HazardControl(32, 5))
 
   // Connect the pipeline stages
   IF.io.out <> ID.io.in
@@ -46,10 +46,12 @@ class ChiselRISC(simulation: Boolean = false) extends Module{
   forwardingUnit.io.wb_fwd <> WB.io.wb_fwd
   EX.io.in.val1 := forwardingUnit.io.val1
   EX.io.in.val2 := forwardingUnit.io.val2
+
   // Initialise signals
   IF.io.addrIn := WireInit(0.U(32.W))
   IF.io.branch := WireInit(false.B)
   IF.io.stallReg := WireInit(false.B)
+  //--------------Testing-----------------------
   IF.io.startPC := io.startPipeline
   IF.io.memIO.Request := DontCare // Not used
   IF.io.memIO.Response := DontCare // Not used

@@ -41,7 +41,7 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 
-  it should "not execute an ADD instruction correctly until forwarding and stalling is implemented" in {
+  it should "execute an ADD instruction correctly with forwarding" in {
     test(new ChiselRISC(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       // Instantiate data
       val input =
@@ -51,10 +51,10 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
           """
       FillInstructionMemory(input, dut.clock, dut.io.memIO)
       dut.io.startPipeline.poke(true.B)
-      dut.clock.step(6)
+      dut.clock.step(4)
 
       // Check the result
-      dut.io.debug.get.out.expect(0.U)
+      dut.io.debug.get.out.expect(2.U)
 
     }
   }
