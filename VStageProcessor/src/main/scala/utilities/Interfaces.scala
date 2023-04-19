@@ -20,6 +20,7 @@ class ID_EX_IO(datawidth: Int, addrWidth: Int) extends Bundle {
   val rd = Output(UInt(addrWidth.W))
   val imm = Output(UInt(datawidth.W))
   val aluOp = Output(UInt(4.W))
+  val memOp = Output(UInt(4.W))
   val ctrl = new Bundle { // Control Signals
     val useImm = Output(Bool())
     val useALU = Output(Bool())
@@ -34,7 +35,6 @@ class ID_EX_IO(datawidth: Int, addrWidth: Int) extends Bundle {
 class EX_MEM_IO(datawidth: Int, addrWidth: Int) extends Bundle { // Output from EX to MEM
   val rd = Output(UInt(addrWidth.W)) // Destination Register
   val aluOut = Output(UInt(datawidth.W)) // Result of ALU
-  //    val imm = Output(UInt(datawidth.W)) // Immediate
   val wrData = Output(UInt(datawidth.W)) // Data to be written to memory
   val ctrl = new Bundle { // Control Signals
     val writeEnable = Output(Bool()) // Write to register file

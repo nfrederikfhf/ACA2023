@@ -9,6 +9,7 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
   val io = IO(new Bundle {
     val inInst = Input(UInt(datawidth.W)) // Input
     val aluOp = Output(UInt(4.W)) // ALU Operation
+    val memOp = Output(UInt(4.W)) // Memory Operation
     val rs1 = Output(UInt(addrWidth.W))
     val rs2 = Output(UInt(addrWidth.W))
     val rd = Output(UInt(addrWidth.W))
@@ -26,6 +27,7 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
   io.rs1 := WireInit(0.U(addrWidth.W))
   io.rs2 := WireInit(0.U(addrWidth.W))
   io.rd := WireInit(0.U(addrWidth.W))
+  io.memOp := WireInit(0.U(4.W))
   io.ctrlSignals.useImm := WireInit(false.B)
   io.ctrlSignals.branch := WireInit(false.B)
   io.ctrlSignals.useALU := WireInit(false.B)
@@ -46,6 +48,17 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
       io.ctrlSignals.useImm := true.B
       io.ctrlSignals.useALU := true.B
       io.aluOp := ALUOp.ADD.asUInt
+      switch(funct3){
+        is(Funct3.LB) {
+          io.memOp := Funct3.LB.asUInt
+        }
+        is(Funct3.LH) {
+          io.memOp := Funct3.LH.asUInt
+        }
+        is(Funct3.LW) {
+          io.memOp := Funct3.LW.asUInt
+        }
+      }
     }
 
     is(OP.IM) {
@@ -94,6 +107,17 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
         io.ctrlSignals.useALU := true.B
         io.ctrlSignals.store := true.B
         io.ctrlSignals.useImm := true.B
+        switch(funct3) {
+          is(Funct3.SB) {
+            io.memOp := Funct3.SB.asUInt
+          }
+          is(Funct3.SH) {
+            io.memOp := Funct3.SH.asUInt
+          }
+          is(Funct3.SW) {
+            io.memOp := Funct3.SW.asUInt
+          }
+        }
       }
 
       is(OP.AR) { // Arithmetic instructions

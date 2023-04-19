@@ -30,7 +30,25 @@ class MemSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.rdAddr1.poke(1.U)
       dut.clock.step(1)
       println("addr 0x0000 0001 is: " + dut.io.rdData1.peek())
+      dut.io.rden.poke(true.B)
       dut.io.rdData1.expect(1234.U)
+    }
+  }
+  it should "get zero, because reading from mem when rden is not high" in {
+    test(new DualReadMem(32, 32, 100)) { dut =>
+      println("addr 0x0000 0001 is: " + dut.io.rdData1.peek())
+      dut.io.wren.poke(true.B)
+      dut.io.wrAddr.poke(1.U)
+      dut.io.wrData.poke(1234.U)
+      println("addr 0x0000 0001 is: " + dut.io.rdData1.peek())
+      dut.clock.step(1)
+      dut.io.wren.poke(false.B)
+      dut.io.rden.poke(true.B)
+      dut.io.rdAddr1.poke(1.U)
+      dut.clock.step(1)
+      println("addr 0x0000 0001 is: " + dut.io.rdData1.peek())
+      dut.io.rden.poke(false.B)
+      dut.io.rdData1.expect(0.U)
     }
   }
 }

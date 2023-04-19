@@ -3,7 +3,8 @@ import chisel3._
 import utilities._
 import chisel3.util._
 import components.memory.RegisterFile
-import components.{ALU, ForwardingUnit}
+import components.{ADDER, ALU, ForwardingUnit}
+import utilities.Funct3._
 
 class EX(datawidth: Int, addrWidth: Int) extends Module {
   val io = IO(new Bundle {
@@ -16,7 +17,6 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   // Creating the modules
   val ALU = Module(new ALU(datawidth, addrWidth))
 
-
   // Initialise signals
   io.PCout := RegInit(0.U(datawidth.W))
   val outReg = RegEnable(io.out, !io.stallReg)
@@ -28,13 +28,42 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   outReg.ctrl.load := io.in.ctrl.load
   outReg.ctrl.store := io.in.ctrl.store
   outReg.rd := io.in.rd
-  outReg.wrData := io.in.val2
+  //outReg.wrData := io.in.val2
   outReg.ctrl.writeEnable := !(io.in.ctrl.branch || io.in.ctrl.store)
 
 
   // Muxes
   val mux1 = Mux(io.in.ctrl.branch, io.in.pc, io.in.val1)
   val mux2 = Mux(io.in.ctrl.useImm, io.in.imm, io.in.val2)
+  // Loading
+  when(io.in.memOp === LW) { // Load word
+    outReg.wrData := io.in.val2
+  }
+  when(io.in.memOp === LH) { // Load halfword
+    outReg.wrData := Cat(Fill(16, io.in.val2(15)), io.in.val2(15, 0))
+  }
+  when(io.in.memOp === LHU) { // Load halfword unsigned
+    outReg.wrData := Cat(Fill(16, 0.U), io.in.val2(15, 0))
+  }
+  when(io.in.memOp === LB) { // Load byte
+    outReg.wrData := Cat(Fill(24, io.in.val2(7)), io.in.val2(7, 0))
+  }
+  when(io.in.memOp === LBU) { // Load byte unsigned
+    outReg.wrData := Cat(Fill(24, 0.U), io.in.val2(7, 0))
+  }
+
+
+  // Storing
+  when(io.in.memOp === SW){ // Store word
+    outReg.wrData := io.in.val2
+ }
+  when(io.in.memOp === SH){ // Store halfword
+    outReg.wrData := Cat(Fill(16,0.U), io.in.val2(15, 0))
+  }
+  when(io.in.memOp === SB) { // Store byte
+    outReg.wrData := Cat(Fill(24,0.U), io.in.val2(7, 0))
+  }
+
 
   when(io.in.ctrl.useALU) {
     ALU.io.val1 := mux1
@@ -46,9 +75,8 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
 
   //-------output-------------
   io.out.aluOut := outReg.aluOut
-  io.out.ctrl.load := outReg.ctrl.load
+  io.out.ctrl.load := outReg.ctrl.load//Mux(io.in.ctrl.load, fwd_load, outReg.ctrl.load)
   io.out.ctrl.store := outReg.ctrl.store
-//  io.out.imm := outReg.imm
   io.out.ctrl.writeEnable := outReg.ctrl.writeEnable
   io.out.rd := outReg.rd
   io.out.wrData := outReg.wrData

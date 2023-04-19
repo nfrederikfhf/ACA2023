@@ -8,6 +8,7 @@ import utilities._
 class IF(datawidth: Int, depth: Int) extends Module {
   val io = IO(new Bundle {
     val stallReg = Input(Bool())
+    val flush = Input(Bool())
     val out = new IF_ID_IO(datawidth)
     val addrIn = Input(UInt(datawidth.W)) //ALU calculated Addr
     val branch = Input(Bool())
@@ -52,8 +53,11 @@ class IF(datawidth: Int, depth: Int) extends Module {
     PC.io.in := pc
   }
 
-  outReg.inst := instMem.io.memIO.Response.data
-  outReg.pc := addMux
+  val muxOutPC = Mux(io.flush, 0.U, addMux)
+  val muxOutInst = Mux(io.flush, 0.U, instMem.io.memIO.Response.data)
+
+  outReg.inst := muxOutInst
+  outReg.pc := muxOutPC
   io.out.inst := outReg.inst
   io.out.pc := outReg.pc
 

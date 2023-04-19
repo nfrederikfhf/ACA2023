@@ -10,7 +10,7 @@ class HazardControl(dataWidth: Int, addrWidth: Int) extends Module {
     val EXctrlBranch = Input(Bool())
     val EXctrlJump = Input(Bool())
     val EXctrlLoad = Input(Bool())
-    val EXrd = Input(Bool())
+    val EXrd = Input(UInt(addrWidth.W))
     val IDrs1 = Input(UInt(addrWidth.W))
     val IDrs2 = Input(UInt(addrWidth.W))
     val IDFlush = Output(Bool())

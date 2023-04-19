@@ -20,6 +20,7 @@ class ID(datawidth: Int, addrWidth: Int, simulation: Boolean = false) extends Mo
 
   val io = IO(new Bundle {
     val stallReg = Input(Bool())
+    val flush = Input(Bool())
     val in = Flipped(new IF_ID_IO(datawidth))
     val wbIn = Flipped(new WB_ID_IO(datawidth, addrWidth))
     val out = new ID_EX_IO(datawidth, addrWidth)
@@ -42,7 +43,6 @@ class ID(datawidth: Int, addrWidth: Int, simulation: Boolean = false) extends Mo
     io.debug.get.inst := io.in.inst
     io.debug.get.pc := io.in.pc
   }
-
   // Connecting the signals through
   immGenerator.io.immIn := io.in.inst
   decoder.io.inInst := io.in.inst
@@ -55,12 +55,13 @@ class ID(datawidth: Int, addrWidth: Int, simulation: Boolean = false) extends Mo
   //-----Control signals-----
   io.out.ctrl <> RegEnable(decoder.io.ctrlSignals, !io.stallReg)
   //-----ALU signals-----
-  io.out.aluOp := RegEnable(decoder.io.aluOp, !io.stallReg) // ALU operation
-  io.out.rd := RegEnable(decoder.io.rd, !io.stallReg) // Destination register address
-  io.out.val1 := RegEnable(regfile.io.rdData1, !io.stallReg) // Value read from register
-  io.out.val2 := RegEnable(regfile.io.rdData2, !io.stallReg) // Value read from register
-  io.out.imm := RegEnable(immGenerator.io.immOut, !io.stallReg) // Immediate value
-  io.out.pc := RegEnable(io.in.pc, !io.stallReg) // Program counter value
-  io.out.rs1 := RegEnable(decoder.io.rs1, !io.stallReg) // rs1 address
-  io.out.rs2 := RegEnable(decoder.io.rs2, !io.stallReg) // rs2 address
+  io.out.aluOp := RegEnable(Mux(io.flush, 0.U, decoder.io.aluOp), !io.stallReg) // ALU operation
+  io.out.rd := RegEnable(Mux(io.flush,0.U, decoder.io.rd), !io.stallReg) // Destination register address
+  io.out.val1 := RegEnable(Mux(io.flush,0.U, regfile.io.rdData1), !io.stallReg) // Value read from register
+  io.out.val2 := RegEnable(Mux(io.flush,0.U, regfile.io.rdData2), !io.stallReg) // Value read from register
+  io.out.imm := RegEnable(Mux(io.flush,0.U, immGenerator.io.immOut), !io.stallReg) // Immediate value
+  io.out.pc := RegEnable(Mux(io.flush,0.U, io.in.pc), !io.stallReg) // Program counter value
+  io.out.rs1 := RegEnable(Mux(io.flush,0.U, decoder.io.rs1), !io.stallReg) // rs1 address
+  io.out.rs2 := RegEnable(Mux(io.flush,0.U, decoder.io.rs2), !io.stallReg) // rs2 address
+  io.out.memOp := RegEnable(Mux(io.flush,0.U, decoder.io.memOp), !io.stallReg) // Memory operation
 }

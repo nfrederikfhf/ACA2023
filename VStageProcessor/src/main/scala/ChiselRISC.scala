@@ -18,8 +18,9 @@ class ChiselRISC(simulation: Boolean = false) extends Module{
   val WB = Module(new WB(32, 5))
   // Forwarding and Hazard Control units
   val forwardingUnit = Module(new ForwardingUnit(32, 5))
-  //val hazardControl = Module(new HazardControl(32, 5))
-
+//  val hazardControl = Module(new HazardControl(32, 5))
+  IF.io.flush := DontCare
+  ID.io.flush := DontCare
   // Connect the pipeline stages
   IF.io.out <> ID.io.in
   EX.io.in.pc := ID.io.out.pc
@@ -46,6 +47,15 @@ class ChiselRISC(simulation: Boolean = false) extends Module{
   forwardingUnit.io.wb_fwd <> WB.io.wb_fwd
   EX.io.in.val1 := forwardingUnit.io.val1
   EX.io.in.val2 := forwardingUnit.io.val2
+
+  // Forward the data to MEM to avoid a one clock cylce delay
+
+
+  // Connect Hazard Control Wires
+//  IF.io.stallReg := hazardControl.io.IFStall
+//  IF.io.flush := hazardControl.io.IFFlush
+
+
 
   // Initialise signals
   IF.io.addrIn := WireInit(0.U(32.W))
