@@ -30,6 +30,7 @@ class ChiselRISC(simulation: Boolean = false) extends Module{
   EX.io.in.imm := ID.io.out.imm
   EX.io.in.aluOp := ID.io.out.aluOp
   EX.io.in.ctrl := ID.io.out.ctrl
+  EX.io.in.memOp := ID.io.out.memOp
   EX.io.out <> MEM.io.in
   MEM.io.out <> WB.io.in
   WB.io.out <> ID.io.wbIn
