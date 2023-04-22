@@ -5,15 +5,15 @@ import components._
 import components.memory._
 import utilities._
 
-class IF(datawidth: Int, depth: Int) extends Module {
+class IF(datawidth: Int, depth: Int, simulation: Boolean = false) extends Module {
   val io = IO(new Bundle {
     val stallReg = Input(Bool())
     val flush = Input(Bool())
     val out = new IF_ID_IO(datawidth)
-    val addrIn = Input(UInt(datawidth.W)) //ALU calculated Addr
-    val branch = Input(Bool())
-    val startPC = Input(Bool())
+    val newPCValue = Input(UInt(datawidth.W)) //ALU calculated Addr
+    val changePC = Input(Bool())
     val memIO = Flipped(new memoryInterface(datawidth))
+    val startPC = Input(Bool())
   })
   // ----- Testing ------------
   val PC = Module(new ProgramCounter(datawidth))
@@ -39,18 +39,18 @@ class IF(datawidth: Int, depth: Int) extends Module {
   val pc = WireDefault(PC.io.memIO.Request.addr)
   // val pcNext = pc
 
-  val addMux = Mux(io.branch === true.B, io.addrIn, pc)
+  val addMux = Mux(io.changePC, io.newPCValue, pc)
 
   instMem.io.memIO.write.ready := io.memIO.write.ready
   instMem.io.memIO.write.data := io.memIO.write.data
 
 
-  when(!instMem.io.memIO.Response.nonEmpty) {
+  when(!instMem.io.memIO.Response.nonEmpty && io.startPC) { // remove startPC when not testing
     PC.io.memIO.Response.ready := true.B
     PC.io.in := addMux + 4.U
   }.otherwise {
     PC.io.memIO.Response.ready := false.B
-    PC.io.in := pc
+    PC.io.in := addMux
   }
 
   val muxOutPC = Mux(io.flush, 0.U, addMux)

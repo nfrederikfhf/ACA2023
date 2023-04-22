@@ -18,11 +18,11 @@ class ChiselRISC(simulation: Boolean = false) extends Module{
   val WB = Module(new WB(32, 5))
   // Forwarding and Hazard Control units
   val forwardingUnit = Module(new ForwardingUnit(32, 5))
-//  val hazardControl = Module(new HazardControl(32, 5))
-  IF.io.flush := DontCare
-  ID.io.flush := DontCare
+  val hazardControl = Module(new HazardControl(32, 5))
   // Connect the pipeline stages
   IF.io.out <> ID.io.in
+  IF.io.changePC := EX.io.changePC
+  IF.io.newPCValue := EX.io.newPCValue
   EX.io.in.pc := ID.io.out.pc
   EX.io.in.rs1 := ID.io.out.rs1
   EX.io.in.rs2 := ID.io.out.rs2
@@ -49,18 +49,24 @@ class ChiselRISC(simulation: Boolean = false) extends Module{
   EX.io.in.val1 := forwardingUnit.io.val1
   EX.io.in.val2 := forwardingUnit.io.val2
 
+  // Connect the hazard control unit
+  IF.io.flush := hazardControl.io.IFFlush
+  ID.io.flush := hazardControl.io.IDFlush
+  IF.io.stallReg := hazardControl.io.IFStall
+  hazardControl.io.EXaluOut := EX.io.hazardAluOut
+  hazardControl.io.EXctrlBranch := EX.io.in.ctrl.branch
+  hazardControl.io.EXctrlJump := EX.io.in.ctrl.jump
+  hazardControl.io.EXctrlLoad := EX.io.in.ctrl.load
+  hazardControl.io.EXrd := EX.io.in.rd
+  hazardControl.io.IDrs1 := ID.io.out.rs1
+  hazardControl.io.IDrs2 := ID.io.out.rs2
+
   // Forward the data to MEM to avoid a one clock cylce delay
 
 
-  // Connect Hazard Control Wires
-//  IF.io.stallReg := hazardControl.io.IFStall
-//  IF.io.flush := hazardControl.io.IFFlush
-
-
-
   // Initialise signals
-  IF.io.addrIn := WireInit(0.U(32.W))
-  IF.io.branch := WireInit(false.B)
+  IF.io.newPCValue := WireInit(0.U(32.W))
+  IF.io.changePC := WireInit(false.B)
   IF.io.stallReg := WireInit(false.B)
   //--------------Testing-----------------------
   IF.io.startPC := io.startPipeline

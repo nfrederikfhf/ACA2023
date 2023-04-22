@@ -51,7 +51,7 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
           """
       FillInstructionMemory(input, dut.clock, dut.io.memIO)
       dut.io.startPipeline.poke(true.B)
-      dut.clock.step(4)
+      dut.clock.step(6)
 
       // Check the result
       dut.io.debug.get.out.expect(2.U)
@@ -83,6 +83,31 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.clock.step(4)
       dut.io.debug.get.out.expect(1.U)
       dut.io.startPipeline.poke(false.B)
+    }
+  }
+
+  it should "execute JAL/JALR instructions" in {
+    test(new ChiselRISC(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      // Instantiate data
+      val input =
+        """
+          jal x1, +12
+          nop
+          nop
+          nop
+          addi x2, x1, 1
+          """ //jalr x2, x1, +2000
+      FillInstructionMemory(input, dut.clock, dut.io.memIO)
+      dut.io.debug.get.pc.expect(0.U)
+      dut.io.debug.get.regFile(1).expect(0.U)
+      dut.io.debug.get.regFile(2).expect(0.U)
+      dut.io.startPipeline.poke(true.B)
+      dut.clock.step(8)
+      dut.io.debug.get.pc.expect(12.U)
+      dut.io.debug.get.regFile(1).expect(4.U)
+      dut.clock.step(1)
+      dut.io.debug.get.pc.expect(2012.U)
+      dut.io.debug.get.regFile(2).expect(16.U)
     }
   }
 

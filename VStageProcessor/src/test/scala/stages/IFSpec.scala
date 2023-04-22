@@ -6,8 +6,8 @@ import org.scalatest.flatspec.AnyFlatSpec
 class IFSpec extends AnyFlatSpec with ChiselScalatestTester{
   it should "check instruction can be fetched" in {
     test(new IF(32, 100)) { dut =>
-      dut.io.branch.poke(false.B)
-      dut.io.addrIn.poke(0.U)
+      dut.io.changePC.poke(false.B)
+      dut.io.newPCValue.poke(0.U)
       dut.clock.step(1)
       dut.io.memIO.write.ready.poke(true.B)
       dut.io.memIO.write.data.poke("h81234523".U(32.W))

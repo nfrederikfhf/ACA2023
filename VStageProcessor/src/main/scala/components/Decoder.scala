@@ -183,8 +183,8 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
     }
 
     //---------outputs----------------
-    io.rs1 := io.inInst(19, 15)
-    io.rs2 := io.inInst(24, 20)
+    io.rs1 := Mux(op === OP.JAL, 0.U, io.inInst(19, 15)) // Reset rsX to 0 if JAL to avoid false forwarding
+    io.rs2 := Mux(op === OP.JAL, 0.U, io.inInst(24, 20))
     io.rd := io.inInst(11, 7)
 
 }
