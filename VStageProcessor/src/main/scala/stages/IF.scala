@@ -53,12 +53,12 @@ class IF(datawidth: Int, depth: Int, simulation: Boolean = false) extends Module
     PC.io.in := addMux
   }
 
-  val muxOutPC = Mux(io.flush, 0.U, addMux)
+  val muxOutPC = Mux(io.stallReg, pc , addMux)
   val muxOutInst = Mux(io.flush, 0.U, instMem.io.memIO.Response.data)
 
   outReg.inst := muxOutInst
   outReg.pc := muxOutPC
   io.out.inst := outReg.inst
-  io.out.pc := outReg.pc
+  io.out.pc := RegNext(Mux(io.stallReg, pc , addMux))
 
 }

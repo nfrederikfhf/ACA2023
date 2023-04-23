@@ -94,6 +94,7 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
           jal x1, +12
           nop
           nop
+          nop
           jalr x2, x1, +2000
           """
       FillInstructionMemory(input, dut.clock, dut.io.memIO)
@@ -105,8 +106,86 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.debug.get.pc.expect(16.U)
       dut.io.debug.get.regFile(1).expect(4.U)
       dut.clock.step(4)
-      dut.io.debug.get.pc.expect(2000.U)
-      dut.io.debug.get.regFile(2).expect(16.U)
+      dut.io.debug.get.pc.expect(2004.U)
+      dut.io.debug.get.regFile(2).expect(20.U)
+    }
+  }
+
+  it should "execute JAL an instruction and skip JALR instruction" in {
+    test(new ChiselRISC(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      // Should skip the JALR instruction due to the JAL instruction
+      val input =
+        """
+          jal x1, +32
+          jalr x2, x1, +2000
+          """
+      FillInstructionMemory(input, dut.clock, dut.io.memIO)
+      dut.io.debug.get.pc.expect(0.U)
+      dut.io.debug.get.regFile(1).expect(0.U)
+      dut.io.debug.get.regFile(2).expect(0.U)
+      dut.io.startPipeline.poke(true.B)
+      dut.clock.step(4)
+      dut.io.debug.get.pc.expect(32.U)
+      dut.clock.step(2) //step 2 more for register rd writeback
+      dut.io.debug.get.regFile(1).expect(4.U)
+      dut.clock.step(4)
+      dut.io.debug.get.pc.expect(32.U)
+      dut.io.debug.get.regFile(2).expect(0.U)
+    }
+  }
+
+  it should "execute branch instructions" in {
+    test(new ChiselRISC(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      val input =
+        """
+          addi x1, x0, 4
+          addi x2, x0, 4
+          addi x3, x0, 2
+          nop
+          nop
+          beq x1, x2, +36
+          jal x0, 0
+          nop
+          nop
+          nop
+          nop
+          addi x4, x0, 42
+        """
+      /*
+       1 pc 0
+       2 pc 4
+       3 pc 8
+       4 pc 16
+       5 x
+       6 x
+       7 pc 24
+       */
+
+      //          bne x2, x3, +8
+      //          jal x0, 0
+      //          blt x3, x2, +8
+      //          jal x0, 0
+      //          bge x2, x3, +8
+      //          jal x0, 0
+        FillInstructionMemory(input, dut.clock, dut.io.memIO)
+        dut.io.debug.get.regFile(1).expect(0.U)
+        dut.io.debug.get.regFile(2).expect(0.U)
+        dut.io.debug.get.regFile(3).expect(0.U)
+        dut.io.startPipeline.poke(true.B)
+        dut.clock.step(5)
+        dut.io.debug.get.regFile(1).expect(4.U)
+        dut.io.debug.get.pc.expect(16.U)
+        dut.clock.step(1)
+        dut.io.debug.get.regFile(2).expect(4.U)
+        dut.io.debug.get.pc.expect(20.U)
+        dut.clock.step(1)
+        dut.io.debug.get.regFile(3).expect(2.U)
+        dut.io.debug.get.pc.expect(24.U)
+        dut.clock.step(7)
+        dut.io.debug.get.pc.expect(56.U)
+        dut.io.debug.get.regFile(4).expect(42.U)
+
+
     }
   }
 

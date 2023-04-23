@@ -34,7 +34,6 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
 
 
   // Muxes
-  val mux1 = Mux(io.in.ctrl.branch, io.in.pc, io.in.val1)
   val mux2 = Mux(io.in.ctrl.useImm, io.in.imm, io.in.val2)
 
   // Jumping and branching
@@ -73,7 +72,7 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
 
 
   when(io.in.ctrl.useALU) {
-    ALU.io.val1 := mux1
+    ALU.io.val1 := io.in.val1
     ALU.io.val2 := mux2
   }.otherwise {
     ALU.io.val1 := 0.U

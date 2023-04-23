@@ -20,7 +20,7 @@ object Funct3 {
   val BNE, LH, SH, SLLI, SLL = "b001".U
   val LW, SW, SLTI, SLT = "b010".U
   val SLTIU, SLTU = "b011".U
-  val BLE, LBU, XORI, XOR = "b100".U
+  val BLT, LBU, XORI, XOR = "b100".U
   val BGE, LHU, SRI, SR = "b101".U
   val BLTU, ORI, OR = "b110".U
   val BGEU, ANDI, AND = "b111".U
@@ -32,7 +32,7 @@ object Funct7 {
 }
 
 object ALUOp extends ChiselEnum {
-  val ZERO = Value("b0000".U)
+  val BNE = Value("b0000".U)
   val ADD = Value("b0001".U)
   val SUB = Value("b0010".U)
   val AND = Value("b0011".U)

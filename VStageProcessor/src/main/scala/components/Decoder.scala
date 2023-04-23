@@ -170,7 +170,27 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
       }
       is(OP.BR) {
         io.ctrlSignals.branch := true.B
-        io.ctrlSignals.useImm := true.B
+        io.ctrlSignals.useALU := true.B
+        switch(funct3){
+          is(Funct3.BEQ) {
+            io.aluOp := ALUOp.BEQ.asUInt
+          }
+          is(Funct3.BNE) {
+            io.aluOp := ALUOp.BNE.asUInt
+          }
+          is(Funct3.BLT) {
+            io.aluOp := ALUOp.BLT.asUInt
+          }
+          is(Funct3.BGE) {
+            io.aluOp := ALUOp.BGE.asUInt
+          }
+          is(Funct3.BLTU) {
+            io.aluOp := ALUOp.BLTU.asUInt
+          }
+          is(Funct3.BGEU) {
+            io.aluOp := ALUOp.BGEU.asUInt
+          }
+        }
       }
       is(OP.JALR) {
         io.ctrlSignals.jump := true.B
