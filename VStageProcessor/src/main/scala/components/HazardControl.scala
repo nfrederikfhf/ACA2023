@@ -28,6 +28,6 @@ class HazardControl(dataWidth: Int, addrWidth: Int) extends Module {
   val branch_jump = (io.EXaluOut === 1.U && io.EXctrlBranch) || io.EXctrlJump
 
   io.IFFlush := branch_jump
-  io.IFStall := branch_jump || use_load
+  io.IFStall := use_load
   io.IDFlush := branch_jump || use_load
 }

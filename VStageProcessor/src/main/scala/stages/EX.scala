@@ -21,8 +21,6 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
 
   // Initialise signals
   io.PCout := RegInit(0.U(datawidth.W))
-  io.changePC := WireInit(false.B)
-  io.newPCValue := WireInit(0.U(datawidth.W))
   val outReg = RegEnable(io.out, !io.stallReg)
   io.hazardAluOut := WireDefault(ALU.io.aluOut)
   // Connecting the I/O through

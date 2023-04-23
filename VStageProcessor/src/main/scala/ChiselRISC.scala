@@ -63,11 +63,6 @@ class ChiselRISC(simulation: Boolean = false) extends Module{
 
   // Forward the data to MEM to avoid a one clock cylce delay
 
-
-  // Initialise signals
-  IF.io.newPCValue := WireInit(0.U(32.W))
-  IF.io.changePC := WireInit(false.B)
-  IF.io.stallReg := WireInit(false.B)
   //--------------Testing-----------------------
   IF.io.startPC := io.startPipeline
   IF.io.memIO.Request := DontCare // Not used
