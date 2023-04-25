@@ -24,9 +24,10 @@ class DualReadMem(addrWidth: Int, dataWidth: Int, depth: Int) extends Module {
   //Init
   io.rdData1 := WireInit(0.U(dataWidth.W))
   io.rdData2 := WireInit(0.U(dataWidth.W))
-  // Divide by four to get the correct address due to pc+4 addressing
-  val readAddress1 = WireInit(UInt((addrWidth).W),DontCare)
-  val readAddress2 = WireInit(0.U(addrWidth.W))
+  val rdData1 = WireInit(UInt(dataWidth.W),DontCare) // To allow for reading next clock cycle
+  val rdData2 = WireInit(UInt(dataWidth.W),DontCare)
+  val readAddress1 = WireInit(UInt((addrWidth).W),DontCare) // To allow for reading next clock cycle
+  val readAddress2 = WireInit(UInt(addrWidth.W),DontCare)
   val writeAddress = WireInit(0.U(addrWidth.W))
 
 
@@ -34,18 +35,15 @@ class DualReadMem(addrWidth: Int, dataWidth: Int, depth: Int) extends Module {
 //  val rden1 =
 
   when (io.rden){
+    // Divide by four to get the correct address due to pc+4 addressing
     readAddress1 := io.rdAddr1 >> 2
-  }
-  io.rdData1 := mem.read(readAddress1)
-
-  when (io.rdAddr2 === 0.U) {
-    io.rdData2 := 0.U
-  }.elsewhen(io.rden) {
     readAddress2 := io.rdAddr2 >> 2
-    io.rdData2 := mem.read(readAddress2)
-  }.otherwise{
-      io.rdData2 := 0.U
+    rdData1 := mem.read(readAddress1)
+    rdData2 := mem.read(readAddress2)
   }
+
+  io.rdData1 := rdData1
+  io.rdData2 := rdData2
 
   when (io.wren){
     writeAddress := io.wrAddr >> 2

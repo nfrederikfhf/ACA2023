@@ -34,7 +34,7 @@ class MEMSpec extends AnyFlatSpec with ChiselScalatestTester {
   }
 
   it should "write to memory when store signal is high" in {
-    test(new MEM(dataWidth = 32, addrWidth = 32, 100)) { dut =>
+    test(new MEM(dataWidth = 32, addrWidth = 32, 100)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       dut.io.in.ctrl.load.poke(false.B)
       dut.io.in.ctrl.store.poke(true.B)
       dut.io.in.aluOut.poke(1.U)

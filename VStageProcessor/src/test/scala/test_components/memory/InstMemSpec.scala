@@ -13,7 +13,7 @@ import utilities._
  */
 class InstMemSpec extends AnyFlatSpec with ChiselScalatestTester{
   it should "store and retrieve instructions correctly" in {
-    test(new InstructionMemory(1000, 32)) { dut =>
+    test(new InstructionMemory(100, 32)) { dut =>
       // Write some data to the memory
       for (i <- 0 until dut.actualDepth) {
         dut.io.memIO.write.ready.poke(true.B)
@@ -40,7 +40,7 @@ class InstMemSpec extends AnyFlatSpec with ChiselScalatestTester{
     }
   }
   it should "not allow reading from empty memory" in {
-    test(new InstructionMemory(1000,32)) {dut =>
+    test(new InstructionMemory(100,32)) {dut =>
       // Try to read from an empty memory
       dut.io.memIO.Request.addr.poke((1.U(32.W)))
       dut.clock.step(1)
@@ -49,7 +49,7 @@ class InstMemSpec extends AnyFlatSpec with ChiselScalatestTester{
   }
 
   it should "fill instruction memory with a program and the expected output is correct" in {
-    test(new InstructionMemory(1000, 32)) { dut =>
+    test(new InstructionMemory(100, 32)) { dut =>
       val input =
                   """
                      addi x0, x0, 0

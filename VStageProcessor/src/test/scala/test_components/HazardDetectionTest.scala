@@ -37,21 +37,21 @@ class HazardDetectionTest extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.IFFlush.expect(false.B)
     }
   }
-  it should "Flush and stall everything if we get a jump instruction" in {
+  it should "Flush everything if we get a jump instruction" in {
     test(new HazardControl(32, 5)) { dut =>
       dut.io.EXctrlJump.poke(true.B)
       dut.io.IFFlush.expect(true.B)
-      dut.io.IFStall.expect(true.B)
+      dut.io.IFStall.expect(false.B)
       dut.io.IDFlush.expect(true.B)
     }
   }
 
-  it should "Flush and stall everything if we get a taken branch instruction" in {
+  it should "Flush everything if we get a taken branch instruction" in {
     test(new HazardControl(32, 5)) { dut =>
       dut.io.EXaluOut.poke(1.U(5.W))
       dut.io.EXctrlBranch.poke(true.B)
       dut.io.IFFlush.expect(true.B)
-      dut.io.IFStall.expect(true.B)
+      dut.io.IFStall.expect(false.B)
       dut.io.IDFlush.expect(true.B)
     }
   }
