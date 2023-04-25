@@ -8,7 +8,7 @@ class DualReadMem(addrWidth: Int, dataWidth: Int, depth: Int) extends Module {
   val actualDepth = math.pow(2, bitwidth).toInt // 2^bidwidth
 
   val io = IO(new Bundle {
-
+    // Read Enable
     val rden: Bool = Input(Bool())
     //ReadPort 1
     val rdAddr1: UInt = Input(UInt(addrWidth.W))
@@ -24,16 +24,16 @@ class DualReadMem(addrWidth: Int, dataWidth: Int, depth: Int) extends Module {
   //Init
   io.rdData1 := WireInit(0.U(dataWidth.W))
   io.rdData2 := WireInit(0.U(dataWidth.W))
-  val rdData1 = WireInit(UInt(dataWidth.W),DontCare) // To allow for reading next clock cycle
-  val rdData2 = WireInit(UInt(dataWidth.W),DontCare)
-  val readAddress1 = WireInit(UInt((addrWidth).W),DontCare) // To allow for reading next clock cycle
-  val readAddress2 = WireInit(UInt(addrWidth.W),DontCare)
+  val rdData1 = WireInit(UInt(dataWidth.W), DontCare) // To allow for reading next clock cycle
+  val rdData2 = WireInit(UInt(dataWidth.W), DontCare)
+  val readAddress1 = WireInit(UInt((addrWidth).W), DontCare) // To allow for reading next clock cycle
+  val readAddress2 = WireInit(UInt(addrWidth.W), DontCare)
   val writeAddress = WireInit(0.U(addrWidth.W))
 
-
+  // Instantiate the memory, syncronous read
   val mem: SyncReadMem[UInt] = SyncReadMem(actualDepth, UInt(dataWidth.W))
 
-  when (io.rden){ // Calculate the address to read from
+  when(io.rden) { // Calculate the address to read from
     // Divide by four to get the correct address due to pc+4 addressing
     readAddress1 := io.rdAddr1 >> 2
     readAddress2 := io.rdAddr2 >> 2
@@ -45,7 +45,8 @@ class DualReadMem(addrWidth: Int, dataWidth: Int, depth: Int) extends Module {
     io.rdData1 := rdData1
     io.rdData2 := rdData2
   }
-  when (io.wren){
+
+  when(io.wren) {
     writeAddress := io.wrAddr >> 2
     mem.write(writeAddress, io.wrData)
   }
