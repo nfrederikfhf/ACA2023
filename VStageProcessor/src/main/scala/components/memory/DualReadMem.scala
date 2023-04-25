@@ -32,9 +32,8 @@ class DualReadMem(addrWidth: Int, dataWidth: Int, depth: Int) extends Module {
 
 
   val mem: SyncReadMem[UInt] = SyncReadMem(actualDepth, UInt(dataWidth.W))
-//  val rden1 =
 
-  when (io.rden){
+  when (io.rden){ // Calculate the address to read from
     // Divide by four to get the correct address due to pc+4 addressing
     readAddress1 := io.rdAddr1 >> 2
     readAddress2 := io.rdAddr2 >> 2
@@ -42,7 +41,7 @@ class DualReadMem(addrWidth: Int, dataWidth: Int, depth: Int) extends Module {
     rdData2 := mem.read(readAddress2)
   }
 
-  when(io.rden || RegNext(io.rden)) {
+  when(io.rden || RegNext(io.rden)) { // Only update the output if the read is enabled, or if it was enabled last cycle
     io.rdData1 := rdData1
     io.rdData2 := rdData2
   }
