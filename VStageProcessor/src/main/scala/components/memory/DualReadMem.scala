@@ -42,9 +42,10 @@ class DualReadMem(addrWidth: Int, dataWidth: Int, depth: Int) extends Module {
     rdData2 := mem.read(readAddress2)
   }
 
-  io.rdData1 := rdData1
-  io.rdData2 := rdData2
-
+  when(io.rden || RegNext(io.rden)) {
+    io.rdData1 := rdData1
+    io.rdData2 := rdData2
+  }
   when (io.wren){
     writeAddress := io.wrAddr >> 2
     mem.write(writeAddress, io.wrData)

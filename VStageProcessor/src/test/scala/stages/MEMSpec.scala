@@ -43,7 +43,6 @@ class MEMSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.clock.step(1)
 
       dut.io.out.memOut.expect(0.U)
-
       dut.io.in.ctrl.load.poke(true.B)
       dut.io.in.ctrl.store.poke(false.B)
       dut.io.in.aluOut.poke(1.U)
