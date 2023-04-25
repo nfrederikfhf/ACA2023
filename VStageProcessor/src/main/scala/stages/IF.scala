@@ -39,7 +39,7 @@ class IF(datawidth: Int, depth: Int, simulation: Boolean = false) extends Module
   val pc = WireDefault(PC.io.memIO.Request.addr)
   // val pcNext = pc
 
-  val addMux = Mux(io.changePC, io.newPCValue, pc)
+//  val addMux = Mux(io.changePC, io.newPCValue, pc+4.U)
 
   instMem.io.memIO.write.ready := io.memIO.write.ready
   instMem.io.memIO.write.data := io.memIO.write.data
@@ -47,18 +47,18 @@ class IF(datawidth: Int, depth: Int, simulation: Boolean = false) extends Module
 
   when(!instMem.io.memIO.Response.nonEmpty && io.startPC) { // remove startPC when not testing
     PC.io.memIO.Response.ready := true.B
-    PC.io.in := addMux + 4.U
+    PC.io.in := Mux(io.changePC, io.newPCValue, pc+4.U)
   }.otherwise {
     PC.io.memIO.Response.ready := false.B
-    PC.io.in := addMux
+    PC.io.in := Mux(io.changePC, io.newPCValue, pc)
   }
 
-  val muxOutPC = Mux(io.stallReg, pc , addMux)
+  val muxOutPC = Mux(io.stallReg, pc , Mux(io.changePC, io.newPCValue, pc))
   val muxOutInst = Mux(io.flush, 0.U, instMem.io.memIO.Response.data)
 
   outReg.inst := muxOutInst
   outReg.pc := muxOutPC
   io.out.inst := outReg.inst
-  io.out.pc := RegNext(Mux(io.stallReg, pc , addMux))
+  io.out.pc := RegNext(Mux(io.stallReg, pc , Mux(io.changePC, io.newPCValue, pc)))
 
 }

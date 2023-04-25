@@ -62,13 +62,18 @@ class ID(datawidth: Int, addrWidth: Int, simulation: Boolean = false) extends Mo
   io.out.ctrl.jump := RegEnable(Mux(io.flush, 0.U, decoder.io.ctrlSignals.jump), !io.stallReg)
   io.out.ctrl.useALU := RegEnable(Mux(io.flush, 0.U, decoder.io.ctrlSignals.useALU), !io.stallReg)
   io.out.ctrl.useImm := RegEnable(Mux(io.flush, 0.U, decoder.io.ctrlSignals.useImm), !io.stallReg)
+  io.out.ctrl.changePC := RegEnable(Mux(io.flush, 0.U, decoder.io.ctrlSignals.changePC), !io.stallReg)
   //io.out.ctrl <> RegEnable(decoder.io.ctrlSignals, !io.stallReg)
+
+  // Forwarding from WB to ID values, incase of read/write in the same clock cycle
+  val val1 = Mux(io.wbIn.writeEnable && io.wbIn.rd === decoder.io.rs1, io.wbIn.muxOut, regfile.io.rdData1)
+  val val2 = Mux(io.wbIn.writeEnable && io.wbIn.rd === decoder.io.rs2, io.wbIn.muxOut, regfile.io.rdData2)
 
   //-----ALU signals-----
   io.out.aluOp := RegEnable(Mux(io.flush, 0.U, decoder.io.aluOp), !io.stallReg) // ALU operation
   io.out.rd := RegEnable(Mux(io.flush, 0.U, decoder.io.rd), !io.stallReg) // Destination register address
-  io.out.val1 := RegEnable(Mux(io.flush, 0.U, regfile.io.rdData1), !io.stallReg) // Value read from register
-  io.out.val2 := RegEnable(Mux(io.flush, 0.U, regfile.io.rdData2), !io.stallReg) // Value read from register
+  io.out.val1 := RegEnable(Mux(io.flush, 0.U, val1), !io.stallReg) // Value read from register
+  io.out.val2 := RegEnable(Mux(io.flush, 0.U, val2), !io.stallReg) // Value read from register
   io.out.imm := RegEnable(Mux(io.flush, 0.U, immGenerator.io.immOut), !io.stallReg) // Immediate value
   io.out.pc := RegEnable(Mux(io.flush, 0.U, io.in.pc), !io.stallReg) // Program counter value
   io.out.rs1 := RegEnable(Mux(io.flush, 0.U, decoder.io.rs1), !io.stallReg) // rs1 address

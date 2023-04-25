@@ -20,6 +20,7 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
       val jump = Output(Bool())
       val load = Output(Bool())
       val store = Output(Bool())
+      val changePC = Output(Bool())
     }
   })
 
@@ -34,6 +35,7 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
   io.ctrlSignals.jump := WireInit(false.B)
   io.ctrlSignals.load := WireInit(false.B)
   io.ctrlSignals.store := WireInit(false.B)
+  io.ctrlSignals.changePC := WireInit(false.B)
   io.aluOp := WireDefault(ALUOp.ADD.asUInt)
 
   // split instruction into fields
@@ -195,6 +197,7 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
       is(OP.JALR) {
         io.ctrlSignals.jump := true.B
         io.ctrlSignals.useImm := true.B
+        io.ctrlSignals.changePC := true.B
       }
       is(OP.JAL) {
         io.ctrlSignals.jump := true.B

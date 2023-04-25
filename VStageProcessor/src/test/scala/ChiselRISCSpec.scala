@@ -81,7 +81,7 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
       FillInstructionMemory(load, dut.clock, dut.io.memIO)
       dut.io.startPipeline.poke(true.B)
       dut.clock.step(4)
-      //dut.io.debug.get.out.expect(1.U)
+      dut.io.debug.get.out.expect(1.U)
       dut.io.startPipeline.poke(false.B)
     }
   }
@@ -91,7 +91,7 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
       // Instantiate data
       val input =
         """
-          jal x1, +12
+          jal x1, +16
           nop
           nop
           nop
@@ -105,7 +105,7 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.clock.step(5)
       dut.io.debug.get.pc.expect(16.U)
       dut.io.debug.get.regFile(1).expect(4.U)
-      dut.clock.step(4)
+      dut.clock.step(5)
       dut.io.debug.get.pc.expect(2004.U)
       dut.io.debug.get.regFile(2).expect(20.U)
     }
@@ -140,10 +140,8 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
         """
           addi x1, x0, 4
           addi x2, x0, 4
-          addi x3, x0, 2
-          nop
-          nop
-          beq x1, x2, +36
+          addi x3, x0, 6
+          beq x1, x2, +24
           jal x0, 0
           nop
           nop
@@ -179,10 +177,10 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.debug.get.regFile(2).expect(4.U)
         dut.io.debug.get.pc.expect(20.U)
         dut.clock.step(1)
-        dut.io.debug.get.regFile(3).expect(2.U)
-        dut.io.debug.get.pc.expect(24.U)
-        dut.clock.step(7)
-        dut.io.debug.get.pc.expect(56.U)
+        dut.io.debug.get.regFile(3).expect(6.U)
+        dut.io.debug.get.pc.expect(36.U)
+        dut.clock.step(5)
+        dut.io.debug.get.pc.expect(48.U)
         dut.io.debug.get.regFile(4).expect(42.U)
 
 

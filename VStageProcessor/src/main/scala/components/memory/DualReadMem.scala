@@ -25,20 +25,18 @@ class DualReadMem(addrWidth: Int, dataWidth: Int, depth: Int) extends Module {
   io.rdData1 := WireInit(0.U(dataWidth.W))
   io.rdData2 := WireInit(0.U(dataWidth.W))
   // Divide by four to get the correct address due to pc+4 addressing
-  val readAddress1 = WireInit(0.U(addrWidth.W))
+  val readAddress1 = WireInit(UInt((addrWidth).W),DontCare)
   val readAddress2 = WireInit(0.U(addrWidth.W))
   val writeAddress = WireInit(0.U(addrWidth.W))
 
 
   val mem: SyncReadMem[UInt] = SyncReadMem(actualDepth, UInt(dataWidth.W))
-  when (io.rdAddr1 === 0.U){
-    io.rdData1 := 0.U
-  }.elsewhen(io.rden){
+//  val rden1 =
+
+  when (io.rden){
     readAddress1 := io.rdAddr1 >> 2
-    io.rdData1 := mem.read(readAddress1)
-  }.otherwise{
-      io.rdData1 := 0.U
   }
+  io.rdData1 := mem.read(readAddress1)
 
   when (io.rdAddr2 === 0.U) {
     io.rdData2 := 0.U

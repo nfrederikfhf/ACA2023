@@ -7,17 +7,17 @@ import chisel3.util._
 /**
  * Instruction Memory
  * Is implemented as a circular buffer
+ *
  * @param depth     The depth of the memory
  * @param datawidth The width of the data
  *
  */
 class InstructionMemory(depth: Int, datawidth: Int) extends Module {
-  val bitwidth = log2Ceil(depth)                // Calculate the number of bits needed to address the memory
+  val bitwidth = log2Ceil(depth) // Calculate the number of bits needed to address the memory
   val actualDepth = math.pow(2, bitwidth).toInt // 2^bidwidth
 
   val io = IO(new Bundle {
-    //val writeMem = Flipped(new DecoupledIO(UInt(datawidth.W))) // Write to memory
-    val memIO = Flipped(new memoryInterface(datawidth))   // Memory interface
+    val memIO = Flipped(new memoryInterface(datawidth)) // Memory interface
   })
   // Buffer status signals
   val bufferEmpty = WireInit(true.B)
@@ -43,14 +43,13 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
   io.memIO.Response.nonEmpty := bufferEmpty
 
   // Instantiate the memory
-  val mem = Mem(actualDepth, UInt(datawidth.W))
+  val mem = Reg(Vec(actualDepth, UInt(datawidth.W)))
 
   // Read from memory
   when(io.memIO.Request.valid && !bufferEmpty) {
-    readAddr := io.memIO.Request.addr >> 2// Divide by 4 to get the correct read address
+    readAddr := io.memIO.Request.addr >> 2 // Divide by 4 to get the correct read address
     io.memIO.Response.data := mem(readAddr)
     readPtr := readPtr + 1.U
-
     when(readPtr >= actualDepth.U) {
       readPtr := 0.U // Wrap around
     }
@@ -65,11 +64,11 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
       writePtr := 0.U
     }
   }
- // Calculate the number of elements in the memory
+  // Calculate the number of elements in the memory
   val difference = writePtr - readPtr
-  when(difference <= 0.U){ // Wrap around
+  when(difference <= 0.U) { // Wrap around
     count := difference + actualDepth.U
   }.otherwise {
     count := difference
   }
-  }
+}

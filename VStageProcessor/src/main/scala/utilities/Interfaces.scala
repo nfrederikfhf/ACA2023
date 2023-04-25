@@ -28,6 +28,7 @@ class ID_EX_IO(datawidth: Int, addrWidth: Int) extends Bundle {
     val jump = Output(Bool())
     val load = Output(Bool())
     val store = Output(Bool())
+    val changePC = Output(Bool())
   }
   //val branchPredict = UInt(32.W) // TODO: Implement branch prediction
 }
