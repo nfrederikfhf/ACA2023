@@ -41,7 +41,7 @@ class DualReadMem(addrWidth: Int, dataWidth: Int, depth: Int) extends Module {
     rdData2 := mem.read(readAddress2)
   }
 
-  when(io.rden || RegNext(io.rden)) { // Only update the output if the read is enabled, or if it was enabled last cycle
+  when(RegNext(io.rden)) { // Only update the output if the read is enabled, or if it was enabled last cycle
     io.rdData1 := rdData1
     io.rdData2 := rdData2
   }
