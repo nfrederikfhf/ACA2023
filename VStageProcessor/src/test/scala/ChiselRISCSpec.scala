@@ -2,6 +2,8 @@ import chiseltest._
 import org.scalatest.flatspec.AnyFlatSpec
 import chisel3._
 import components._
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.not.be
 import stages._
 import utilities.helperFunctions.FillInstructionMemory
 import utilities._
@@ -149,22 +151,6 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
           nop
           addi x4, x0, 42
         """
-      /*
-       1 pc 0
-       2 pc 4
-       3 pc 8
-       4 pc 16
-       5 x
-       6 x
-       7 pc 24
-       */
-
-      //          bne x2, x3, +8
-      //          jal x0, 0
-      //          blt x3, x2, +8
-      //          jal x0, 0
-      //          bge x2, x3, +8
-      //          jal x0, 0
         FillInstructionMemory(input, dut.clock, dut.io.memIO)
         dut.io.debug.get.regFile(1).expect(0.U)
         dut.io.debug.get.regFile(2).expect(0.U)
@@ -187,6 +173,79 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 
+  it should "execute branch instructions - alternative" in {
+    test(new ChiselRISC(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      val input =
+        """
+          addi x1, x0, 6
+          addi x2, x0, 6
+          addi x3, x0, 4
+          beq x1, x2, +12
+          nop
+          nop
+          bne x2, x3, +12
+          nop
+          nop
+          blt x3, x2, +12
+          nop
+          nop
+          bge x2, x3, +12
+          nop
+          nop
+        """
+      FillInstructionMemory(input, dut.clock, dut.io.memIO)
+      dut.io.debug.get.regFile(1).expect(0.U)
+      dut.io.debug.get.regFile(2).expect(0.U)
+      dut.io.debug.get.regFile(3).expect(0.U)
+      dut.io.startPipeline.poke(true.B)
+      dut.clock.step(5)
+      dut.io.debug.get.regFile(1).expect(6.U)
+      dut.io.debug.get.pc.expect(16.U)
+      dut.clock.step(1)
+      dut.io.debug.get.regFile(2).expect(6.U)
+      dut.io.debug.get.pc.expect(20.U)
+      dut.clock.step(1)
+      dut.io.debug.get.regFile(3).expect(4.U)
+      dut.io.debug.get.pc.expect(24.U)
+      dut.clock.step(3)
+      dut.io.debug.get.pc.expect(36.U)
+      dut.clock.step(3)
+      dut.io.debug.get.pc.expect(44.U)
+      dut.clock.step(3)
+      dut.io.debug.get.pc.expect(52.U)
+    }
+  }
+
+  it should "execute the LW instruction" in {
+    test(new ChiselRISC(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      val input =
+        """
+          lui x1, 0xf0f0f
+          addi x1, x1, 240
+          addi x2, x0, 10
+          sw x1, 0(x2)
+          lw x3, 0(x2)
+        """
+      FillInstructionMemory(input, dut.clock, dut.io.memIO)
+      dut.io.debug.get.regFile(1).expect(0.U)
+      dut.io.debug.get.regFile(2).expect(0.U)
+      dut.io.debug.get.regFile(3).expect(0.U)
+      dut.io.startPipeline.poke(true.B)
+      dut.clock.step(5)
+      dut.io.debug.get.regFile(1).expect(0xf0f0f000L.U) // L is to assign scala to evaluate it as a long
+      dut.clock.step(1)
+      dut.io.debug.get.regFile(1).expect(0xf0f0f0f0L.U)
+      dut.io.debug.get.memoryIO.wren.expect(true.B)
+      dut.io.debug.get.memoryIO.wrData.expect(0xf0f0f0f0L.U)
+      dut.io.debug.get.memoryIO.wrAddr.expect(10.U)
+      dut.clock.step(1)
+      dut.io.debug.get.memoryIO.rden.expect(true.B)
+      dut.io.debug.get.memoryIO.rdAddr1.expect(10.U)
+      dut.io.debug.get.regFile(2).expect(10.U)
+      dut.clock.step(2)
+      dut.io.debug.get.regFile(3).expect(0xf0f0f0f0L.U)
+    }
+  }
 
 
 }

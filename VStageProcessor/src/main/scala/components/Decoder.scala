@@ -101,8 +101,8 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
       }
     }
       is(OP.AUIPC) {
-        io.ctrlSignals.load := true.B
         io.ctrlSignals.useImm := true.B
+        io.ctrlSignals.useALU := true.B
       }
 
       is(OP.ST) { // Store instructions
@@ -168,7 +168,7 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
 
       is(OP.LUI) {
         io.ctrlSignals.useImm := true.B
-        io.ctrlSignals.load := true.B
+        io.ctrlSignals.useALU := true.B
       }
       is(OP.BR) {
         io.ctrlSignals.branch := true.B
