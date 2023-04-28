@@ -79,6 +79,15 @@ class memoryInterface(dataWidth: Int) extends Bundle { // Interface for memory
   }
 }
 
+class memoryInterfaceLight(dataWidth: Int) extends Bundle { // Interface for memory
+  val ready = Input(Bool())
+  val write = Output(Bool())
+  val writeData = Output(UInt(dataWidth.W))
+  val valid = Output(Bool())
+  val nonEmpty = Input(Bool())
+  val addr = Output(UInt(dataWidth.W))
+}
+
 class forwardingIO(dataWidth: Int, addrWidth: Int) extends Bundle { // Forwarding interface
   val rd = Output(UInt(addrWidth.W)) // Destination register
   val stageOutput = Output(UInt(dataWidth.W)) // Output from stage

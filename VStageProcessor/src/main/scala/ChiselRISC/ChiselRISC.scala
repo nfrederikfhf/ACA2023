@@ -2,19 +2,17 @@ package ChiselRISC
 
 import components.{ForwardingUnit, HazardControl}
 import stages._
-import utilities.{debugIO, memoryInterface}
+import utilities.{debugIO, memoryInterface, memoryInterfaceLight}
 import chisel3._
 
 
 
 class ChiselRISC(simulation: Boolean = false) extends Module{
   val io = IO(new Bundle{
-    val memIO = Flipped(new memoryInterface(32))
+    val memIO = Flipped(new memoryInterfaceLight(32))
     val startPipeline = Input(Bool())
     val debug = if(simulation) Some(new debugIO(32, 5)) else None
-    val PC_out = Output(UInt(32.W))
     val WB_out = Output(UInt(32.W))
-    val FWD_out = Output(Bool())
   })
   // Pipeline ChiselRISC.stages
   val IF = Module(new IF(32, 100, simulation))
@@ -70,11 +68,12 @@ class ChiselRISC(simulation: Boolean = false) extends Module{
   // Forward the data to MEM to avoid a one clock cylce delay
 
   //--------------Testing-----------------------
-  IF.io.memIO.Request := DontCare // Not used
-  IF.io.memIO.Response := DontCare // Not used
-  io.memIO.Response := DontCare
-  IF.io.memIO.write.ready := io.memIO.write.ready
-  IF.io.memIO.write.data := io.memIO.write.data
+  io.memIO.valid := DontCare
+  io.memIO.ready := DontCare
+  io.memIO.nonEmpty := DontCare
+  io.memIO.addr := DontCare
+  IF.io.memIO.ready := io.memIO.write
+  IF.io.memIO.writeData := io.memIO.writeData
 
   if(simulation){ // Connect the simulation wires
     IF.io.startPC.get := io.startPipeline
@@ -85,7 +84,5 @@ class ChiselRISC(simulation: Boolean = false) extends Module{
     io.debug.get.regFile := ID.io.debug.get.regFile
     io.debug.get.memoryIO <> MEM.io.debug.get.memoryIO
   }
-  io.PC_out := ID.io.out.pc
   io.WB_out := WB.io.out.muxOut
-  io.FWD_out := forwardingUnit.io.is_forwarding
 }

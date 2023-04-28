@@ -65,7 +65,7 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.startPipeline.poke(true.B)
       dut.clock.step(4)
       dut.io.debug.get.out.expect(1.U)
-      dut.io.startPipeline.get.poke(false.B)
+      dut.io.startPipeline.poke(false.B)
       val store = "sw x1, 4(x2)"
       FillInstructionMemory(store, dut.clock, dut.io.memIO)
       dut.io.startPipeline.poke(true.B)
@@ -74,13 +74,13 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.debug.get.memoryIO.wrData.expect(1.U)
       dut.io.debug.get.memoryIO.wrAddr.expect(4.U)
       dut.clock.step(1)
-      dut.io.startPipeline.get.poke(false.B)
+      dut.io.startPipeline.poke(false.B)
       val load = "lw x3, 4(x2)"
       FillInstructionMemory(load, dut.clock, dut.io.memIO)
       dut.io.startPipeline.poke(true.B)
       dut.clock.step(4)
       dut.io.debug.get.out.expect(1.U)
-      dut.io.startPipeline.get.poke(false.B)
+      dut.io.startPipeline.poke(false.B)
     }
   }
 

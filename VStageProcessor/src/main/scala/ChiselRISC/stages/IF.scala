@@ -13,7 +13,10 @@ class IF(datawidth: Int, depth: Int, simulation: Boolean = false) extends Module
     val out = new IF_ID_IO(datawidth)
     val newPCValue = Input(UInt(datawidth.W)) //ALU calculated Addr
     val changePC = Input(Bool())
-    val memIO = Flipped(new memoryInterface(datawidth))
+    val memIO = new Bundle{
+      val ready = Input(Bool())
+      val writeData = Input(UInt(datawidth.W))
+    }
     val startPC = if(simulation) Some(Input(Bool())) else None
   })
   // ----- Testing ------------
@@ -23,47 +26,55 @@ class IF(datawidth: Int, depth: Int, simulation: Boolean = false) extends Module
   val outReg = RegEnable(io.out, !io.stallReg)
 
   //Init signals
-  PC.io.memIO.Response.ready := WireInit(false.B)
-  PC.io.memIO.Response.nonEmpty := WireInit(false.B)
-  PC.io.memIO.Response.data := WireInit(0.U(datawidth.W))
-  instMem.io.memIO.Request.valid := WireInit(false.B)
-  instMem.io.memIO.Request.addr := WireInit(0.U(datawidth.W))
-  instMem.io.memIO.Request.writeData := WireInit(0.U(datawidth.W))
-  instMem.io.memIO.write.ready := WireInit(false.B)
-  instMem.io.memIO.write.data := WireInit(0.U(datawidth.W))
+//  PC.io.memIO.Response.ready := WireInit(false.B)
+//  PC.io.memIO.Response.nonEmpty := WireInit(false.B)
+//  PC.io.memIO.Response.data := WireInit(0.U(datawidth.W))
+//  instMem.io.memIO.Request.valid := WireInit(false.B)
+//  instMem.io.memIO.Request.addr := WireInit(0.U(datawidth.W))
+//  instMem.io.memIO.Request.writeData := WireInit(0.U(datawidth.W))
+//  instMem.io.memIO.write.ready := WireInit(false.B)
+//  instMem.io.memIO.write.data := WireInit(0.U(datawidth.W))
+  // Program counter
+  PC.io.memIO.nonEmpty := DontCare
+  PC.io.memIO.ready := WireInit(false.B)
   PC.io.in := WireInit(0.U(datawidth.W))
-  instMem.io.memIO <> PC.io.memIO
-  io.memIO.Request := DontCare
-  io.memIO.Response := DontCare
+  // Instruction memory
+  instMem.io.memIO.valid := WireInit(false.B)
+  instMem.io.memIO.write := WireInit(false.B)
+  //instMem.io.writeData := WireInit(0.U(datawidth.W))
+  // Connecting the PC to the Instmem
+  instMem.io.memIO.write := io.memIO.ready
+  instMem.io.memIO.writeData := io.memIO.writeData
+  instMem.io.memIO.valid := PC.io.memIO.valid
+  instMem.io.memIO.addr := PC.io.memIO.addr
+  //instMem.io.memIO <> PC.io.memIO
 
 
-  val pc = WireDefault(PC.io.memIO.Request.addr)
+  val pc = WireDefault(PC.io.memIO.addr)
 
 
   val addMux = Mux(io.changePC, io.newPCValue, pc)
 
-  instMem.io.memIO.write.ready := io.memIO.write.ready
-  instMem.io.memIO.write.data := io.memIO.write.data
 
   if (simulation)
-    Some(when(!instMem.io.memIO.Response.nonEmpty && io.startPC.get) { // For simulating and testing
-      PC.io.memIO.Response.ready := true.B
-      PC.io.in := Mux(io.changePC, io.newPCValue, pc + 4.U)
+    Some(when(!instMem.io.memIO.nonEmpty && io.startPC.get) { // For simulating and testing
+      PC.io.memIO.ready := true.B
+      PC.io.in:= Mux(io.changePC, io.newPCValue, pc + 4.U)
     }.otherwise {
-      PC.io.memIO.Response.ready := false.B
+      PC.io.memIO.ready := false.B
       PC.io.in := addMux
     })
   else
-    (when(!instMem.io.memIO.Response.nonEmpty) { // For FPGA implementation
-      PC.io.memIO.Response.ready := true.B
+    (when(!instMem.io.memIO.nonEmpty) { // For FPGA implementation
+      PC.io.memIO.ready := true.B
       PC.io.in := Mux(io.changePC, io.newPCValue, pc + 4.U)
     }.otherwise {
-      PC.io.memIO.Response.ready := false.B
+      PC.io.memIO.ready := false.B
       PC.io.in := addMux
     })
 
   val muxOutPC = Mux(io.stallReg, pc, addMux)
-  val muxOutInst = Mux(io.flush, 0.U, instMem.io.memIO.Response.data)
+  val muxOutInst = Mux(io.flush, 0.U, instMem.io.memOut)
 
   outReg.inst := muxOutInst
   outReg.pc := muxOutPC

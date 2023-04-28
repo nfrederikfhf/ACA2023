@@ -16,24 +16,24 @@ class InstMemSpec extends AnyFlatSpec with ChiselScalatestTester{
     test(new InstructionMemory(100, 32)) { dut =>
       // Write some data to the memory
       for (i <- 0 until dut.actualDepth) {
-        dut.io.memIO.write.ready.poke(true.B)
-        dut.io.memIO.write.data.poke(i.U(32.W))
+        dut.io.memIO.write.poke(true.B)
+        dut.io.memIO.writeData.poke(i.U(32.W))
         dut.clock.step(1)
-        dut.io.memIO.write.ready.poke(false.B)
+        dut.io.memIO.write.poke(false.B)
         dut.clock.step(1)
       }
 
       // Read some data from the memory
       for (i <- 0 until dut.actualDepth - 1) {
         var j= i * 4
-        dut.io.memIO.Response.nonEmpty.expect(false.B)
-        dut.io.memIO.Request.addr.poke((j.U(32.W)))
+        dut.io.memIO.nonEmpty.expect(false.B)
+        dut.io.memIO.addr.poke((j.U(32.W)))
         dut.clock.step(1)
-        dut.io.memIO.Request.valid.poke(true.B)
-        dut.io.memIO.Response.data.expect(i.U(32.W))
+        dut.io.memIO.valid.poke(true.B)
+        dut.io.memOut.expect(i.U(32.W))
         dut.clock.step(1)
-        dut.io.memIO.Request.valid.poke(false.B)
-        dut.io.memIO.Response.data.expect(0.U(32.W))
+        dut.io.memIO.valid.poke(false.B)
+        dut.io.memOut.expect(0.U(32.W))
         dut.clock.step(1)
       }
 
@@ -42,9 +42,9 @@ class InstMemSpec extends AnyFlatSpec with ChiselScalatestTester{
   it should "not allow reading from empty memory" in {
     test(new InstructionMemory(100,32)) {dut =>
       // Try to read from an empty memory
-      dut.io.memIO.Request.addr.poke((1.U(32.W)))
+      dut.io.memIO.addr.poke((1.U(32.W)))
       dut.clock.step(1)
-      dut.io.memIO.Response.ready.expect(false.B)
+      dut.io.memIO.nonEmpty.expect(true.B)
     }
   }
 
@@ -62,18 +62,18 @@ class InstMemSpec extends AnyFlatSpec with ChiselScalatestTester{
         instructionsArray(i) = "h" + instructionsArray(i)
       }
       FillInstructionMemory(input, dut.clock, dut.io.memIO)
-      dut.io.memIO.Response.nonEmpty.expect(false.B)
+      dut.io.memIO.nonEmpty.expect(false.B)
 
       for (i <- 0 until instructionsArray.length) {
         var j = i * 4
-        dut.io.memIO.Response.nonEmpty.expect(false.B)
-        dut.io.memIO.Request.addr.poke((j.U(32.W)))
+        dut.io.memIO.nonEmpty.expect(false.B)
+        dut.io.memIO.addr.poke((j.U(32.W)))
         dut.clock.step(1)
-        dut.io.memIO.Request.valid.poke(true.B)
-        dut.io.memIO.Response.data.expect(instructionsArray(i).U(32.W))
+        dut.io.memIO.valid.poke(true.B)
+        dut.io.memOut.expect(instructionsArray(i).U(32.W))
         dut.clock.step(1)
-        dut.io.memIO.Request.valid.poke(false.B)
-        dut.io.memIO.Response.data.expect(0.U(32.W))
+        dut.io.memIO.valid.poke(false.B)
+        dut.io.memOut.expect(0.U(32.W))
         dut.clock.step(1)
       }
     }

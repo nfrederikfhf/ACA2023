@@ -17,16 +17,20 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
   val actualDepth = math.pow(2, bitwidth).toInt // 2^bidwidth
 
   val io = IO(new Bundle {
-    val memIO = Flipped(new memoryInterface(datawidth)) // Memory interface
+    val memIO = Flipped(new memoryInterfaceLight(datawidth)) // Memory interface
+    val memOut = Output(UInt(datawidth.W)) // Data read from memory
   })
   // Buffer status signals
   val bufferEmpty = WireInit(true.B)
   val bufferFull = WireInit(false.B)
 
   // Initialise the signals
-  io.memIO.Response.data := WireInit(0.U(datawidth.W))
-  io.memIO.Response.ready := WireInit(false.B)
-  io.memIO.Response.nonEmpty := WireInit(false.B)
+//  io.memIO.Response.data := WireInit(0.U(datawidth.W))
+//  io.memIO.Response.ready := WireInit(false.B)
+//  io.memIO.Response.nonEmpty := WireInit(false.B)
+  io.memOut := WireInit(0.U(datawidth.W))
+  io.memIO.ready := DontCare
+  io.memIO.nonEmpty := WireInit(false.B)
   val readAddr = WireInit(0.U(bitwidth.W))
 
   // Pointers to handle empty and full logic
@@ -40,15 +44,15 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
   bufferFull := count >= actualDepth.U - 1.U
 
   // Ready to receive a read address if memory is not empty
-  io.memIO.Response.nonEmpty := bufferEmpty
+  io.memIO.nonEmpty := bufferEmpty
 
   // Instantiate the memory
   val mem = Reg(Vec(actualDepth, UInt(datawidth.W)))
 
   // Read from memory
-  when(io.memIO.Request.valid && !bufferEmpty) {
-    readAddr := io.memIO.Request.addr >> 2 // Divide by 4 to get the correct read address
-    io.memIO.Response.data := mem(readAddr)
+  when(io.memIO.valid && !bufferEmpty) {
+    readAddr := io.memIO.addr >> 2 // Divide by 4 to get the correct read address
+    io.memOut := mem(readAddr)
     readPtr := readPtr + 1.U
     when(readPtr >= actualDepth.U) {
       readPtr := 0.U // Wrap around
@@ -56,8 +60,8 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
   }
 
   // Write to memory - should only be needed for testing
-  when(io.memIO.write.ready && !bufferFull) {
-    mem(writePtr) := io.memIO.write.data
+  when(io.memIO.write && !bufferFull) {
+    mem(writePtr) := io.memIO.writeData
     writePtr := writePtr + 1.U
 
     when(writePtr >= actualDepth.U) {
