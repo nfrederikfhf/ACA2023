@@ -11,7 +11,7 @@ class IFSpec extends AnyFlatSpec with ChiselScalatestTester{
       dut.clock.step(1)
       dut.io.memIO.ready.poke(true.B)
       dut.io.memIO.writeData.poke("h81234523".U(32.W))
-      dut.io.startPC.get.poke(true.B)
+      dut.io.startPC.poke(true.B)
       dut.clock.step(2)
       dut.io.memIO.ready.poke(false.B)
       dut.io.out.inst.expect("h81234523".U(32.W))

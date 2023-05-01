@@ -1,6 +1,8 @@
 module ProgramCounter(
   input         clock,
   input         reset,
+  input         io_memIO_ready,
+  output        io_memIO_valid,
   output [31:0] io_memIO_addr,
   input  [31:0] io_in
 );
@@ -8,6 +10,7 @@ module ProgramCounter(
   reg [31:0] _RAND_0;
 `endif // RANDOMIZE_REG_INIT
   reg [31:0] reg_; // @[ProgramCounter.scala 19:20]
+  assign io_memIO_valid = io_memIO_ready; // @[ProgramCounter.scala 21:23 22:20 24:20]
   assign io_memIO_addr = reg_; // @[ProgramCounter.scala 26:19]
   always @(posedge clock) begin
     if (reset) begin // @[ProgramCounter.scala 19:20]
@@ -62,19 +65,1072 @@ end // initial
 `endif
 `endif // SYNTHESIS
 endmodule
-module InstructionMemoryFPGA(
+module InstructionMemory(
   input         clock,
+  input         reset,
+  input         io_memIO_write,
+  input  [31:0] io_memIO_writeData,
+  input         io_memIO_valid,
+  output        io_memIO_nonEmpty,
   input  [31:0] io_memIO_addr,
   output [31:0] io_memOut
 );
-  reg [31:0] mem [0:127]; // @[InstructionMemoryFPGA.scala 23:16]
-  wire  mem_io_memOut_MPORT_en; // @[InstructionMemoryFPGA.scala 23:16]
-  wire [6:0] mem_io_memOut_MPORT_addr; // @[InstructionMemoryFPGA.scala 23:16]
-  wire [31:0] mem_io_memOut_MPORT_data; // @[InstructionMemoryFPGA.scala 23:16]
-  assign mem_io_memOut_MPORT_en = 1'h1;
-  assign mem_io_memOut_MPORT_addr = io_memIO_addr[8:2];
-  assign mem_io_memOut_MPORT_data = mem[mem_io_memOut_MPORT_addr]; // @[InstructionMemoryFPGA.scala 23:16]
-  assign io_memOut = mem_io_memOut_MPORT_data; // @[InstructionMemoryFPGA.scala 17:13 32:24 34:15]
+`ifdef RANDOMIZE_REG_INIT
+  reg [31:0] _RAND_0;
+  reg [31:0] _RAND_1;
+  reg [31:0] _RAND_2;
+  reg [31:0] _RAND_3;
+  reg [31:0] _RAND_4;
+  reg [31:0] _RAND_5;
+  reg [31:0] _RAND_6;
+  reg [31:0] _RAND_7;
+  reg [31:0] _RAND_8;
+  reg [31:0] _RAND_9;
+  reg [31:0] _RAND_10;
+  reg [31:0] _RAND_11;
+  reg [31:0] _RAND_12;
+  reg [31:0] _RAND_13;
+  reg [31:0] _RAND_14;
+  reg [31:0] _RAND_15;
+  reg [31:0] _RAND_16;
+  reg [31:0] _RAND_17;
+  reg [31:0] _RAND_18;
+  reg [31:0] _RAND_19;
+  reg [31:0] _RAND_20;
+  reg [31:0] _RAND_21;
+  reg [31:0] _RAND_22;
+  reg [31:0] _RAND_23;
+  reg [31:0] _RAND_24;
+  reg [31:0] _RAND_25;
+  reg [31:0] _RAND_26;
+  reg [31:0] _RAND_27;
+  reg [31:0] _RAND_28;
+  reg [31:0] _RAND_29;
+  reg [31:0] _RAND_30;
+  reg [31:0] _RAND_31;
+  reg [31:0] _RAND_32;
+  reg [31:0] _RAND_33;
+  reg [31:0] _RAND_34;
+  reg [31:0] _RAND_35;
+  reg [31:0] _RAND_36;
+  reg [31:0] _RAND_37;
+  reg [31:0] _RAND_38;
+  reg [31:0] _RAND_39;
+  reg [31:0] _RAND_40;
+  reg [31:0] _RAND_41;
+  reg [31:0] _RAND_42;
+  reg [31:0] _RAND_43;
+  reg [31:0] _RAND_44;
+  reg [31:0] _RAND_45;
+  reg [31:0] _RAND_46;
+  reg [31:0] _RAND_47;
+  reg [31:0] _RAND_48;
+  reg [31:0] _RAND_49;
+  reg [31:0] _RAND_50;
+  reg [31:0] _RAND_51;
+  reg [31:0] _RAND_52;
+  reg [31:0] _RAND_53;
+  reg [31:0] _RAND_54;
+  reg [31:0] _RAND_55;
+  reg [31:0] _RAND_56;
+  reg [31:0] _RAND_57;
+  reg [31:0] _RAND_58;
+  reg [31:0] _RAND_59;
+  reg [31:0] _RAND_60;
+  reg [31:0] _RAND_61;
+  reg [31:0] _RAND_62;
+  reg [31:0] _RAND_63;
+  reg [31:0] _RAND_64;
+  reg [31:0] _RAND_65;
+  reg [31:0] _RAND_66;
+  reg [31:0] _RAND_67;
+  reg [31:0] _RAND_68;
+  reg [31:0] _RAND_69;
+  reg [31:0] _RAND_70;
+  reg [31:0] _RAND_71;
+  reg [31:0] _RAND_72;
+  reg [31:0] _RAND_73;
+  reg [31:0] _RAND_74;
+  reg [31:0] _RAND_75;
+  reg [31:0] _RAND_76;
+  reg [31:0] _RAND_77;
+  reg [31:0] _RAND_78;
+  reg [31:0] _RAND_79;
+  reg [31:0] _RAND_80;
+  reg [31:0] _RAND_81;
+  reg [31:0] _RAND_82;
+  reg [31:0] _RAND_83;
+  reg [31:0] _RAND_84;
+  reg [31:0] _RAND_85;
+  reg [31:0] _RAND_86;
+  reg [31:0] _RAND_87;
+  reg [31:0] _RAND_88;
+  reg [31:0] _RAND_89;
+  reg [31:0] _RAND_90;
+  reg [31:0] _RAND_91;
+  reg [31:0] _RAND_92;
+  reg [31:0] _RAND_93;
+  reg [31:0] _RAND_94;
+  reg [31:0] _RAND_95;
+  reg [31:0] _RAND_96;
+  reg [31:0] _RAND_97;
+  reg [31:0] _RAND_98;
+  reg [31:0] _RAND_99;
+  reg [31:0] _RAND_100;
+  reg [31:0] _RAND_101;
+  reg [31:0] _RAND_102;
+  reg [31:0] _RAND_103;
+  reg [31:0] _RAND_104;
+  reg [31:0] _RAND_105;
+  reg [31:0] _RAND_106;
+  reg [31:0] _RAND_107;
+  reg [31:0] _RAND_108;
+  reg [31:0] _RAND_109;
+  reg [31:0] _RAND_110;
+  reg [31:0] _RAND_111;
+  reg [31:0] _RAND_112;
+  reg [31:0] _RAND_113;
+  reg [31:0] _RAND_114;
+  reg [31:0] _RAND_115;
+  reg [31:0] _RAND_116;
+  reg [31:0] _RAND_117;
+  reg [31:0] _RAND_118;
+  reg [31:0] _RAND_119;
+  reg [31:0] _RAND_120;
+  reg [31:0] _RAND_121;
+  reg [31:0] _RAND_122;
+  reg [31:0] _RAND_123;
+  reg [31:0] _RAND_124;
+  reg [31:0] _RAND_125;
+  reg [31:0] _RAND_126;
+  reg [31:0] _RAND_127;
+  reg [31:0] _RAND_128;
+  reg [31:0] _RAND_129;
+`endif // RANDOMIZE_REG_INIT
+  reg [6:0] readPtr; // @[InstructionMemory.scala 38:24]
+  reg [6:0] writePtr; // @[InstructionMemory.scala 39:25]
+  wire [6:0] difference = writePtr - readPtr; // @[InstructionMemory.scala 81:29]
+  wire [7:0] _GEN_391 = {{1'd0}, difference}; // @[InstructionMemory.scala 83:25]
+  wire [7:0] _count_T_1 = _GEN_391 + 8'h80; // @[InstructionMemory.scala 83:25]
+  wire [7:0] _GEN_390 = difference <= 7'h0 ? _count_T_1 : {{1'd0}, difference}; // @[InstructionMemory.scala 82:27 83:11 85:11]
+  wire [6:0] count = _GEN_390[6:0];
+  wire  bufferEmpty = count == 7'h0; // @[InstructionMemory.scala 43:24]
+  wire [7:0] _bufferFull_T_1 = 8'h80 - 8'h1; // @[InstructionMemory.scala 45:40]
+  wire [7:0] _GEN_392 = {{1'd0}, count}; // @[InstructionMemory.scala 45:23]
+  wire  bufferFull = _GEN_392 >= _bufferFull_T_1; // @[InstructionMemory.scala 45:23]
+  reg [31:0] mem_0; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_1; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_2; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_3; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_4; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_5; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_6; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_7; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_8; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_9; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_10; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_11; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_12; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_13; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_14; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_15; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_16; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_17; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_18; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_19; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_20; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_21; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_22; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_23; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_24; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_25; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_26; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_27; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_28; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_29; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_30; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_31; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_32; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_33; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_34; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_35; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_36; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_37; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_38; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_39; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_40; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_41; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_42; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_43; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_44; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_45; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_46; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_47; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_48; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_49; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_50; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_51; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_52; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_53; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_54; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_55; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_56; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_57; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_58; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_59; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_60; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_61; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_62; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_63; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_64; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_65; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_66; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_67; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_68; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_69; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_70; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_71; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_72; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_73; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_74; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_75; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_76; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_77; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_78; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_79; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_80; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_81; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_82; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_83; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_84; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_85; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_86; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_87; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_88; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_89; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_90; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_91; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_92; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_93; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_94; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_95; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_96; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_97; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_98; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_99; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_100; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_101; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_102; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_103; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_104; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_105; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_106; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_107; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_108; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_109; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_110; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_111; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_112; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_113; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_114; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_115; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_116; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_117; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_118; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_119; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_120; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_121; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_122; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_123; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_124; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_125; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_126; // @[InstructionMemory.scala 52:18]
+  reg [31:0] mem_127; // @[InstructionMemory.scala 52:18]
+  wire [29:0] _GEN_129 = io_memIO_valid & ~bufferEmpty ? io_memIO_addr[31:2] : 30'h0; // @[InstructionMemory.scala 62:40 63:14]
+  wire [6:0] readAddr = _GEN_129[6:0];
+  wire [31:0] _GEN_1 = 7'h1 == readAddr ? mem_1 : mem_0; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_2 = 7'h2 == readAddr ? mem_2 : _GEN_1; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_3 = 7'h3 == readAddr ? mem_3 : _GEN_2; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_4 = 7'h4 == readAddr ? mem_4 : _GEN_3; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_5 = 7'h5 == readAddr ? mem_5 : _GEN_4; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_6 = 7'h6 == readAddr ? mem_6 : _GEN_5; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_7 = 7'h7 == readAddr ? mem_7 : _GEN_6; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_8 = 7'h8 == readAddr ? mem_8 : _GEN_7; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_9 = 7'h9 == readAddr ? mem_9 : _GEN_8; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_10 = 7'ha == readAddr ? mem_10 : _GEN_9; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_11 = 7'hb == readAddr ? mem_11 : _GEN_10; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_12 = 7'hc == readAddr ? mem_12 : _GEN_11; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_13 = 7'hd == readAddr ? mem_13 : _GEN_12; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_14 = 7'he == readAddr ? mem_14 : _GEN_13; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_15 = 7'hf == readAddr ? mem_15 : _GEN_14; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_16 = 7'h10 == readAddr ? mem_16 : _GEN_15; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_17 = 7'h11 == readAddr ? mem_17 : _GEN_16; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_18 = 7'h12 == readAddr ? mem_18 : _GEN_17; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_19 = 7'h13 == readAddr ? mem_19 : _GEN_18; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_20 = 7'h14 == readAddr ? mem_20 : _GEN_19; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_21 = 7'h15 == readAddr ? mem_21 : _GEN_20; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_22 = 7'h16 == readAddr ? mem_22 : _GEN_21; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_23 = 7'h17 == readAddr ? mem_23 : _GEN_22; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_24 = 7'h18 == readAddr ? mem_24 : _GEN_23; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_25 = 7'h19 == readAddr ? mem_25 : _GEN_24; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_26 = 7'h1a == readAddr ? mem_26 : _GEN_25; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_27 = 7'h1b == readAddr ? mem_27 : _GEN_26; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_28 = 7'h1c == readAddr ? mem_28 : _GEN_27; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_29 = 7'h1d == readAddr ? mem_29 : _GEN_28; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_30 = 7'h1e == readAddr ? mem_30 : _GEN_29; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_31 = 7'h1f == readAddr ? mem_31 : _GEN_30; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_32 = 7'h20 == readAddr ? mem_32 : _GEN_31; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_33 = 7'h21 == readAddr ? mem_33 : _GEN_32; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_34 = 7'h22 == readAddr ? mem_34 : _GEN_33; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_35 = 7'h23 == readAddr ? mem_35 : _GEN_34; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_36 = 7'h24 == readAddr ? mem_36 : _GEN_35; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_37 = 7'h25 == readAddr ? mem_37 : _GEN_36; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_38 = 7'h26 == readAddr ? mem_38 : _GEN_37; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_39 = 7'h27 == readAddr ? mem_39 : _GEN_38; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_40 = 7'h28 == readAddr ? mem_40 : _GEN_39; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_41 = 7'h29 == readAddr ? mem_41 : _GEN_40; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_42 = 7'h2a == readAddr ? mem_42 : _GEN_41; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_43 = 7'h2b == readAddr ? mem_43 : _GEN_42; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_44 = 7'h2c == readAddr ? mem_44 : _GEN_43; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_45 = 7'h2d == readAddr ? mem_45 : _GEN_44; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_46 = 7'h2e == readAddr ? mem_46 : _GEN_45; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_47 = 7'h2f == readAddr ? mem_47 : _GEN_46; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_48 = 7'h30 == readAddr ? mem_48 : _GEN_47; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_49 = 7'h31 == readAddr ? mem_49 : _GEN_48; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_50 = 7'h32 == readAddr ? mem_50 : _GEN_49; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_51 = 7'h33 == readAddr ? mem_51 : _GEN_50; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_52 = 7'h34 == readAddr ? mem_52 : _GEN_51; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_53 = 7'h35 == readAddr ? mem_53 : _GEN_52; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_54 = 7'h36 == readAddr ? mem_54 : _GEN_53; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_55 = 7'h37 == readAddr ? mem_55 : _GEN_54; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_56 = 7'h38 == readAddr ? mem_56 : _GEN_55; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_57 = 7'h39 == readAddr ? mem_57 : _GEN_56; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_58 = 7'h3a == readAddr ? mem_58 : _GEN_57; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_59 = 7'h3b == readAddr ? mem_59 : _GEN_58; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_60 = 7'h3c == readAddr ? mem_60 : _GEN_59; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_61 = 7'h3d == readAddr ? mem_61 : _GEN_60; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_62 = 7'h3e == readAddr ? mem_62 : _GEN_61; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_63 = 7'h3f == readAddr ? mem_63 : _GEN_62; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_64 = 7'h40 == readAddr ? mem_64 : _GEN_63; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_65 = 7'h41 == readAddr ? mem_65 : _GEN_64; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_66 = 7'h42 == readAddr ? mem_66 : _GEN_65; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_67 = 7'h43 == readAddr ? mem_67 : _GEN_66; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_68 = 7'h44 == readAddr ? mem_68 : _GEN_67; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_69 = 7'h45 == readAddr ? mem_69 : _GEN_68; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_70 = 7'h46 == readAddr ? mem_70 : _GEN_69; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_71 = 7'h47 == readAddr ? mem_71 : _GEN_70; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_72 = 7'h48 == readAddr ? mem_72 : _GEN_71; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_73 = 7'h49 == readAddr ? mem_73 : _GEN_72; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_74 = 7'h4a == readAddr ? mem_74 : _GEN_73; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_75 = 7'h4b == readAddr ? mem_75 : _GEN_74; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_76 = 7'h4c == readAddr ? mem_76 : _GEN_75; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_77 = 7'h4d == readAddr ? mem_77 : _GEN_76; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_78 = 7'h4e == readAddr ? mem_78 : _GEN_77; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_79 = 7'h4f == readAddr ? mem_79 : _GEN_78; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_80 = 7'h50 == readAddr ? mem_80 : _GEN_79; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_81 = 7'h51 == readAddr ? mem_81 : _GEN_80; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_82 = 7'h52 == readAddr ? mem_82 : _GEN_81; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_83 = 7'h53 == readAddr ? mem_83 : _GEN_82; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_84 = 7'h54 == readAddr ? mem_84 : _GEN_83; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_85 = 7'h55 == readAddr ? mem_85 : _GEN_84; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_86 = 7'h56 == readAddr ? mem_86 : _GEN_85; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_87 = 7'h57 == readAddr ? mem_87 : _GEN_86; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_88 = 7'h58 == readAddr ? mem_88 : _GEN_87; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_89 = 7'h59 == readAddr ? mem_89 : _GEN_88; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_90 = 7'h5a == readAddr ? mem_90 : _GEN_89; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_91 = 7'h5b == readAddr ? mem_91 : _GEN_90; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_92 = 7'h5c == readAddr ? mem_92 : _GEN_91; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_93 = 7'h5d == readAddr ? mem_93 : _GEN_92; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_94 = 7'h5e == readAddr ? mem_94 : _GEN_93; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_95 = 7'h5f == readAddr ? mem_95 : _GEN_94; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_96 = 7'h60 == readAddr ? mem_96 : _GEN_95; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_97 = 7'h61 == readAddr ? mem_97 : _GEN_96; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_98 = 7'h62 == readAddr ? mem_98 : _GEN_97; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_99 = 7'h63 == readAddr ? mem_99 : _GEN_98; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_100 = 7'h64 == readAddr ? mem_100 : _GEN_99; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_101 = 7'h65 == readAddr ? mem_101 : _GEN_100; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_102 = 7'h66 == readAddr ? mem_102 : _GEN_101; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_103 = 7'h67 == readAddr ? mem_103 : _GEN_102; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_104 = 7'h68 == readAddr ? mem_104 : _GEN_103; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_105 = 7'h69 == readAddr ? mem_105 : _GEN_104; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_106 = 7'h6a == readAddr ? mem_106 : _GEN_105; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_107 = 7'h6b == readAddr ? mem_107 : _GEN_106; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_108 = 7'h6c == readAddr ? mem_108 : _GEN_107; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_109 = 7'h6d == readAddr ? mem_109 : _GEN_108; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_110 = 7'h6e == readAddr ? mem_110 : _GEN_109; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_111 = 7'h6f == readAddr ? mem_111 : _GEN_110; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_112 = 7'h70 == readAddr ? mem_112 : _GEN_111; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_113 = 7'h71 == readAddr ? mem_113 : _GEN_112; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_114 = 7'h72 == readAddr ? mem_114 : _GEN_113; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_115 = 7'h73 == readAddr ? mem_115 : _GEN_114; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_116 = 7'h74 == readAddr ? mem_116 : _GEN_115; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_117 = 7'h75 == readAddr ? mem_117 : _GEN_116; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_118 = 7'h76 == readAddr ? mem_118 : _GEN_117; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_119 = 7'h77 == readAddr ? mem_119 : _GEN_118; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_120 = 7'h78 == readAddr ? mem_120 : _GEN_119; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_121 = 7'h79 == readAddr ? mem_121 : _GEN_120; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_122 = 7'h7a == readAddr ? mem_122 : _GEN_121; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_123 = 7'h7b == readAddr ? mem_123 : _GEN_122; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_124 = 7'h7c == readAddr ? mem_124 : _GEN_123; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_125 = 7'h7d == readAddr ? mem_125 : _GEN_124; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_126 = 7'h7e == readAddr ? mem_126 : _GEN_125; // @[InstructionMemory.scala 64:{15,15}]
+  wire [31:0] _GEN_127 = 7'h7f == readAddr ? mem_127 : _GEN_126; // @[InstructionMemory.scala 64:{15,15}]
+  wire [6:0] _readPtr_T_1 = readPtr + 7'h1; // @[InstructionMemory.scala 65:24]
+  wire [6:0] _writePtr_T_1 = writePtr + 7'h1; // @[InstructionMemory.scala 74:26]
+  assign io_memIO_nonEmpty = count == 7'h0; // @[InstructionMemory.scala 43:24]
+  assign io_memOut = io_memIO_valid & ~bufferEmpty ? _GEN_127 : 32'h0; // @[InstructionMemory.scala 32:13 62:40 64:15]
+  always @(posedge clock) begin
+    if (reset) begin // @[InstructionMemory.scala 38:24]
+      readPtr <= 7'h0; // @[InstructionMemory.scala 38:24]
+    end else if (io_memIO_valid & ~bufferEmpty) begin // @[InstructionMemory.scala 62:40]
+      readPtr <= _readPtr_T_1;
+    end
+    if (reset) begin // @[InstructionMemory.scala 39:25]
+      writePtr <= 7'h0; // @[InstructionMemory.scala 39:25]
+    end else if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      writePtr <= _writePtr_T_1;
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h0 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_0 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h1 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_1 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h2 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_2 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h3 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_3 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h4 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_4 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h5 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_5 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h6 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_6 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h7 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_7 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h8 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_8 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h9 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_9 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'ha == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_10 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'hb == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_11 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'hc == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_12 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'hd == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_13 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'he == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_14 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'hf == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_15 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h10 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_16 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h11 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_17 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h12 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_18 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h13 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_19 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h14 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_20 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h15 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_21 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h16 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_22 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h17 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_23 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h18 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_24 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h19 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_25 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h1a == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_26 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h1b == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_27 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h1c == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_28 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h1d == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_29 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h1e == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_30 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h1f == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_31 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h20 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_32 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h21 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_33 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h22 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_34 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h23 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_35 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h24 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_36 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h25 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_37 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h26 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_38 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h27 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_39 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h28 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_40 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h29 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_41 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h2a == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_42 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h2b == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_43 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h2c == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_44 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h2d == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_45 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h2e == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_46 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h2f == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_47 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h30 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_48 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h31 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_49 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h32 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_50 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h33 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_51 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h34 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_52 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h35 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_53 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h36 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_54 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h37 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_55 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h38 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_56 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h39 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_57 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h3a == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_58 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h3b == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_59 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h3c == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_60 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h3d == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_61 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h3e == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_62 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h3f == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_63 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h40 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_64 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h41 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_65 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h42 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_66 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h43 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_67 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h44 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_68 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h45 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_69 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h46 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_70 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h47 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_71 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h48 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_72 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h49 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_73 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h4a == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_74 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h4b == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_75 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h4c == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_76 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h4d == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_77 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h4e == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_78 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h4f == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_79 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h50 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_80 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h51 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_81 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h52 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_82 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h53 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_83 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h54 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_84 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h55 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_85 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h56 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_86 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h57 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_87 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h58 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_88 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h59 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_89 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h5a == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_90 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h5b == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_91 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h5c == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_92 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h5d == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_93 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h5e == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_94 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h5f == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_95 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h60 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_96 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h61 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_97 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h62 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_98 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h63 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_99 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h64 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_100 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h65 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_101 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h66 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_102 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h67 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_103 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h68 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_104 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h69 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_105 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h6a == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_106 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h6b == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_107 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h6c == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_108 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h6d == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_109 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h6e == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_110 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h6f == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_111 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h70 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_112 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h71 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_113 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h72 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_114 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h73 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_115 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h74 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_116 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h75 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_117 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h76 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_118 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h77 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_119 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h78 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_120 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h79 == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_121 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h7a == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_122 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h7b == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_123 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h7c == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_124 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h7d == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_125 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h7e == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_126 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+    if (io_memIO_write & ~bufferFull) begin // @[InstructionMemory.scala 72:39]
+      if (7'h7f == writePtr) begin // @[InstructionMemory.scala 73:19]
+        mem_127 <= io_memIO_writeData; // @[InstructionMemory.scala 73:19]
+      end
+    end
+  end
 // Register and memory initialization
 `ifdef RANDOMIZE_GARBAGE_ASSIGN
 `define RANDOMIZE
@@ -91,7 +1147,9 @@ module InstructionMemoryFPGA(
 `ifndef RANDOM
 `define RANDOM $random
 `endif
+`ifdef RANDOMIZE_MEM_INIT
   integer initvar;
+`endif
 `ifndef SYNTHESIS
 `ifdef FIRRTL_BEFORE_INITIAL
 `FIRRTL_BEFORE_INITIAL
@@ -108,8 +1166,269 @@ initial begin
         #0.002 begin end
       `endif
     `endif
+`ifdef RANDOMIZE_REG_INIT
+  _RAND_0 = {1{`RANDOM}};
+  readPtr = _RAND_0[6:0];
+  _RAND_1 = {1{`RANDOM}};
+  writePtr = _RAND_1[6:0];
+  _RAND_2 = {1{`RANDOM}};
+  mem_0 = _RAND_2[31:0];
+  _RAND_3 = {1{`RANDOM}};
+  mem_1 = _RAND_3[31:0];
+  _RAND_4 = {1{`RANDOM}};
+  mem_2 = _RAND_4[31:0];
+  _RAND_5 = {1{`RANDOM}};
+  mem_3 = _RAND_5[31:0];
+  _RAND_6 = {1{`RANDOM}};
+  mem_4 = _RAND_6[31:0];
+  _RAND_7 = {1{`RANDOM}};
+  mem_5 = _RAND_7[31:0];
+  _RAND_8 = {1{`RANDOM}};
+  mem_6 = _RAND_8[31:0];
+  _RAND_9 = {1{`RANDOM}};
+  mem_7 = _RAND_9[31:0];
+  _RAND_10 = {1{`RANDOM}};
+  mem_8 = _RAND_10[31:0];
+  _RAND_11 = {1{`RANDOM}};
+  mem_9 = _RAND_11[31:0];
+  _RAND_12 = {1{`RANDOM}};
+  mem_10 = _RAND_12[31:0];
+  _RAND_13 = {1{`RANDOM}};
+  mem_11 = _RAND_13[31:0];
+  _RAND_14 = {1{`RANDOM}};
+  mem_12 = _RAND_14[31:0];
+  _RAND_15 = {1{`RANDOM}};
+  mem_13 = _RAND_15[31:0];
+  _RAND_16 = {1{`RANDOM}};
+  mem_14 = _RAND_16[31:0];
+  _RAND_17 = {1{`RANDOM}};
+  mem_15 = _RAND_17[31:0];
+  _RAND_18 = {1{`RANDOM}};
+  mem_16 = _RAND_18[31:0];
+  _RAND_19 = {1{`RANDOM}};
+  mem_17 = _RAND_19[31:0];
+  _RAND_20 = {1{`RANDOM}};
+  mem_18 = _RAND_20[31:0];
+  _RAND_21 = {1{`RANDOM}};
+  mem_19 = _RAND_21[31:0];
+  _RAND_22 = {1{`RANDOM}};
+  mem_20 = _RAND_22[31:0];
+  _RAND_23 = {1{`RANDOM}};
+  mem_21 = _RAND_23[31:0];
+  _RAND_24 = {1{`RANDOM}};
+  mem_22 = _RAND_24[31:0];
+  _RAND_25 = {1{`RANDOM}};
+  mem_23 = _RAND_25[31:0];
+  _RAND_26 = {1{`RANDOM}};
+  mem_24 = _RAND_26[31:0];
+  _RAND_27 = {1{`RANDOM}};
+  mem_25 = _RAND_27[31:0];
+  _RAND_28 = {1{`RANDOM}};
+  mem_26 = _RAND_28[31:0];
+  _RAND_29 = {1{`RANDOM}};
+  mem_27 = _RAND_29[31:0];
+  _RAND_30 = {1{`RANDOM}};
+  mem_28 = _RAND_30[31:0];
+  _RAND_31 = {1{`RANDOM}};
+  mem_29 = _RAND_31[31:0];
+  _RAND_32 = {1{`RANDOM}};
+  mem_30 = _RAND_32[31:0];
+  _RAND_33 = {1{`RANDOM}};
+  mem_31 = _RAND_33[31:0];
+  _RAND_34 = {1{`RANDOM}};
+  mem_32 = _RAND_34[31:0];
+  _RAND_35 = {1{`RANDOM}};
+  mem_33 = _RAND_35[31:0];
+  _RAND_36 = {1{`RANDOM}};
+  mem_34 = _RAND_36[31:0];
+  _RAND_37 = {1{`RANDOM}};
+  mem_35 = _RAND_37[31:0];
+  _RAND_38 = {1{`RANDOM}};
+  mem_36 = _RAND_38[31:0];
+  _RAND_39 = {1{`RANDOM}};
+  mem_37 = _RAND_39[31:0];
+  _RAND_40 = {1{`RANDOM}};
+  mem_38 = _RAND_40[31:0];
+  _RAND_41 = {1{`RANDOM}};
+  mem_39 = _RAND_41[31:0];
+  _RAND_42 = {1{`RANDOM}};
+  mem_40 = _RAND_42[31:0];
+  _RAND_43 = {1{`RANDOM}};
+  mem_41 = _RAND_43[31:0];
+  _RAND_44 = {1{`RANDOM}};
+  mem_42 = _RAND_44[31:0];
+  _RAND_45 = {1{`RANDOM}};
+  mem_43 = _RAND_45[31:0];
+  _RAND_46 = {1{`RANDOM}};
+  mem_44 = _RAND_46[31:0];
+  _RAND_47 = {1{`RANDOM}};
+  mem_45 = _RAND_47[31:0];
+  _RAND_48 = {1{`RANDOM}};
+  mem_46 = _RAND_48[31:0];
+  _RAND_49 = {1{`RANDOM}};
+  mem_47 = _RAND_49[31:0];
+  _RAND_50 = {1{`RANDOM}};
+  mem_48 = _RAND_50[31:0];
+  _RAND_51 = {1{`RANDOM}};
+  mem_49 = _RAND_51[31:0];
+  _RAND_52 = {1{`RANDOM}};
+  mem_50 = _RAND_52[31:0];
+  _RAND_53 = {1{`RANDOM}};
+  mem_51 = _RAND_53[31:0];
+  _RAND_54 = {1{`RANDOM}};
+  mem_52 = _RAND_54[31:0];
+  _RAND_55 = {1{`RANDOM}};
+  mem_53 = _RAND_55[31:0];
+  _RAND_56 = {1{`RANDOM}};
+  mem_54 = _RAND_56[31:0];
+  _RAND_57 = {1{`RANDOM}};
+  mem_55 = _RAND_57[31:0];
+  _RAND_58 = {1{`RANDOM}};
+  mem_56 = _RAND_58[31:0];
+  _RAND_59 = {1{`RANDOM}};
+  mem_57 = _RAND_59[31:0];
+  _RAND_60 = {1{`RANDOM}};
+  mem_58 = _RAND_60[31:0];
+  _RAND_61 = {1{`RANDOM}};
+  mem_59 = _RAND_61[31:0];
+  _RAND_62 = {1{`RANDOM}};
+  mem_60 = _RAND_62[31:0];
+  _RAND_63 = {1{`RANDOM}};
+  mem_61 = _RAND_63[31:0];
+  _RAND_64 = {1{`RANDOM}};
+  mem_62 = _RAND_64[31:0];
+  _RAND_65 = {1{`RANDOM}};
+  mem_63 = _RAND_65[31:0];
+  _RAND_66 = {1{`RANDOM}};
+  mem_64 = _RAND_66[31:0];
+  _RAND_67 = {1{`RANDOM}};
+  mem_65 = _RAND_67[31:0];
+  _RAND_68 = {1{`RANDOM}};
+  mem_66 = _RAND_68[31:0];
+  _RAND_69 = {1{`RANDOM}};
+  mem_67 = _RAND_69[31:0];
+  _RAND_70 = {1{`RANDOM}};
+  mem_68 = _RAND_70[31:0];
+  _RAND_71 = {1{`RANDOM}};
+  mem_69 = _RAND_71[31:0];
+  _RAND_72 = {1{`RANDOM}};
+  mem_70 = _RAND_72[31:0];
+  _RAND_73 = {1{`RANDOM}};
+  mem_71 = _RAND_73[31:0];
+  _RAND_74 = {1{`RANDOM}};
+  mem_72 = _RAND_74[31:0];
+  _RAND_75 = {1{`RANDOM}};
+  mem_73 = _RAND_75[31:0];
+  _RAND_76 = {1{`RANDOM}};
+  mem_74 = _RAND_76[31:0];
+  _RAND_77 = {1{`RANDOM}};
+  mem_75 = _RAND_77[31:0];
+  _RAND_78 = {1{`RANDOM}};
+  mem_76 = _RAND_78[31:0];
+  _RAND_79 = {1{`RANDOM}};
+  mem_77 = _RAND_79[31:0];
+  _RAND_80 = {1{`RANDOM}};
+  mem_78 = _RAND_80[31:0];
+  _RAND_81 = {1{`RANDOM}};
+  mem_79 = _RAND_81[31:0];
+  _RAND_82 = {1{`RANDOM}};
+  mem_80 = _RAND_82[31:0];
+  _RAND_83 = {1{`RANDOM}};
+  mem_81 = _RAND_83[31:0];
+  _RAND_84 = {1{`RANDOM}};
+  mem_82 = _RAND_84[31:0];
+  _RAND_85 = {1{`RANDOM}};
+  mem_83 = _RAND_85[31:0];
+  _RAND_86 = {1{`RANDOM}};
+  mem_84 = _RAND_86[31:0];
+  _RAND_87 = {1{`RANDOM}};
+  mem_85 = _RAND_87[31:0];
+  _RAND_88 = {1{`RANDOM}};
+  mem_86 = _RAND_88[31:0];
+  _RAND_89 = {1{`RANDOM}};
+  mem_87 = _RAND_89[31:0];
+  _RAND_90 = {1{`RANDOM}};
+  mem_88 = _RAND_90[31:0];
+  _RAND_91 = {1{`RANDOM}};
+  mem_89 = _RAND_91[31:0];
+  _RAND_92 = {1{`RANDOM}};
+  mem_90 = _RAND_92[31:0];
+  _RAND_93 = {1{`RANDOM}};
+  mem_91 = _RAND_93[31:0];
+  _RAND_94 = {1{`RANDOM}};
+  mem_92 = _RAND_94[31:0];
+  _RAND_95 = {1{`RANDOM}};
+  mem_93 = _RAND_95[31:0];
+  _RAND_96 = {1{`RANDOM}};
+  mem_94 = _RAND_96[31:0];
+  _RAND_97 = {1{`RANDOM}};
+  mem_95 = _RAND_97[31:0];
+  _RAND_98 = {1{`RANDOM}};
+  mem_96 = _RAND_98[31:0];
+  _RAND_99 = {1{`RANDOM}};
+  mem_97 = _RAND_99[31:0];
+  _RAND_100 = {1{`RANDOM}};
+  mem_98 = _RAND_100[31:0];
+  _RAND_101 = {1{`RANDOM}};
+  mem_99 = _RAND_101[31:0];
+  _RAND_102 = {1{`RANDOM}};
+  mem_100 = _RAND_102[31:0];
+  _RAND_103 = {1{`RANDOM}};
+  mem_101 = _RAND_103[31:0];
+  _RAND_104 = {1{`RANDOM}};
+  mem_102 = _RAND_104[31:0];
+  _RAND_105 = {1{`RANDOM}};
+  mem_103 = _RAND_105[31:0];
+  _RAND_106 = {1{`RANDOM}};
+  mem_104 = _RAND_106[31:0];
+  _RAND_107 = {1{`RANDOM}};
+  mem_105 = _RAND_107[31:0];
+  _RAND_108 = {1{`RANDOM}};
+  mem_106 = _RAND_108[31:0];
+  _RAND_109 = {1{`RANDOM}};
+  mem_107 = _RAND_109[31:0];
+  _RAND_110 = {1{`RANDOM}};
+  mem_108 = _RAND_110[31:0];
+  _RAND_111 = {1{`RANDOM}};
+  mem_109 = _RAND_111[31:0];
+  _RAND_112 = {1{`RANDOM}};
+  mem_110 = _RAND_112[31:0];
+  _RAND_113 = {1{`RANDOM}};
+  mem_111 = _RAND_113[31:0];
+  _RAND_114 = {1{`RANDOM}};
+  mem_112 = _RAND_114[31:0];
+  _RAND_115 = {1{`RANDOM}};
+  mem_113 = _RAND_115[31:0];
+  _RAND_116 = {1{`RANDOM}};
+  mem_114 = _RAND_116[31:0];
+  _RAND_117 = {1{`RANDOM}};
+  mem_115 = _RAND_117[31:0];
+  _RAND_118 = {1{`RANDOM}};
+  mem_116 = _RAND_118[31:0];
+  _RAND_119 = {1{`RANDOM}};
+  mem_117 = _RAND_119[31:0];
+  _RAND_120 = {1{`RANDOM}};
+  mem_118 = _RAND_120[31:0];
+  _RAND_121 = {1{`RANDOM}};
+  mem_119 = _RAND_121[31:0];
+  _RAND_122 = {1{`RANDOM}};
+  mem_120 = _RAND_122[31:0];
+  _RAND_123 = {1{`RANDOM}};
+  mem_121 = _RAND_123[31:0];
+  _RAND_124 = {1{`RANDOM}};
+  mem_122 = _RAND_124[31:0];
+  _RAND_125 = {1{`RANDOM}};
+  mem_123 = _RAND_125[31:0];
+  _RAND_126 = {1{`RANDOM}};
+  mem_124 = _RAND_126[31:0];
+  _RAND_127 = {1{`RANDOM}};
+  mem_125 = _RAND_127[31:0];
+  _RAND_128 = {1{`RANDOM}};
+  mem_126 = _RAND_128[31:0];
+  _RAND_129 = {1{`RANDOM}};
+  mem_127 = _RAND_129[31:0];
+`endif // RANDOMIZE_REG_INIT
   `endif // RANDOMIZE
-  $readmemh("InputHex.txt", mem);
 end // initial
 `ifdef FIRRTL_AFTER_INITIAL
 `FIRRTL_AFTER_INITIAL
@@ -124,7 +1443,10 @@ module IF(
   output [31:0] io_out_inst,
   output [31:0] io_out_pc,
   input  [31:0] io_newPCValue,
-  input         io_changePC
+  input         io_changePC,
+  input         io_memIO_ready,
+  input  [31:0] io_memIO_writeData,
+  input         io_startPC
 );
 `ifdef RANDOMIZE_REG_INIT
   reg [31:0] _RAND_0;
@@ -132,40 +1454,61 @@ module IF(
 `endif // RANDOMIZE_REG_INIT
   wire  PC_clock; // @[IF.scala 23:18]
   wire  PC_reset; // @[IF.scala 23:18]
+  wire  PC_io_memIO_ready; // @[IF.scala 23:18]
+  wire  PC_io_memIO_valid; // @[IF.scala 23:18]
   wire [31:0] PC_io_memIO_addr; // @[IF.scala 23:18]
   wire [31:0] PC_io_in; // @[IF.scala 23:18]
-  wire  instMem_clock; // @[IF.scala 24:23]
-  wire [31:0] instMem_io_memIO_addr; // @[IF.scala 24:23]
-  wire [31:0] instMem_io_memOut; // @[IF.scala 24:23]
+  wire  instMem_clock; // @[IF.scala 25:23]
+  wire  instMem_reset; // @[IF.scala 25:23]
+  wire  instMem_io_memIO_write; // @[IF.scala 25:23]
+  wire [31:0] instMem_io_memIO_writeData; // @[IF.scala 25:23]
+  wire  instMem_io_memIO_valid; // @[IF.scala 25:23]
+  wire  instMem_io_memIO_nonEmpty; // @[IF.scala 25:23]
+  wire [31:0] instMem_io_memIO_addr; // @[IF.scala 25:23]
+  wire [31:0] instMem_io_memOut; // @[IF.scala 25:23]
   reg [31:0] outReg_inst; // @[Reg.scala 19:16]
   wire [31:0] pc = PC_io_memIO_addr;
-  wire [31:0] _PC_io_in_T_1 = pc + 32'h4; // @[IF.scala 71:54]
-  reg [31:0] io_out_pc_REG; // @[IF.scala 83:23]
+  wire [31:0] addMux = io_changePC ? io_newPCValue : pc; // @[IF.scala 57:19]
+  wire [31:0] _PC_io_in_T_1 = pc + 32'h4; // @[IF.scala 62:51]
+  wire [31:0] _PC_io_in_T_2 = io_changePC ? io_newPCValue : _PC_io_in_T_1; // @[IF.scala 62:19]
+  reg [31:0] io_out_pc_REG; // @[IF.scala 74:23]
   ProgramCounter PC ( // @[IF.scala 23:18]
     .clock(PC_clock),
     .reset(PC_reset),
+    .io_memIO_ready(PC_io_memIO_ready),
+    .io_memIO_valid(PC_io_memIO_valid),
     .io_memIO_addr(PC_io_memIO_addr),
     .io_in(PC_io_in)
   );
-  InstructionMemoryFPGA instMem ( // @[IF.scala 24:23]
+  InstructionMemory instMem ( // @[IF.scala 25:23]
     .clock(instMem_clock),
+    .reset(instMem_reset),
+    .io_memIO_write(instMem_io_memIO_write),
+    .io_memIO_writeData(instMem_io_memIO_writeData),
+    .io_memIO_valid(instMem_io_memIO_valid),
+    .io_memIO_nonEmpty(instMem_io_memIO_nonEmpty),
     .io_memIO_addr(instMem_io_memIO_addr),
     .io_memOut(instMem_io_memOut)
   );
-  assign io_out_inst = outReg_inst; // @[IF.scala 82:15]
-  assign io_out_pc = io_out_pc_REG; // @[IF.scala 83:13]
+  assign io_out_inst = outReg_inst; // @[IF.scala 73:15]
+  assign io_out_pc = io_out_pc_REG; // @[IF.scala 74:13]
   assign PC_clock = clock;
   assign PC_reset = reset;
-  assign PC_io_in = io_changePC ? io_newPCValue : _PC_io_in_T_1; // @[IF.scala 71:22]
+  assign PC_io_memIO_ready = ~instMem_io_memIO_nonEmpty & io_startPC; // @[IF.scala 60:35]
+  assign PC_io_in = ~instMem_io_memIO_nonEmpty & io_startPC ? _PC_io_in_T_2 : addMux; // @[IF.scala 60:50 62:13 65:14]
   assign instMem_clock = clock;
+  assign instMem_reset = reset;
+  assign instMem_io_memIO_write = io_memIO_ready; // @[IF.scala 47:26]
+  assign instMem_io_memIO_writeData = io_memIO_writeData; // @[IF.scala 48:30]
+  assign instMem_io_memIO_valid = PC_io_memIO_valid; // @[IF.scala 49:26]
   assign instMem_io_memIO_addr = PC_io_memIO_addr; // @[IF.scala 50:25]
   always @(posedge clock) begin
-    if (io_flush) begin // @[IF.scala 78:23]
+    if (io_flush) begin // @[IF.scala 69:23]
       outReg_inst <= 32'h0;
     end else begin
       outReg_inst <= instMem_io_memOut;
     end
-    if (io_stallReg) begin // @[IF.scala 83:27]
+    if (io_stallReg) begin // @[IF.scala 74:27]
       io_out_pc_REG <= pc;
     end else if (io_changePC) begin // @[IF.scala 57:19]
       io_out_pc_REG <= io_newPCValue;
@@ -1317,21 +2660,21 @@ module DualReadMem(
   reg [31:0] _RAND_4;
   reg [31:0] _RAND_5;
 `endif // RANDOMIZE_REG_INIT
-  reg [31:0] mem [0:127]; // @[DualReadMem.scala 34:43]
+  reg [31:0] mem [0:1023]; // @[DualReadMem.scala 34:43]
   wire  mem_rdData1_MPORT_en; // @[DualReadMem.scala 34:43]
-  wire [6:0] mem_rdData1_MPORT_addr; // @[DualReadMem.scala 34:43]
+  wire [9:0] mem_rdData1_MPORT_addr; // @[DualReadMem.scala 34:43]
   wire [31:0] mem_rdData1_MPORT_data; // @[DualReadMem.scala 34:43]
   wire  mem_rdData2_MPORT_en; // @[DualReadMem.scala 34:43]
-  wire [6:0] mem_rdData2_MPORT_addr; // @[DualReadMem.scala 34:43]
+  wire [9:0] mem_rdData2_MPORT_addr; // @[DualReadMem.scala 34:43]
   wire [31:0] mem_rdData2_MPORT_data; // @[DualReadMem.scala 34:43]
   wire [31:0] mem_MPORT_data; // @[DualReadMem.scala 34:43]
-  wire [6:0] mem_MPORT_addr; // @[DualReadMem.scala 34:43]
+  wire [9:0] mem_MPORT_addr; // @[DualReadMem.scala 34:43]
   wire  mem_MPORT_mask; // @[DualReadMem.scala 34:43]
   wire  mem_MPORT_en; // @[DualReadMem.scala 34:43]
   reg  mem_rdData1_MPORT_en_pipe_0;
-  reg [6:0] mem_rdData1_MPORT_addr_pipe_0;
+  reg [9:0] mem_rdData1_MPORT_addr_pipe_0;
   reg  mem_rdData2_MPORT_en_pipe_0;
-  reg [6:0] mem_rdData2_MPORT_addr_pipe_0;
+  reg [9:0] mem_rdData2_MPORT_addr_pipe_0;
   wire [4:0] readAddress1 = {{2'd0}, io_rdAddr1[4:2]};
   wire [31:0] rdData1 = mem_rdData1_MPORT_data; // @[DualReadMem.scala 36:17 40:13]
   reg  REG; // @[DualReadMem.scala 44:15]
@@ -1343,7 +2686,7 @@ module DualReadMem(
   assign mem_rdData2_MPORT_addr = mem_rdData2_MPORT_addr_pipe_0;
   assign mem_rdData2_MPORT_data = mem[mem_rdData2_MPORT_addr]; // @[DualReadMem.scala 34:43]
   assign mem_MPORT_data = io_wrData;
-  assign mem_MPORT_addr = {{2'd0}, writeAddress};
+  assign mem_MPORT_addr = {{5'd0}, writeAddress};
   assign mem_MPORT_mask = 1'h1;
   assign mem_MPORT_en = io_wren;
   assign io_rdData1 = REG ? rdData1 : 32'h0; // @[DualReadMem.scala 25:14 44:26 45:16]
@@ -1353,11 +2696,11 @@ module DualReadMem(
     end
     mem_rdData1_MPORT_en_pipe_0 <= io_rden;
     if (io_rden) begin
-      mem_rdData1_MPORT_addr_pipe_0 <= {{2'd0}, readAddress1};
+      mem_rdData1_MPORT_addr_pipe_0 <= {{5'd0}, readAddress1};
     end
     mem_rdData2_MPORT_en_pipe_0 <= io_rden;
     if (io_rden) begin
-      mem_rdData2_MPORT_addr_pipe_0 <= 7'h0;
+      mem_rdData2_MPORT_addr_pipe_0 <= 10'h0;
     end
     REG <= io_rden; // @[DualReadMem.scala 44:15]
   end
@@ -1398,18 +2741,18 @@ initial begin
     `endif
 `ifdef RANDOMIZE_MEM_INIT
   _RAND_0 = {1{`RANDOM}};
-  for (initvar = 0; initvar < 128; initvar = initvar+1)
+  for (initvar = 0; initvar < 1024; initvar = initvar+1)
     mem[initvar] = _RAND_0[31:0];
 `endif // RANDOMIZE_MEM_INIT
 `ifdef RANDOMIZE_REG_INIT
   _RAND_1 = {1{`RANDOM}};
   mem_rdData1_MPORT_en_pipe_0 = _RAND_1[0:0];
   _RAND_2 = {1{`RANDOM}};
-  mem_rdData1_MPORT_addr_pipe_0 = _RAND_2[6:0];
+  mem_rdData1_MPORT_addr_pipe_0 = _RAND_2[9:0];
   _RAND_3 = {1{`RANDOM}};
   mem_rdData2_MPORT_en_pipe_0 = _RAND_3[0:0];
   _RAND_4 = {1{`RANDOM}};
-  mem_rdData2_MPORT_addr_pipe_0 = _RAND_4[6:0];
+  mem_rdData2_MPORT_addr_pipe_0 = _RAND_4[9:0];
   _RAND_5 = {1{`RANDOM}};
   REG = _RAND_5[0:0];
 `endif // RANDOMIZE_REG_INIT
@@ -1705,133 +3048,138 @@ end // initial
 `endif // SYNTHESIS
 endmodule
 module ChiselRISC(
-  input         clock,
-  input         reset,
-  output        io_memIO_ready,
-  input         io_memIO_write,
-  input  [31:0] io_memIO_writeData,
-  input         io_memIO_valid,
-  output        io_memIO_nonEmpty,
-  input  [31:0] io_memIO_addr,
-  input         io_startPipeline,
-  output [6:0]  io_seg,
-  output [3:0]  io_an
+  input        clock,
+  input        reset,
+  input        io_startPipeline,
+  output [6:0] io_seg,
+  output [3:0] io_an,
+  output       io_led0,
+  input        io_add
 );
 `ifdef RANDOMIZE_REG_INIT
   reg [31:0] _RAND_0;
+  reg [31:0] _RAND_1;
+  reg [31:0] _RAND_2;
 `endif // RANDOMIZE_REG_INIT
-  wire  IF_clock; // @[ChiselRISC.scala 27:20]
-  wire  IF_reset; // @[ChiselRISC.scala 27:20]
-  wire  IF_io_stallReg; // @[ChiselRISC.scala 27:20]
-  wire  IF_io_flush; // @[ChiselRISC.scala 27:20]
-  wire [31:0] IF_io_out_inst; // @[ChiselRISC.scala 27:20]
-  wire [31:0] IF_io_out_pc; // @[ChiselRISC.scala 27:20]
-  wire [31:0] IF_io_newPCValue; // @[ChiselRISC.scala 27:20]
-  wire  IF_io_changePC; // @[ChiselRISC.scala 27:20]
-  wire  ID_clock; // @[ChiselRISC.scala 28:20]
-  wire  ID_io_stallReg; // @[ChiselRISC.scala 28:20]
-  wire  ID_io_flush; // @[ChiselRISC.scala 28:20]
-  wire [31:0] ID_io_in_inst; // @[ChiselRISC.scala 28:20]
-  wire [31:0] ID_io_in_pc; // @[ChiselRISC.scala 28:20]
-  wire [4:0] ID_io_wbIn_rd; // @[ChiselRISC.scala 28:20]
-  wire [31:0] ID_io_wbIn_muxOut; // @[ChiselRISC.scala 28:20]
-  wire  ID_io_wbIn_writeEnable; // @[ChiselRISC.scala 28:20]
-  wire [31:0] ID_io_out_pc; // @[ChiselRISC.scala 28:20]
-  wire [4:0] ID_io_out_rs1; // @[ChiselRISC.scala 28:20]
-  wire [4:0] ID_io_out_rs2; // @[ChiselRISC.scala 28:20]
-  wire [31:0] ID_io_out_val1; // @[ChiselRISC.scala 28:20]
-  wire [31:0] ID_io_out_val2; // @[ChiselRISC.scala 28:20]
-  wire [4:0] ID_io_out_rd; // @[ChiselRISC.scala 28:20]
-  wire [31:0] ID_io_out_imm; // @[ChiselRISC.scala 28:20]
-  wire [3:0] ID_io_out_aluOp; // @[ChiselRISC.scala 28:20]
-  wire [3:0] ID_io_out_memOp; // @[ChiselRISC.scala 28:20]
-  wire  ID_io_out_ctrl_useImm; // @[ChiselRISC.scala 28:20]
-  wire  ID_io_out_ctrl_useALU; // @[ChiselRISC.scala 28:20]
-  wire  ID_io_out_ctrl_branch; // @[ChiselRISC.scala 28:20]
-  wire  ID_io_out_ctrl_jump; // @[ChiselRISC.scala 28:20]
-  wire  ID_io_out_ctrl_load; // @[ChiselRISC.scala 28:20]
-  wire  ID_io_out_ctrl_store; // @[ChiselRISC.scala 28:20]
-  wire  ID_io_out_ctrl_changePC; // @[ChiselRISC.scala 28:20]
-  wire  EX_clock; // @[ChiselRISC.scala 29:20]
-  wire  EX_io_stallReg; // @[ChiselRISC.scala 29:20]
-  wire [31:0] EX_io_in_pc; // @[ChiselRISC.scala 29:20]
-  wire [31:0] EX_io_in_val1; // @[ChiselRISC.scala 29:20]
-  wire [31:0] EX_io_in_val2; // @[ChiselRISC.scala 29:20]
-  wire [4:0] EX_io_in_rd; // @[ChiselRISC.scala 29:20]
-  wire [31:0] EX_io_in_imm; // @[ChiselRISC.scala 29:20]
-  wire [3:0] EX_io_in_aluOp; // @[ChiselRISC.scala 29:20]
-  wire [3:0] EX_io_in_memOp; // @[ChiselRISC.scala 29:20]
-  wire  EX_io_in_ctrl_useImm; // @[ChiselRISC.scala 29:20]
-  wire  EX_io_in_ctrl_useALU; // @[ChiselRISC.scala 29:20]
-  wire  EX_io_in_ctrl_branch; // @[ChiselRISC.scala 29:20]
-  wire  EX_io_in_ctrl_jump; // @[ChiselRISC.scala 29:20]
-  wire  EX_io_in_ctrl_load; // @[ChiselRISC.scala 29:20]
-  wire  EX_io_in_ctrl_store; // @[ChiselRISC.scala 29:20]
-  wire  EX_io_in_ctrl_changePC; // @[ChiselRISC.scala 29:20]
-  wire [4:0] EX_io_out_rd; // @[ChiselRISC.scala 29:20]
-  wire [31:0] EX_io_out_aluOut; // @[ChiselRISC.scala 29:20]
-  wire [31:0] EX_io_out_wrData; // @[ChiselRISC.scala 29:20]
-  wire  EX_io_out_ctrl_writeEnable; // @[ChiselRISC.scala 29:20]
-  wire  EX_io_out_ctrl_store; // @[ChiselRISC.scala 29:20]
-  wire  EX_io_out_ctrl_load; // @[ChiselRISC.scala 29:20]
-  wire [31:0] EX_io_hazardAluOut; // @[ChiselRISC.scala 29:20]
-  wire  EX_io_changePC; // @[ChiselRISC.scala 29:20]
-  wire [31:0] EX_io_newPCValue; // @[ChiselRISC.scala 29:20]
-  wire  MEM_clock; // @[ChiselRISC.scala 30:21]
-  wire [4:0] MEM_io_in_rd; // @[ChiselRISC.scala 30:21]
-  wire [31:0] MEM_io_in_aluOut; // @[ChiselRISC.scala 30:21]
-  wire [31:0] MEM_io_in_wrData; // @[ChiselRISC.scala 30:21]
-  wire  MEM_io_in_ctrl_writeEnable; // @[ChiselRISC.scala 30:21]
-  wire  MEM_io_in_ctrl_store; // @[ChiselRISC.scala 30:21]
-  wire  MEM_io_in_ctrl_load; // @[ChiselRISC.scala 30:21]
-  wire [4:0] MEM_io_out_rd; // @[ChiselRISC.scala 30:21]
-  wire [31:0] MEM_io_out_aluOut; // @[ChiselRISC.scala 30:21]
-  wire [31:0] MEM_io_out_memOut; // @[ChiselRISC.scala 30:21]
-  wire  MEM_io_out_load; // @[ChiselRISC.scala 30:21]
-  wire  MEM_io_out_writeEnable; // @[ChiselRISC.scala 30:21]
-  wire [4:0] MEM_io_mem_fwd_rd; // @[ChiselRISC.scala 30:21]
-  wire [31:0] MEM_io_mem_fwd_stageOutput; // @[ChiselRISC.scala 30:21]
-  wire  MEM_io_mem_fwd_writeEnable; // @[ChiselRISC.scala 30:21]
-  wire [4:0] WB_io_in_rd; // @[ChiselRISC.scala 31:20]
-  wire [31:0] WB_io_in_aluOut; // @[ChiselRISC.scala 31:20]
-  wire [31:0] WB_io_in_memOut; // @[ChiselRISC.scala 31:20]
-  wire  WB_io_in_load; // @[ChiselRISC.scala 31:20]
-  wire  WB_io_in_writeEnable; // @[ChiselRISC.scala 31:20]
-  wire [4:0] WB_io_out_rd; // @[ChiselRISC.scala 31:20]
-  wire [31:0] WB_io_out_muxOut; // @[ChiselRISC.scala 31:20]
-  wire  WB_io_out_writeEnable; // @[ChiselRISC.scala 31:20]
-  wire [4:0] WB_io_wb_fwd_rd; // @[ChiselRISC.scala 31:20]
-  wire [31:0] WB_io_wb_fwd_stageOutput; // @[ChiselRISC.scala 31:20]
-  wire  WB_io_wb_fwd_writeEnable; // @[ChiselRISC.scala 31:20]
-  wire [4:0] forwardingUnit_io_id_rs1; // @[ChiselRISC.scala 33:32]
-  wire [4:0] forwardingUnit_io_id_rs2; // @[ChiselRISC.scala 33:32]
-  wire [31:0] forwardingUnit_io_id_val1; // @[ChiselRISC.scala 33:32]
-  wire [31:0] forwardingUnit_io_id_val2; // @[ChiselRISC.scala 33:32]
-  wire [4:0] forwardingUnit_io_mem_fwd_rd; // @[ChiselRISC.scala 33:32]
-  wire [31:0] forwardingUnit_io_mem_fwd_stageOutput; // @[ChiselRISC.scala 33:32]
-  wire  forwardingUnit_io_mem_fwd_writeEnable; // @[ChiselRISC.scala 33:32]
-  wire [4:0] forwardingUnit_io_wb_fwd_rd; // @[ChiselRISC.scala 33:32]
-  wire [31:0] forwardingUnit_io_wb_fwd_stageOutput; // @[ChiselRISC.scala 33:32]
-  wire  forwardingUnit_io_wb_fwd_writeEnable; // @[ChiselRISC.scala 33:32]
-  wire [31:0] forwardingUnit_io_val1; // @[ChiselRISC.scala 33:32]
-  wire [31:0] forwardingUnit_io_val2; // @[ChiselRISC.scala 33:32]
-  wire [31:0] hazardControl_io_EXaluOut; // @[ChiselRISC.scala 34:31]
-  wire  hazardControl_io_EXctrlBranch; // @[ChiselRISC.scala 34:31]
-  wire  hazardControl_io_EXctrlJump; // @[ChiselRISC.scala 34:31]
-  wire  hazardControl_io_EXctrlLoad; // @[ChiselRISC.scala 34:31]
-  wire [4:0] hazardControl_io_EXrd; // @[ChiselRISC.scala 34:31]
-  wire [4:0] hazardControl_io_IDrs1; // @[ChiselRISC.scala 34:31]
-  wire [4:0] hazardControl_io_IDrs2; // @[ChiselRISC.scala 34:31]
-  wire  hazardControl_io_IDFlush; // @[ChiselRISC.scala 34:31]
-  wire  hazardControl_io_IFFlush; // @[ChiselRISC.scala 34:31]
-  wire  hazardControl_io_IFStall; // @[ChiselRISC.scala 34:31]
-  wire  sevenSeg_clock; // @[ChiselRISC.scala 103:26]
-  wire  sevenSeg_reset; // @[ChiselRISC.scala 103:26]
-  wire [15:0] sevenSeg_io_in; // @[ChiselRISC.scala 103:26]
-  wire [6:0] sevenSeg_io_seg; // @[ChiselRISC.scala 103:26]
-  wire [3:0] sevenSeg_io_an; // @[ChiselRISC.scala 103:26]
-  reg [15:0] sevenSeg_io_in_REG; // @[ChiselRISC.scala 104:30]
-  IF IF ( // @[ChiselRISC.scala 27:20]
+  wire  IF_clock; // @[ChiselRISC.scala 27:18]
+  wire  IF_reset; // @[ChiselRISC.scala 27:18]
+  wire  IF_io_stallReg; // @[ChiselRISC.scala 27:18]
+  wire  IF_io_flush; // @[ChiselRISC.scala 27:18]
+  wire [31:0] IF_io_out_inst; // @[ChiselRISC.scala 27:18]
+  wire [31:0] IF_io_out_pc; // @[ChiselRISC.scala 27:18]
+  wire [31:0] IF_io_newPCValue; // @[ChiselRISC.scala 27:18]
+  wire  IF_io_changePC; // @[ChiselRISC.scala 27:18]
+  wire  IF_io_memIO_ready; // @[ChiselRISC.scala 27:18]
+  wire [31:0] IF_io_memIO_writeData; // @[ChiselRISC.scala 27:18]
+  wire  IF_io_startPC; // @[ChiselRISC.scala 27:18]
+  wire  ID_clock; // @[ChiselRISC.scala 28:18]
+  wire  ID_io_stallReg; // @[ChiselRISC.scala 28:18]
+  wire  ID_io_flush; // @[ChiselRISC.scala 28:18]
+  wire [31:0] ID_io_in_inst; // @[ChiselRISC.scala 28:18]
+  wire [31:0] ID_io_in_pc; // @[ChiselRISC.scala 28:18]
+  wire [4:0] ID_io_wbIn_rd; // @[ChiselRISC.scala 28:18]
+  wire [31:0] ID_io_wbIn_muxOut; // @[ChiselRISC.scala 28:18]
+  wire  ID_io_wbIn_writeEnable; // @[ChiselRISC.scala 28:18]
+  wire [31:0] ID_io_out_pc; // @[ChiselRISC.scala 28:18]
+  wire [4:0] ID_io_out_rs1; // @[ChiselRISC.scala 28:18]
+  wire [4:0] ID_io_out_rs2; // @[ChiselRISC.scala 28:18]
+  wire [31:0] ID_io_out_val1; // @[ChiselRISC.scala 28:18]
+  wire [31:0] ID_io_out_val2; // @[ChiselRISC.scala 28:18]
+  wire [4:0] ID_io_out_rd; // @[ChiselRISC.scala 28:18]
+  wire [31:0] ID_io_out_imm; // @[ChiselRISC.scala 28:18]
+  wire [3:0] ID_io_out_aluOp; // @[ChiselRISC.scala 28:18]
+  wire [3:0] ID_io_out_memOp; // @[ChiselRISC.scala 28:18]
+  wire  ID_io_out_ctrl_useImm; // @[ChiselRISC.scala 28:18]
+  wire  ID_io_out_ctrl_useALU; // @[ChiselRISC.scala 28:18]
+  wire  ID_io_out_ctrl_branch; // @[ChiselRISC.scala 28:18]
+  wire  ID_io_out_ctrl_jump; // @[ChiselRISC.scala 28:18]
+  wire  ID_io_out_ctrl_load; // @[ChiselRISC.scala 28:18]
+  wire  ID_io_out_ctrl_store; // @[ChiselRISC.scala 28:18]
+  wire  ID_io_out_ctrl_changePC; // @[ChiselRISC.scala 28:18]
+  wire  EX_clock; // @[ChiselRISC.scala 29:18]
+  wire  EX_io_stallReg; // @[ChiselRISC.scala 29:18]
+  wire [31:0] EX_io_in_pc; // @[ChiselRISC.scala 29:18]
+  wire [31:0] EX_io_in_val1; // @[ChiselRISC.scala 29:18]
+  wire [31:0] EX_io_in_val2; // @[ChiselRISC.scala 29:18]
+  wire [4:0] EX_io_in_rd; // @[ChiselRISC.scala 29:18]
+  wire [31:0] EX_io_in_imm; // @[ChiselRISC.scala 29:18]
+  wire [3:0] EX_io_in_aluOp; // @[ChiselRISC.scala 29:18]
+  wire [3:0] EX_io_in_memOp; // @[ChiselRISC.scala 29:18]
+  wire  EX_io_in_ctrl_useImm; // @[ChiselRISC.scala 29:18]
+  wire  EX_io_in_ctrl_useALU; // @[ChiselRISC.scala 29:18]
+  wire  EX_io_in_ctrl_branch; // @[ChiselRISC.scala 29:18]
+  wire  EX_io_in_ctrl_jump; // @[ChiselRISC.scala 29:18]
+  wire  EX_io_in_ctrl_load; // @[ChiselRISC.scala 29:18]
+  wire  EX_io_in_ctrl_store; // @[ChiselRISC.scala 29:18]
+  wire  EX_io_in_ctrl_changePC; // @[ChiselRISC.scala 29:18]
+  wire [4:0] EX_io_out_rd; // @[ChiselRISC.scala 29:18]
+  wire [31:0] EX_io_out_aluOut; // @[ChiselRISC.scala 29:18]
+  wire [31:0] EX_io_out_wrData; // @[ChiselRISC.scala 29:18]
+  wire  EX_io_out_ctrl_writeEnable; // @[ChiselRISC.scala 29:18]
+  wire  EX_io_out_ctrl_store; // @[ChiselRISC.scala 29:18]
+  wire  EX_io_out_ctrl_load; // @[ChiselRISC.scala 29:18]
+  wire [31:0] EX_io_hazardAluOut; // @[ChiselRISC.scala 29:18]
+  wire  EX_io_changePC; // @[ChiselRISC.scala 29:18]
+  wire [31:0] EX_io_newPCValue; // @[ChiselRISC.scala 29:18]
+  wire  MEM_clock; // @[ChiselRISC.scala 30:19]
+  wire [4:0] MEM_io_in_rd; // @[ChiselRISC.scala 30:19]
+  wire [31:0] MEM_io_in_aluOut; // @[ChiselRISC.scala 30:19]
+  wire [31:0] MEM_io_in_wrData; // @[ChiselRISC.scala 30:19]
+  wire  MEM_io_in_ctrl_writeEnable; // @[ChiselRISC.scala 30:19]
+  wire  MEM_io_in_ctrl_store; // @[ChiselRISC.scala 30:19]
+  wire  MEM_io_in_ctrl_load; // @[ChiselRISC.scala 30:19]
+  wire [4:0] MEM_io_out_rd; // @[ChiselRISC.scala 30:19]
+  wire [31:0] MEM_io_out_aluOut; // @[ChiselRISC.scala 30:19]
+  wire [31:0] MEM_io_out_memOut; // @[ChiselRISC.scala 30:19]
+  wire  MEM_io_out_load; // @[ChiselRISC.scala 30:19]
+  wire  MEM_io_out_writeEnable; // @[ChiselRISC.scala 30:19]
+  wire [4:0] MEM_io_mem_fwd_rd; // @[ChiselRISC.scala 30:19]
+  wire [31:0] MEM_io_mem_fwd_stageOutput; // @[ChiselRISC.scala 30:19]
+  wire  MEM_io_mem_fwd_writeEnable; // @[ChiselRISC.scala 30:19]
+  wire [4:0] WB_io_in_rd; // @[ChiselRISC.scala 31:18]
+  wire [31:0] WB_io_in_aluOut; // @[ChiselRISC.scala 31:18]
+  wire [31:0] WB_io_in_memOut; // @[ChiselRISC.scala 31:18]
+  wire  WB_io_in_load; // @[ChiselRISC.scala 31:18]
+  wire  WB_io_in_writeEnable; // @[ChiselRISC.scala 31:18]
+  wire [4:0] WB_io_out_rd; // @[ChiselRISC.scala 31:18]
+  wire [31:0] WB_io_out_muxOut; // @[ChiselRISC.scala 31:18]
+  wire  WB_io_out_writeEnable; // @[ChiselRISC.scala 31:18]
+  wire [4:0] WB_io_wb_fwd_rd; // @[ChiselRISC.scala 31:18]
+  wire [31:0] WB_io_wb_fwd_stageOutput; // @[ChiselRISC.scala 31:18]
+  wire  WB_io_wb_fwd_writeEnable; // @[ChiselRISC.scala 31:18]
+  wire [4:0] forwardingUnit_io_id_rs1; // @[ChiselRISC.scala 33:30]
+  wire [4:0] forwardingUnit_io_id_rs2; // @[ChiselRISC.scala 33:30]
+  wire [31:0] forwardingUnit_io_id_val1; // @[ChiselRISC.scala 33:30]
+  wire [31:0] forwardingUnit_io_id_val2; // @[ChiselRISC.scala 33:30]
+  wire [4:0] forwardingUnit_io_mem_fwd_rd; // @[ChiselRISC.scala 33:30]
+  wire [31:0] forwardingUnit_io_mem_fwd_stageOutput; // @[ChiselRISC.scala 33:30]
+  wire  forwardingUnit_io_mem_fwd_writeEnable; // @[ChiselRISC.scala 33:30]
+  wire [4:0] forwardingUnit_io_wb_fwd_rd; // @[ChiselRISC.scala 33:30]
+  wire [31:0] forwardingUnit_io_wb_fwd_stageOutput; // @[ChiselRISC.scala 33:30]
+  wire  forwardingUnit_io_wb_fwd_writeEnable; // @[ChiselRISC.scala 33:30]
+  wire [31:0] forwardingUnit_io_val1; // @[ChiselRISC.scala 33:30]
+  wire [31:0] forwardingUnit_io_val2; // @[ChiselRISC.scala 33:30]
+  wire [31:0] hazardControl_io_EXaluOut; // @[ChiselRISC.scala 34:29]
+  wire  hazardControl_io_EXctrlBranch; // @[ChiselRISC.scala 34:29]
+  wire  hazardControl_io_EXctrlJump; // @[ChiselRISC.scala 34:29]
+  wire  hazardControl_io_EXctrlLoad; // @[ChiselRISC.scala 34:29]
+  wire [4:0] hazardControl_io_EXrd; // @[ChiselRISC.scala 34:29]
+  wire [4:0] hazardControl_io_IDrs1; // @[ChiselRISC.scala 34:29]
+  wire [4:0] hazardControl_io_IDrs2; // @[ChiselRISC.scala 34:29]
+  wire  hazardControl_io_IDFlush; // @[ChiselRISC.scala 34:29]
+  wire  hazardControl_io_IFFlush; // @[ChiselRISC.scala 34:29]
+  wire  hazardControl_io_IFStall; // @[ChiselRISC.scala 34:29]
+  wire  sevenSeg_clock; // @[ChiselRISC.scala 117:24]
+  wire  sevenSeg_reset; // @[ChiselRISC.scala 117:24]
+  wire [15:0] sevenSeg_io_in; // @[ChiselRISC.scala 117:24]
+  wire [6:0] sevenSeg_io_seg; // @[ChiselRISC.scala 117:24]
+  wire [3:0] sevenSeg_io_an; // @[ChiselRISC.scala 117:24]
+  reg  led; // @[ChiselRISC.scala 109:20]
+  reg [23:0] ledCounterWrap_c_value; // @[Counter.scala 61:40]
+  wire  ledCounterWrap_wrap_wrap = ledCounterWrap_c_value == 24'h98967f; // @[Counter.scala 73:24]
+  wire [23:0] _ledCounterWrap_wrap_value_T_1 = ledCounterWrap_c_value + 24'h1; // @[Counter.scala 77:24]
+  reg [15:0] sevenSeg_io_in_REG; // @[ChiselRISC.scala 118:28]
+  IF IF ( // @[ChiselRISC.scala 27:18]
     .clock(IF_clock),
     .reset(IF_reset),
     .io_stallReg(IF_io_stallReg),
@@ -1839,9 +3187,12 @@ module ChiselRISC(
     .io_out_inst(IF_io_out_inst),
     .io_out_pc(IF_io_out_pc),
     .io_newPCValue(IF_io_newPCValue),
-    .io_changePC(IF_io_changePC)
+    .io_changePC(IF_io_changePC),
+    .io_memIO_ready(IF_io_memIO_ready),
+    .io_memIO_writeData(IF_io_memIO_writeData),
+    .io_startPC(IF_io_startPC)
   );
-  ID ID ( // @[ChiselRISC.scala 28:20]
+  ID ID ( // @[ChiselRISC.scala 28:18]
     .clock(ID_clock),
     .io_stallReg(ID_io_stallReg),
     .io_flush(ID_io_flush),
@@ -1867,7 +3218,7 @@ module ChiselRISC(
     .io_out_ctrl_store(ID_io_out_ctrl_store),
     .io_out_ctrl_changePC(ID_io_out_ctrl_changePC)
   );
-  EX EX ( // @[ChiselRISC.scala 29:20]
+  EX EX ( // @[ChiselRISC.scala 29:18]
     .clock(EX_clock),
     .io_stallReg(EX_io_stallReg),
     .io_in_pc(EX_io_in_pc),
@@ -1894,7 +3245,7 @@ module ChiselRISC(
     .io_changePC(EX_io_changePC),
     .io_newPCValue(EX_io_newPCValue)
   );
-  MEM MEM ( // @[ChiselRISC.scala 30:21]
+  MEM MEM ( // @[ChiselRISC.scala 30:19]
     .clock(MEM_clock),
     .io_in_rd(MEM_io_in_rd),
     .io_in_aluOut(MEM_io_in_aluOut),
@@ -1911,7 +3262,7 @@ module ChiselRISC(
     .io_mem_fwd_stageOutput(MEM_io_mem_fwd_stageOutput),
     .io_mem_fwd_writeEnable(MEM_io_mem_fwd_writeEnable)
   );
-  WB WB ( // @[ChiselRISC.scala 31:20]
+  WB WB ( // @[ChiselRISC.scala 31:18]
     .io_in_rd(WB_io_in_rd),
     .io_in_aluOut(WB_io_in_aluOut),
     .io_in_memOut(WB_io_in_memOut),
@@ -1924,7 +3275,7 @@ module ChiselRISC(
     .io_wb_fwd_stageOutput(WB_io_wb_fwd_stageOutput),
     .io_wb_fwd_writeEnable(WB_io_wb_fwd_writeEnable)
   );
-  ForwardingUnit forwardingUnit ( // @[ChiselRISC.scala 33:32]
+  ForwardingUnit forwardingUnit ( // @[ChiselRISC.scala 33:30]
     .io_id_rs1(forwardingUnit_io_id_rs1),
     .io_id_rs2(forwardingUnit_io_id_rs2),
     .io_id_val1(forwardingUnit_io_id_val1),
@@ -1938,7 +3289,7 @@ module ChiselRISC(
     .io_val1(forwardingUnit_io_val1),
     .io_val2(forwardingUnit_io_val2)
   );
-  HazardControl hazardControl ( // @[ChiselRISC.scala 34:31]
+  HazardControl hazardControl ( // @[ChiselRISC.scala 34:29]
     .io_EXaluOut(hazardControl_io_EXaluOut),
     .io_EXctrlBranch(hazardControl_io_EXctrlBranch),
     .io_EXctrlJump(hazardControl_io_EXctrlJump),
@@ -1950,81 +3301,95 @@ module ChiselRISC(
     .io_IFFlush(hazardControl_io_IFFlush),
     .io_IFStall(hazardControl_io_IFStall)
   );
-  SevenSegment sevenSeg ( // @[ChiselRISC.scala 103:26]
+  SevenSegment sevenSeg ( // @[ChiselRISC.scala 117:24]
     .clock(sevenSeg_clock),
     .reset(sevenSeg_reset),
     .io_in(sevenSeg_io_in),
     .io_seg(sevenSeg_io_seg),
     .io_an(sevenSeg_io_an)
   );
-  assign io_memIO_ready = 1'h0;
-  assign io_memIO_nonEmpty = 1'h0;
-  assign io_seg = sevenSeg_io_seg; // @[ChiselRISC.scala 105:12]
-  assign io_an = sevenSeg_io_an; // @[ChiselRISC.scala 106:11]
+  assign io_seg = sevenSeg_io_seg; // @[ChiselRISC.scala 119:10]
+  assign io_an = sevenSeg_io_an; // @[ChiselRISC.scala 120:9]
+  assign io_led0 = led; // @[ChiselRISC.scala 114:11]
   assign IF_clock = clock;
   assign IF_reset = reset;
-  assign IF_io_stallReg = hazardControl_io_IFStall; // @[ChiselRISC.scala 69:20]
-  assign IF_io_flush = hazardControl_io_IFFlush; // @[ChiselRISC.scala 67:17]
-  assign IF_io_newPCValue = EX_io_newPCValue; // @[ChiselRISC.scala 39:22]
-  assign IF_io_changePC = EX_io_changePC; // @[ChiselRISC.scala 38:20]
+  assign IF_io_stallReg = hazardControl_io_IFStall; // @[ChiselRISC.scala 69:18]
+  assign IF_io_flush = hazardControl_io_IFFlush; // @[ChiselRISC.scala 67:15]
+  assign IF_io_newPCValue = EX_io_newPCValue; // @[ChiselRISC.scala 39:20]
+  assign IF_io_changePC = EX_io_changePC; // @[ChiselRISC.scala 38:18]
+  assign IF_io_memIO_ready = io_add; // @[ChiselRISC.scala 90:15 87:21 92:23]
+  assign IF_io_memIO_writeData = io_add ? 32'h210113 : 32'h0; // @[ChiselRISC.scala 90:15 88:25 91:27]
+  assign IF_io_startPC = io_startPipeline; // @[ChiselRISC.scala 115:17]
   assign ID_clock = clock;
-  assign ID_io_stallReg = IF_io_stallReg; // @[ChiselRISC.scala 51:20]
-  assign ID_io_flush = hazardControl_io_IDFlush; // @[ChiselRISC.scala 68:17]
-  assign ID_io_in_inst = IF_io_out_inst; // @[ChiselRISC.scala 37:15]
-  assign ID_io_in_pc = IF_io_out_pc; // @[ChiselRISC.scala 37:15]
-  assign ID_io_wbIn_rd = WB_io_out_rd; // @[ChiselRISC.scala 50:15]
-  assign ID_io_wbIn_muxOut = WB_io_out_muxOut; // @[ChiselRISC.scala 50:15]
-  assign ID_io_wbIn_writeEnable = WB_io_out_writeEnable; // @[ChiselRISC.scala 50:15]
+  assign ID_io_stallReg = IF_io_stallReg; // @[ChiselRISC.scala 51:18]
+  assign ID_io_flush = hazardControl_io_IDFlush; // @[ChiselRISC.scala 68:15]
+  assign ID_io_in_inst = IF_io_out_inst; // @[ChiselRISC.scala 37:13]
+  assign ID_io_in_pc = IF_io_out_pc; // @[ChiselRISC.scala 37:13]
+  assign ID_io_wbIn_rd = WB_io_out_rd; // @[ChiselRISC.scala 50:13]
+  assign ID_io_wbIn_muxOut = WB_io_out_muxOut; // @[ChiselRISC.scala 50:13]
+  assign ID_io_wbIn_writeEnable = WB_io_out_writeEnable; // @[ChiselRISC.scala 50:13]
   assign EX_clock = clock;
-  assign EX_io_stallReg = ID_io_stallReg; // @[ChiselRISC.scala 52:20]
-  assign EX_io_in_pc = ID_io_out_pc; // @[ChiselRISC.scala 40:17]
-  assign EX_io_in_val1 = forwardingUnit_io_val1; // @[ChiselRISC.scala 63:19]
-  assign EX_io_in_val2 = forwardingUnit_io_val2; // @[ChiselRISC.scala 64:19]
-  assign EX_io_in_rd = ID_io_out_rd; // @[ChiselRISC.scala 43:17]
-  assign EX_io_in_imm = ID_io_out_imm; // @[ChiselRISC.scala 44:18]
-  assign EX_io_in_aluOp = ID_io_out_aluOp; // @[ChiselRISC.scala 45:20]
-  assign EX_io_in_memOp = ID_io_out_memOp; // @[ChiselRISC.scala 47:20]
-  assign EX_io_in_ctrl_useImm = ID_io_out_ctrl_useImm; // @[ChiselRISC.scala 46:19]
-  assign EX_io_in_ctrl_useALU = ID_io_out_ctrl_useALU; // @[ChiselRISC.scala 46:19]
-  assign EX_io_in_ctrl_branch = ID_io_out_ctrl_branch; // @[ChiselRISC.scala 46:19]
-  assign EX_io_in_ctrl_jump = ID_io_out_ctrl_jump; // @[ChiselRISC.scala 46:19]
-  assign EX_io_in_ctrl_load = ID_io_out_ctrl_load; // @[ChiselRISC.scala 46:19]
-  assign EX_io_in_ctrl_store = ID_io_out_ctrl_store; // @[ChiselRISC.scala 46:19]
-  assign EX_io_in_ctrl_changePC = ID_io_out_ctrl_changePC; // @[ChiselRISC.scala 46:19]
+  assign EX_io_stallReg = ID_io_stallReg; // @[ChiselRISC.scala 52:18]
+  assign EX_io_in_pc = ID_io_out_pc; // @[ChiselRISC.scala 40:15]
+  assign EX_io_in_val1 = forwardingUnit_io_val1; // @[ChiselRISC.scala 63:17]
+  assign EX_io_in_val2 = forwardingUnit_io_val2; // @[ChiselRISC.scala 64:17]
+  assign EX_io_in_rd = ID_io_out_rd; // @[ChiselRISC.scala 43:15]
+  assign EX_io_in_imm = ID_io_out_imm; // @[ChiselRISC.scala 44:16]
+  assign EX_io_in_aluOp = ID_io_out_aluOp; // @[ChiselRISC.scala 45:18]
+  assign EX_io_in_memOp = ID_io_out_memOp; // @[ChiselRISC.scala 47:18]
+  assign EX_io_in_ctrl_useImm = ID_io_out_ctrl_useImm; // @[ChiselRISC.scala 46:17]
+  assign EX_io_in_ctrl_useALU = ID_io_out_ctrl_useALU; // @[ChiselRISC.scala 46:17]
+  assign EX_io_in_ctrl_branch = ID_io_out_ctrl_branch; // @[ChiselRISC.scala 46:17]
+  assign EX_io_in_ctrl_jump = ID_io_out_ctrl_jump; // @[ChiselRISC.scala 46:17]
+  assign EX_io_in_ctrl_load = ID_io_out_ctrl_load; // @[ChiselRISC.scala 46:17]
+  assign EX_io_in_ctrl_store = ID_io_out_ctrl_store; // @[ChiselRISC.scala 46:17]
+  assign EX_io_in_ctrl_changePC = ID_io_out_ctrl_changePC; // @[ChiselRISC.scala 46:17]
   assign MEM_clock = clock;
-  assign MEM_io_in_rd = EX_io_out_rd; // @[ChiselRISC.scala 48:15]
-  assign MEM_io_in_aluOut = EX_io_out_aluOut; // @[ChiselRISC.scala 48:15]
-  assign MEM_io_in_wrData = EX_io_out_wrData; // @[ChiselRISC.scala 48:15]
-  assign MEM_io_in_ctrl_writeEnable = EX_io_out_ctrl_writeEnable; // @[ChiselRISC.scala 48:15]
-  assign MEM_io_in_ctrl_store = EX_io_out_ctrl_store; // @[ChiselRISC.scala 48:15]
-  assign MEM_io_in_ctrl_load = EX_io_out_ctrl_load; // @[ChiselRISC.scala 48:15]
-  assign WB_io_in_rd = MEM_io_out_rd; // @[ChiselRISC.scala 49:16]
-  assign WB_io_in_aluOut = MEM_io_out_aluOut; // @[ChiselRISC.scala 49:16]
-  assign WB_io_in_memOut = MEM_io_out_memOut; // @[ChiselRISC.scala 49:16]
-  assign WB_io_in_load = MEM_io_out_load; // @[ChiselRISC.scala 49:16]
-  assign WB_io_in_writeEnable = MEM_io_out_writeEnable; // @[ChiselRISC.scala 49:16]
-  assign forwardingUnit_io_id_rs1 = ID_io_out_rs1; // @[ChiselRISC.scala 57:30]
-  assign forwardingUnit_io_id_rs2 = ID_io_out_rs2; // @[ChiselRISC.scala 58:30]
-  assign forwardingUnit_io_id_val1 = ID_io_out_val1; // @[ChiselRISC.scala 59:31]
-  assign forwardingUnit_io_id_val2 = ID_io_out_val2; // @[ChiselRISC.scala 60:31]
-  assign forwardingUnit_io_mem_fwd_rd = MEM_io_mem_fwd_rd; // @[ChiselRISC.scala 61:31]
-  assign forwardingUnit_io_mem_fwd_stageOutput = MEM_io_mem_fwd_stageOutput; // @[ChiselRISC.scala 61:31]
-  assign forwardingUnit_io_mem_fwd_writeEnable = MEM_io_mem_fwd_writeEnable; // @[ChiselRISC.scala 61:31]
-  assign forwardingUnit_io_wb_fwd_rd = WB_io_wb_fwd_rd; // @[ChiselRISC.scala 62:30]
-  assign forwardingUnit_io_wb_fwd_stageOutput = WB_io_wb_fwd_stageOutput; // @[ChiselRISC.scala 62:30]
-  assign forwardingUnit_io_wb_fwd_writeEnable = WB_io_wb_fwd_writeEnable; // @[ChiselRISC.scala 62:30]
-  assign hazardControl_io_EXaluOut = EX_io_hazardAluOut; // @[ChiselRISC.scala 70:31]
-  assign hazardControl_io_EXctrlBranch = EX_io_in_ctrl_branch; // @[ChiselRISC.scala 71:35]
-  assign hazardControl_io_EXctrlJump = EX_io_in_ctrl_jump; // @[ChiselRISC.scala 72:33]
-  assign hazardControl_io_EXctrlLoad = EX_io_in_ctrl_load; // @[ChiselRISC.scala 73:33]
-  assign hazardControl_io_EXrd = EX_io_in_rd; // @[ChiselRISC.scala 74:27]
-  assign hazardControl_io_IDrs1 = ID_io_out_rs1; // @[ChiselRISC.scala 75:28]
-  assign hazardControl_io_IDrs2 = ID_io_out_rs2; // @[ChiselRISC.scala 76:28]
+  assign MEM_io_in_rd = EX_io_out_rd; // @[ChiselRISC.scala 48:13]
+  assign MEM_io_in_aluOut = EX_io_out_aluOut; // @[ChiselRISC.scala 48:13]
+  assign MEM_io_in_wrData = EX_io_out_wrData; // @[ChiselRISC.scala 48:13]
+  assign MEM_io_in_ctrl_writeEnable = EX_io_out_ctrl_writeEnable; // @[ChiselRISC.scala 48:13]
+  assign MEM_io_in_ctrl_store = EX_io_out_ctrl_store; // @[ChiselRISC.scala 48:13]
+  assign MEM_io_in_ctrl_load = EX_io_out_ctrl_load; // @[ChiselRISC.scala 48:13]
+  assign WB_io_in_rd = MEM_io_out_rd; // @[ChiselRISC.scala 49:14]
+  assign WB_io_in_aluOut = MEM_io_out_aluOut; // @[ChiselRISC.scala 49:14]
+  assign WB_io_in_memOut = MEM_io_out_memOut; // @[ChiselRISC.scala 49:14]
+  assign WB_io_in_load = MEM_io_out_load; // @[ChiselRISC.scala 49:14]
+  assign WB_io_in_writeEnable = MEM_io_out_writeEnable; // @[ChiselRISC.scala 49:14]
+  assign forwardingUnit_io_id_rs1 = ID_io_out_rs1; // @[ChiselRISC.scala 57:28]
+  assign forwardingUnit_io_id_rs2 = ID_io_out_rs2; // @[ChiselRISC.scala 58:28]
+  assign forwardingUnit_io_id_val1 = ID_io_out_val1; // @[ChiselRISC.scala 59:29]
+  assign forwardingUnit_io_id_val2 = ID_io_out_val2; // @[ChiselRISC.scala 60:29]
+  assign forwardingUnit_io_mem_fwd_rd = MEM_io_mem_fwd_rd; // @[ChiselRISC.scala 61:29]
+  assign forwardingUnit_io_mem_fwd_stageOutput = MEM_io_mem_fwd_stageOutput; // @[ChiselRISC.scala 61:29]
+  assign forwardingUnit_io_mem_fwd_writeEnable = MEM_io_mem_fwd_writeEnable; // @[ChiselRISC.scala 61:29]
+  assign forwardingUnit_io_wb_fwd_rd = WB_io_wb_fwd_rd; // @[ChiselRISC.scala 62:28]
+  assign forwardingUnit_io_wb_fwd_stageOutput = WB_io_wb_fwd_stageOutput; // @[ChiselRISC.scala 62:28]
+  assign forwardingUnit_io_wb_fwd_writeEnable = WB_io_wb_fwd_writeEnable; // @[ChiselRISC.scala 62:28]
+  assign hazardControl_io_EXaluOut = EX_io_hazardAluOut; // @[ChiselRISC.scala 70:29]
+  assign hazardControl_io_EXctrlBranch = EX_io_in_ctrl_branch; // @[ChiselRISC.scala 71:33]
+  assign hazardControl_io_EXctrlJump = EX_io_in_ctrl_jump; // @[ChiselRISC.scala 72:31]
+  assign hazardControl_io_EXctrlLoad = EX_io_in_ctrl_load; // @[ChiselRISC.scala 73:31]
+  assign hazardControl_io_EXrd = EX_io_in_rd; // @[ChiselRISC.scala 74:25]
+  assign hazardControl_io_IDrs1 = ID_io_out_rs1; // @[ChiselRISC.scala 75:26]
+  assign hazardControl_io_IDrs2 = ID_io_out_rs2; // @[ChiselRISC.scala 76:26]
   assign sevenSeg_clock = clock;
   assign sevenSeg_reset = reset;
-  assign sevenSeg_io_in = sevenSeg_io_in_REG; // @[ChiselRISC.scala 104:20]
+  assign sevenSeg_io_in = sevenSeg_io_in_REG; // @[ChiselRISC.scala 118:18]
   always @(posedge clock) begin
-    sevenSeg_io_in_REG <= WB_io_out_muxOut[15:0]; // @[ChiselRISC.scala 104:47]
+    if (reset) begin // @[ChiselRISC.scala 109:20]
+      led <= 1'h0; // @[ChiselRISC.scala 109:20]
+    end else if (ledCounterWrap_wrap_wrap) begin // @[ChiselRISC.scala 111:24]
+      led <= ~led; // @[ChiselRISC.scala 112:9]
+    end
+    if (reset) begin // @[Counter.scala 61:40]
+      ledCounterWrap_c_value <= 24'h0; // @[Counter.scala 61:40]
+    end else if (ledCounterWrap_wrap_wrap) begin // @[Counter.scala 87:20]
+      ledCounterWrap_c_value <= 24'h0; // @[Counter.scala 87:28]
+    end else begin
+      ledCounterWrap_c_value <= _ledCounterWrap_wrap_value_T_1; // @[Counter.scala 77:15]
+    end
+    sevenSeg_io_in_REG <= WB_io_out_muxOut[15:0]; // @[ChiselRISC.scala 118:45]
   end
 // Register and memory initialization
 `ifdef RANDOMIZE_GARBAGE_ASSIGN
@@ -2063,7 +3428,11 @@ initial begin
     `endif
 `ifdef RANDOMIZE_REG_INIT
   _RAND_0 = {1{`RANDOM}};
-  sevenSeg_io_in_REG = _RAND_0[15:0];
+  led = _RAND_0[0:0];
+  _RAND_1 = {1{`RANDOM}};
+  ledCounterWrap_c_value = _RAND_1[23:0];
+  _RAND_2 = {1{`RANDOM}};
+  sevenSeg_io_in_REG = _RAND_2[15:0];
 `endif // RANDOMIZE_REG_INIT
   `endif // RANDOMIZE
 end // initial

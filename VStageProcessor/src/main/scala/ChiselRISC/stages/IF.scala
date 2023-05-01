@@ -17,12 +17,12 @@ class IF(datawidth: Int, depth: Int, simulation: Boolean = false, memoryFile: St
       val ready = Input(Bool())
       val writeData = Input(UInt(datawidth.W))
     }
-    val startPC = if(simulation) Some(Input(Bool())) else None
+    val startPC = Input(Bool())
   })
   // ----- Testing ------------
   val PC = Module(new ProgramCounter(datawidth))
-  val instMem = Module(new InstructionMemoryFPGA(depth, datawidth, memoryFile))
-  //val instMem = Module(new InstructionMemory(depth, datawidth))
+  //val instMem = Module(new InstructionMemoryFPGA(depth, datawidth, memoryFile))
+  val instMem = Module(new InstructionMemory(depth, datawidth))
 
   val outReg = RegEnable(io.out, !io.stallReg)
 
@@ -57,22 +57,13 @@ class IF(datawidth: Int, depth: Int, simulation: Boolean = false, memoryFile: St
   val addMux = Mux(io.changePC, io.newPCValue, pc)
 
 
-  if (simulation)
-    Some(when(!instMem.io.memIO.nonEmpty && io.startPC.get) { // For simulating and testing
-      PC.io.memIO.ready := true.B
-      PC.io.in:= Mux(io.changePC, io.newPCValue, pc + 4.U)
-    }.otherwise {
-      PC.io.memIO.ready := false.B
-      PC.io.in := addMux
-    })
-  else
-    (when(!instMem.io.memIO.nonEmpty) { // For FPGA implementation
-      PC.io.memIO.ready := true.B
-      PC.io.in := Mux(io.changePC, io.newPCValue, pc + 4.U)
-    }.otherwise {
-      PC.io.memIO.ready := false.B
-      PC.io.in := addMux
-    })
+  when(!instMem.io.memIO.nonEmpty && io.startPC) { // For simulating and testing
+    PC.io.memIO.ready := true.B
+    PC.io.in:= Mux(io.changePC, io.newPCValue, pc + 4.U)
+  }.otherwise {
+    PC.io.memIO.ready := false.B
+    PC.io.in := addMux
+  }
 
   val muxOutPC = Mux(io.stallReg, pc, addMux)
   val muxOutInst = Mux(io.flush, 0.U, instMem.io.memOut)

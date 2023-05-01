@@ -53,11 +53,5 @@
   {
     "class":"firrtl.transforms.BlackBoxTargetDirAnno",
     "targetDir":"Verilog"
-  },
-  {
-    "class":"firrtl.annotations.MemoryFileInlineAnnotation",
-    "target":"~ChiselRISC|InstructionMemoryFPGA>mem",
-    "filename":"InputHex.txt",
-    "hexOrBinary":"h"
   }
 ]
