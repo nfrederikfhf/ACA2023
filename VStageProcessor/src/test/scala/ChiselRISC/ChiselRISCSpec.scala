@@ -272,13 +272,12 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.debug.get.regFile(3).expect(0.U)
       dut.io.startPipeline.poke(true.B)
       dut.clock.step(5)
-      dut.io.debug.get.regFile(1).expect(0.U)
-      dut.clock.step(1)
       dut.io.debug.get.regFile(1).expect(1.U)
       dut.clock.step(1)
       dut.io.debug.get.regFile(2).expect(2.U)
       dut.clock.step(1)
       dut.io.debug.get.regFile(3).expect(3.U)
+      dut.clock.step(3)
     }
   }
 

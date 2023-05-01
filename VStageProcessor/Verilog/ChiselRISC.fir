@@ -22,70 +22,27 @@ circuit ChiselRISC :
     io.memIO.addr <= reg @[ProgramCounter.scala 26:19]
     reg <= io.in @[ProgramCounter.scala 27:9]
 
-  module InstructionMemory :
+  module InstructionMemoryFPGA :
     input clock : Clock
     input reset : Reset
     output io : { flip memIO : { flip ready : UInt<1>, write : UInt<1>, writeData : UInt<32>, valid : UInt<1>, flip nonEmpty : UInt<1>, addr : UInt<32>}, memOut : UInt<32>}
 
-    wire bufferEmpty : UInt<1>
-    bufferEmpty <= UInt<1>("h1")
-    wire bufferFull : UInt<1>
-    bufferFull <= UInt<1>("h0")
     wire _io_memOut_WIRE : UInt<32>
     _io_memOut_WIRE <= UInt<32>("h0")
-    io.memOut <= _io_memOut_WIRE @[InstructionMemory.scala 31:13]
-    io.memIO.ready is invalid @[InstructionMemory.scala 32:18]
-    wire _io_memIO_nonEmpty_WIRE : UInt<1>
-    _io_memIO_nonEmpty_WIRE <= UInt<1>("h0")
-    io.memIO.nonEmpty <= _io_memIO_nonEmpty_WIRE @[InstructionMemory.scala 33:21]
+    io.memOut <= _io_memOut_WIRE @[InstructionMemoryFPGA.scala 17:13]
+    io.memIO.ready is invalid @[InstructionMemoryFPGA.scala 18:18]
     wire readAddr : UInt<7>
     readAddr <= UInt<7>("h0")
-    reg readPtr : UInt<7>, clock with :
-      reset => (reset, UInt<7>("h0")) @[InstructionMemory.scala 37:24]
-    reg writePtr : UInt<7>, clock with :
-      reset => (reset, UInt<7>("h0")) @[InstructionMemory.scala 38:25]
-    wire count : UInt<7>
-    count <= UInt<7>("h0")
-    node _bufferEmpty_T = eq(count, UInt<1>("h0")) @[InstructionMemory.scala 42:24]
-    bufferEmpty <= _bufferEmpty_T @[InstructionMemory.scala 42:15]
-    node _bufferFull_T = sub(UInt<8>("h80"), UInt<1>("h1")) @[InstructionMemory.scala 44:40]
-    node _bufferFull_T_1 = tail(_bufferFull_T, 1) @[InstructionMemory.scala 44:40]
-    node _bufferFull_T_2 = geq(count, _bufferFull_T_1) @[InstructionMemory.scala 44:23]
-    bufferFull <= _bufferFull_T_2 @[InstructionMemory.scala 44:14]
-    io.memIO.nonEmpty <= bufferEmpty @[InstructionMemory.scala 47:21]
-    reg mem : UInt<32>[128], clock with :
-      reset => (UInt<1>("h0"), mem) @[InstructionMemory.scala 50:16]
-    node _T = eq(bufferEmpty, UInt<1>("h0")) @[InstructionMemory.scala 53:26]
-    node _T_1 = and(io.memIO.valid, _T) @[InstructionMemory.scala 53:23]
-    when _T_1 : @[InstructionMemory.scala 53:40]
-      node _readAddr_T = shr(io.memIO.addr, 2) @[InstructionMemory.scala 54:31]
-      readAddr <= _readAddr_T @[InstructionMemory.scala 54:14]
-      io.memOut <= mem[readAddr] @[InstructionMemory.scala 55:15]
-      node _readPtr_T = add(readPtr, UInt<1>("h1")) @[InstructionMemory.scala 56:24]
-      node _readPtr_T_1 = tail(_readPtr_T, 1) @[InstructionMemory.scala 56:24]
-      readPtr <= _readPtr_T_1 @[InstructionMemory.scala 56:13]
-      node _T_2 = geq(readPtr, UInt<8>("h80")) @[InstructionMemory.scala 57:18]
-      when _T_2 : @[InstructionMemory.scala 57:36]
-        readPtr <= UInt<1>("h0") @[InstructionMemory.scala 58:15]
-    node _T_3 = eq(bufferFull, UInt<1>("h0")) @[InstructionMemory.scala 63:26]
-    node _T_4 = and(io.memIO.write, _T_3) @[InstructionMemory.scala 63:23]
-    when _T_4 : @[InstructionMemory.scala 63:39]
-      mem[writePtr] <= io.memIO.writeData @[InstructionMemory.scala 64:19]
-      node _writePtr_T = add(writePtr, UInt<1>("h1")) @[InstructionMemory.scala 65:26]
-      node _writePtr_T_1 = tail(_writePtr_T, 1) @[InstructionMemory.scala 65:26]
-      writePtr <= _writePtr_T_1 @[InstructionMemory.scala 65:14]
-      node _T_5 = geq(writePtr, UInt<8>("h80")) @[InstructionMemory.scala 67:19]
-      when _T_5 : @[InstructionMemory.scala 67:37]
-        writePtr <= UInt<1>("h0") @[InstructionMemory.scala 68:16]
-    node _difference_T = sub(writePtr, readPtr) @[InstructionMemory.scala 72:29]
-    node difference = tail(_difference_T, 1) @[InstructionMemory.scala 72:29]
-    node _T_6 = leq(difference, UInt<1>("h0")) @[InstructionMemory.scala 73:19]
-    when _T_6 : @[InstructionMemory.scala 73:27]
-      node _count_T = add(difference, UInt<8>("h80")) @[InstructionMemory.scala 74:25]
-      node _count_T_1 = tail(_count_T, 1) @[InstructionMemory.scala 74:25]
-      count <= _count_T_1 @[InstructionMemory.scala 74:11]
-    else :
-      count <= difference @[InstructionMemory.scala 76:11]
+    wire _io_memIO_nonEmpty_WIRE : UInt<1>
+    _io_memIO_nonEmpty_WIRE <= UInt<1>("h1")
+    io.memIO.nonEmpty <= _io_memIO_nonEmpty_WIRE @[InstructionMemoryFPGA.scala 20:21]
+    cmem mem : UInt<32> [128] @[InstructionMemoryFPGA.scala 23:16]
+    io.memIO.nonEmpty <= UInt<1>("h0") @[InstructionMemoryFPGA.scala 27:23]
+    when io.memIO.valid : @[InstructionMemoryFPGA.scala 32:24]
+      node _readAddr_T = shr(io.memIO.addr, 2) @[InstructionMemoryFPGA.scala 33:31]
+      readAddr <= _readAddr_T @[InstructionMemoryFPGA.scala 33:14]
+      infer mport io_memOut_MPORT = mem[readAddr], clock @[InstructionMemoryFPGA.scala 34:21]
+      io.memOut <= io_memOut_MPORT @[InstructionMemoryFPGA.scala 34:15]
 
   module IF :
     input clock : Clock
@@ -95,55 +52,55 @@ circuit ChiselRISC :
     inst PC of ProgramCounter @[IF.scala 23:18]
     PC.clock <= clock
     PC.reset <= reset
-    inst instMem of InstructionMemory @[IF.scala 24:23]
+    inst instMem of InstructionMemoryFPGA @[IF.scala 24:23]
     instMem.clock <= clock
     instMem.reset <= reset
-    node _outReg_T = eq(io.stallReg, UInt<1>("h0")) @[IF.scala 26:34]
+    node _outReg_T = eq(io.stallReg, UInt<1>("h0")) @[IF.scala 27:34]
     reg outReg : { inst : UInt<32>, pc : UInt<32>}, clock with :
       reset => (UInt<1>("h0"), outReg) @[Reg.scala 19:16]
     when _outReg_T : @[Reg.scala 20:18]
       outReg.pc <= io.out.pc @[Reg.scala 20:22]
       outReg.inst <= io.out.inst @[Reg.scala 20:22]
-    PC.io.memIO.nonEmpty is invalid @[IF.scala 38:24]
+    PC.io.memIO.nonEmpty is invalid @[IF.scala 39:24]
     wire _PC_io_memIO_ready_WIRE : UInt<1>
     _PC_io_memIO_ready_WIRE <= UInt<1>("h0")
-    PC.io.memIO.ready <= _PC_io_memIO_ready_WIRE @[IF.scala 39:21]
+    PC.io.memIO.ready <= _PC_io_memIO_ready_WIRE @[IF.scala 40:21]
     wire _PC_io_in_WIRE : UInt<32>
     _PC_io_in_WIRE <= UInt<32>("h0")
-    PC.io.in <= _PC_io_in_WIRE @[IF.scala 40:12]
+    PC.io.in <= _PC_io_in_WIRE @[IF.scala 41:12]
     wire _instMem_io_memIO_valid_WIRE : UInt<1>
     _instMem_io_memIO_valid_WIRE <= UInt<1>("h0")
-    instMem.io.memIO.valid <= _instMem_io_memIO_valid_WIRE @[IF.scala 42:26]
+    instMem.io.memIO.valid <= _instMem_io_memIO_valid_WIRE @[IF.scala 43:26]
     wire _instMem_io_memIO_write_WIRE : UInt<1>
     _instMem_io_memIO_write_WIRE <= UInt<1>("h0")
-    instMem.io.memIO.write <= _instMem_io_memIO_write_WIRE @[IF.scala 43:26]
-    instMem.io.memIO.write <= io.memIO.ready @[IF.scala 46:26]
-    instMem.io.memIO.writeData <= io.memIO.writeData @[IF.scala 47:30]
-    instMem.io.memIO.valid <= PC.io.memIO.valid @[IF.scala 48:26]
-    instMem.io.memIO.addr <= PC.io.memIO.addr @[IF.scala 49:25]
+    instMem.io.memIO.write <= _instMem_io_memIO_write_WIRE @[IF.scala 44:26]
+    instMem.io.memIO.write <= io.memIO.ready @[IF.scala 47:26]
+    instMem.io.memIO.writeData <= io.memIO.writeData @[IF.scala 48:30]
+    instMem.io.memIO.valid <= PC.io.memIO.valid @[IF.scala 49:26]
+    instMem.io.memIO.addr <= PC.io.memIO.addr @[IF.scala 50:25]
     wire pc : UInt
     pc <= PC.io.memIO.addr
-    node addMux = mux(io.changePC, io.newPCValue, pc) @[IF.scala 56:19]
-    node _T = eq(instMem.io.memIO.nonEmpty, UInt<1>("h0")) @[IF.scala 68:11]
-    when _T : @[IF.scala 68:39]
-      PC.io.memIO.ready <= UInt<1>("h1") @[IF.scala 69:25]
-      node _PC_io_in_T = add(pc, UInt<3>("h4")) @[IF.scala 70:54]
-      node _PC_io_in_T_1 = tail(_PC_io_in_T, 1) @[IF.scala 70:54]
-      node _PC_io_in_T_2 = mux(io.changePC, io.newPCValue, _PC_io_in_T_1) @[IF.scala 70:22]
-      PC.io.in <= _PC_io_in_T_2 @[IF.scala 70:16]
+    node addMux = mux(io.changePC, io.newPCValue, pc) @[IF.scala 57:19]
+    node _T = eq(instMem.io.memIO.nonEmpty, UInt<1>("h0")) @[IF.scala 69:11]
+    when _T : @[IF.scala 69:39]
+      PC.io.memIO.ready <= UInt<1>("h1") @[IF.scala 70:25]
+      node _PC_io_in_T = add(pc, UInt<3>("h4")) @[IF.scala 71:54]
+      node _PC_io_in_T_1 = tail(_PC_io_in_T, 1) @[IF.scala 71:54]
+      node _PC_io_in_T_2 = mux(io.changePC, io.newPCValue, _PC_io_in_T_1) @[IF.scala 71:22]
+      PC.io.in <= _PC_io_in_T_2 @[IF.scala 71:16]
     else :
-      PC.io.memIO.ready <= UInt<1>("h0") @[IF.scala 72:25]
-      PC.io.in <= addMux @[IF.scala 73:16]
-    node muxOutPC = mux(io.stallReg, pc, addMux) @[IF.scala 76:21]
-    node muxOutInst = mux(io.flush, UInt<1>("h0"), instMem.io.memOut) @[IF.scala 77:23]
-    outReg.inst <= muxOutInst @[IF.scala 79:15]
-    outReg.pc <= muxOutPC @[IF.scala 80:13]
-    io.out.inst <= outReg.inst @[IF.scala 81:15]
-    node _io_out_pc_T = mux(io.stallReg, pc, addMux) @[IF.scala 82:27]
+      PC.io.memIO.ready <= UInt<1>("h0") @[IF.scala 73:25]
+      PC.io.in <= addMux @[IF.scala 74:16]
+    node muxOutPC = mux(io.stallReg, pc, addMux) @[IF.scala 77:21]
+    node muxOutInst = mux(io.flush, UInt<1>("h0"), instMem.io.memOut) @[IF.scala 78:23]
+    outReg.inst <= muxOutInst @[IF.scala 80:15]
+    outReg.pc <= muxOutPC @[IF.scala 81:13]
+    io.out.inst <= outReg.inst @[IF.scala 82:15]
+    node _io_out_pc_T = mux(io.stallReg, pc, addMux) @[IF.scala 83:27]
     reg io_out_pc_REG : UInt, clock with :
-      reset => (UInt<1>("h0"), io_out_pc_REG) @[IF.scala 82:23]
-    io_out_pc_REG <= _io_out_pc_T @[IF.scala 82:23]
-    io.out.pc <= io_out_pc_REG @[IF.scala 82:13]
+      reset => (UInt<1>("h0"), io_out_pc_REG) @[IF.scala 83:23]
+    io_out_pc_REG <= _io_out_pc_T @[IF.scala 83:23]
+    io.out.pc <= io_out_pc_REG @[IF.scala 83:13]
 
   module ImmGenerator :
     input clock : Clock
@@ -1267,7 +1224,7 @@ circuit ChiselRISC :
   module ChiselRISC :
     input clock : Clock
     input reset : UInt<1>
-    output io : { flip startPipeline : UInt<1>, seg : UInt<7>, an : UInt<4>}
+    output io : { flip memIO : { flip ready : UInt<1>, write : UInt<1>, writeData : UInt<32>, valid : UInt<1>, flip nonEmpty : UInt<1>, addr : UInt<32>}, flip startPipeline : UInt<1>, seg : UInt<7>, an : UInt<4>}
 
     wire _io_seg_WIRE : UInt<7>
     _io_seg_WIRE <= UInt<7>("h0")
@@ -1338,16 +1295,20 @@ circuit ChiselRISC :
     hazardControl.io.EXrd <= EX.io.in.rd @[ChiselRISC.scala 74:27]
     hazardControl.io.IDrs1 <= ID.io.out.rs1 @[ChiselRISC.scala 75:28]
     hazardControl.io.IDrs2 <= ID.io.out.rs2 @[ChiselRISC.scala 76:28]
-    IF.io.memIO.ready is invalid @[ChiselRISC.scala 81:23]
-    IF.io.memIO.writeData is invalid @[ChiselRISC.scala 82:27]
-    inst sevenSeg of SevenSegment @[ChiselRISC.scala 106:26]
+    io.memIO.valid is invalid @[ChiselRISC.scala 81:20]
+    io.memIO.ready is invalid @[ChiselRISC.scala 82:20]
+    io.memIO.nonEmpty is invalid @[ChiselRISC.scala 83:23]
+    io.memIO.addr is invalid @[ChiselRISC.scala 84:19]
+    IF.io.memIO.ready <= io.memIO.write @[ChiselRISC.scala 85:23]
+    IF.io.memIO.writeData <= io.memIO.writeData @[ChiselRISC.scala 86:27]
+    inst sevenSeg of SevenSegment @[ChiselRISC.scala 103:26]
     sevenSeg.clock <= clock
     sevenSeg.reset <= reset
-    node _sevenSeg_io_in_T = bits(WB.io.out.muxOut, 15, 0) @[ChiselRISC.scala 107:47]
+    node _sevenSeg_io_in_T = bits(WB.io.out.muxOut, 15, 0) @[ChiselRISC.scala 104:47]
     reg sevenSeg_io_in_REG : UInt, clock with :
-      reset => (UInt<1>("h0"), sevenSeg_io_in_REG) @[ChiselRISC.scala 107:30]
-    sevenSeg_io_in_REG <= _sevenSeg_io_in_T @[ChiselRISC.scala 107:30]
-    sevenSeg.io.in <= sevenSeg_io_in_REG @[ChiselRISC.scala 107:20]
-    io.seg <= sevenSeg.io.seg @[ChiselRISC.scala 108:12]
-    io.an <= sevenSeg.io.an @[ChiselRISC.scala 109:11]
+      reset => (UInt<1>("h0"), sevenSeg_io_in_REG) @[ChiselRISC.scala 104:30]
+    sevenSeg_io_in_REG <= _sevenSeg_io_in_T @[ChiselRISC.scala 104:30]
+    sevenSeg.io.in <= sevenSeg_io_in_REG @[ChiselRISC.scala 104:20]
+    io.seg <= sevenSeg.io.seg @[ChiselRISC.scala 105:12]
+    io.an <= sevenSeg.io.an @[ChiselRISC.scala 106:11]
 

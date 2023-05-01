@@ -26,6 +26,11 @@
     }
   },
   {
+    "class":"chisel3.experimental.EnumAnnotations$EnumComponentAnnotation",
+    "target":"ChiselRISC.Decoder.op",
+    "enumTypeName":"ChiselRISC.utilities.OP"
+  },
+  {
     "class":"chisel3.experimental.EnumAnnotations$EnumDefAnnotation",
     "typeName":"ChiselRISC.utilities.OP",
     "definition":{
@@ -41,7 +46,18 @@
     }
   },
   {
+    "class":"chisel3.experimental.EnumAnnotations$EnumComponentAnnotation",
+    "target":"ChiselRISC.ImmGenerator.opcode",
+    "enumTypeName":"ChiselRISC.utilities.OP"
+  },
+  {
     "class":"firrtl.transforms.BlackBoxTargetDirAnno",
     "targetDir":"Verilog"
+  },
+  {
+    "class":"firrtl.annotations.MemoryFileInlineAnnotation",
+    "target":"~ChiselRISC|InstructionMemoryFPGA>mem",
+    "filename":"InputHex.txt",
+    "hexOrBinary":"h"
   }
 ]

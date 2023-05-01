@@ -94,7 +94,6 @@ class ChiselRISC(simulation: Boolean = false, memoryFile: String = "") extends M
       io.debug.get.regFile := ID.io.debug.get.regFile
       io.debug.get.memoryIO <> MEM.io.debug.get.memoryIO
     }
-    //io.WB_out := RegNext(WB.io.out.muxOut)
 
     //------------------------------
     // Top file connection to Basys3
