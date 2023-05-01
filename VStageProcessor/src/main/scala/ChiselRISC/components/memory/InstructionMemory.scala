@@ -3,6 +3,7 @@ package ChiselRISC.components.memory
 import ChiselRISC.utilities._
 import chisel3._
 import chisel3.util._
+import chisel3.util.experimental.loadMemoryFromFileInline
 
 /**
  * Instruction Memory
@@ -47,7 +48,15 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
   io.memIO.nonEmpty := bufferEmpty
 
   // Instantiate the memory
-  val mem = Reg(Vec(actualDepth, UInt(datawidth.W)))
+
+    val mem = Reg(Vec(actualDepth, UInt(datawidth.W)))
+
+//    if (memoryFile.trim().nonEmpty) {
+//      loadMemoryFromFileInline(mem, memoryFile)
+//    }
+
+  //val mem = Reg(Vec(actualDepth, UInt(datawidth.W)))
+
 
   // Read from memory
   when(io.memIO.valid && !bufferEmpty) {
