@@ -29,7 +29,7 @@ object helperFunctions {
   }
 
   def FillInstructionMemoryFromFile(instructions: String, clock: Clock, interface: memoryInterfaceLight): Unit = {
-//    new PrintWriter("InputHex.txt") {
+//    new PrintWriter("InputHex.MEM") {
 //      write(instructions); close}
     val instructionArray = instructions.split("\n") // Split the instructions into an array
     val amountOfInstructions = instructionArray.length // Get the amount of instructions

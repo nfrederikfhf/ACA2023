@@ -21,8 +21,8 @@ class IF(datawidth: Int, depth: Int, simulation: Boolean = false, memoryFile: St
   })
   // ----- Testing ------------
   val PC = Module(new ProgramCounter(datawidth))
-  //val instMem = Module(new InstructionMemoryFPGA(depth, datawidth, memoryFile))
-  val instMem = Module(new InstructionMemory(depth, datawidth))
+  val instMem = Module(new InstructionMemoryFPGA(depth, datawidth, memoryFile))
+  //val instMem = Module(new InstructionMemory(depth, datawidth))
 
   val outReg = RegEnable(io.out, !io.stallReg)
 

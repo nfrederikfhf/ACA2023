@@ -14,17 +14,17 @@ class ChiselRISC(simulation: Boolean = false, memoryFile: String = "") extends M
     val startPipeline = Input(Bool())
     val debug = if (simulation) Some(new debugIO(32, 5)) else None
     //val WB_out = Output(UInt(32.W))
-    val seg = Output(UInt(7.W))
-    val an = Output(UInt(4.W))
-    val led0 = Output(Bool())
+    //val seg = Output(UInt(7.W))
+    //val an = Output(UInt(4.W))
+    //val led0 = Output(Bool())
     val add = Input(Bool())
   })
   // Init
-  io.seg := WireInit(0.U(7.W))
-  io.an := WireInit(0.U(4.W))
+  //io.seg := WireInit(0.U(7.W))
+  //io.an := WireInit(0.U(4.W))
 
   // Pipeline ChiselRISC.stages
-  val IF = Module(new IF(32, 100, simulation, memoryFile))
+  val IF = Module(new IF(32, 6, simulation, memoryFile))
   val ID = Module(new ID(32, 5, simulation))
   val EX = Module(new EX(32, 5))
   val MEM = Module(new MEM(32, 5, 1000, simulation))
@@ -78,12 +78,12 @@ class ChiselRISC(simulation: Boolean = false, memoryFile: String = "") extends M
   // Forward the data to MEM to avoid a one clock cylce delay
 
   //--------------Testing-----------------------
-  //    io.memIO.valid := DontCare
-  //    io.memIO.ready := DontCare
-  //    io.memIO.nonEmpty := DontCare
-  //    io.memIO.addr := DontCare
-  //    IF.io.memIO.ready := io.memIO.write
-  //    IF.io.memIO.writeData := io.memIO.writeData
+  //io.memIO.valid := DontCare
+  //io.memIO.ready := DontCare
+  //io.memIO.nonEmpty := DontCare
+  //io.memIO.addr := DontCare
+  //IF.io.memIO.ready := io.memIO.write
+  //IF.io.memIO.writeData := io.memIO.writeData
   IF.io.memIO.ready := WireInit(false.B)
   IF.io.memIO.writeData := WireInit(0.U(32.W))
 
@@ -106,16 +106,16 @@ class ChiselRISC(simulation: Boolean = false, memoryFile: String = "") extends M
   // Top file connection to Basys3
   //------------------------------
   // Life-blink LED
-  val led = RegInit(false.B)
-  val (_, ledCounterWrap) = Counter(true.B, 10000000)
-  when(ledCounterWrap) {
-    led := ~led
-  }
-  io.led0 := led
+  //val led = RegInit(false.B)
+  //val (_, ledCounterWrap) = Counter(true.B, 10000000)
+  //when(ledCounterWrap) {
+  //  led := ~led
+  //}
+  //io.led0 := led
   IF.io.startPC := io.startPipeline
-  // Seven segment display
-  val sevenSeg = Module(new SevenSegment)
-  sevenSeg.io.in := RegNext(WB.io.out.muxOut(15, 0))
-  io.seg := sevenSeg.io.seg
-  io.an := sevenSeg.io.an
+  //// Seven segment display
+  //val sevenSeg = Module(new SevenSegment)
+  //sevenSeg.io.in := RegNext(WB.io.out.muxOut(15, 0))
+  //io.seg := sevenSeg.io.seg
+  //io.an := sevenSeg.io.an
 }
