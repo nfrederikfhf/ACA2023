@@ -10,10 +10,10 @@ import chisel3.util.Counter
 
 class ChiselRISC(simulation: Boolean = false, memoryFile: String = "") extends Module {
   val io = IO(new Bundle {
-    //val memIO = Flipped(new memoryInterfaceLight(32))
+    val memIO = Flipped(new memoryInterfaceLight(32))
     val startPipeline = Input(Bool())
     val debug = if (simulation) Some(new debugIO(32, 5)) else None
-    //val WB_out = Output(UInt(32.W))
+    val WB_out = Output(UInt(32.W))
     //val seg = Output(UInt(7.W))
     //val an = Output(UInt(4.W))
     //val led0 = Output(Bool())
@@ -78,16 +78,18 @@ class ChiselRISC(simulation: Boolean = false, memoryFile: String = "") extends M
   // Forward the data to MEM to avoid a one clock cylce delay
 
   //--------------Testing-----------------------
-  //io.memIO.valid := DontCare
-  //io.memIO.ready := DontCare
-  //io.memIO.nonEmpty := DontCare
-  //io.memIO.addr := DontCare
-  //IF.io.memIO.ready := io.memIO.write
-  //IF.io.memIO.writeData := io.memIO.writeData
+  io.memIO.valid := DontCare
+  io.memIO.ready := DontCare
+  io.memIO.nonEmpty := DontCare
+  io.memIO.addr := DontCare
+  IF.io.memIO.ready := io.memIO.write
+  IF.io.memIO.writeData := io.memIO.writeData
   IF.io.memIO.ready := WireInit(false.B)
   IF.io.memIO.writeData := WireInit(0.U(32.W))
 
   when(io.add){
+    ID.io.in.inst := "h00210113".U(32.W)
+    ID.io.in.pc := 0.U(32.W)
     IF.io.memIO.writeData := "h00210113".U(32.W)
     IF.io.memIO.ready := true.B
   }
@@ -118,4 +120,5 @@ class ChiselRISC(simulation: Boolean = false, memoryFile: String = "") extends M
   //sevenSeg.io.in := RegNext(WB.io.out.muxOut(15, 0))
   //io.seg := sevenSeg.io.seg
   //io.an := sevenSeg.io.an
+  io.WB_out :=  RegNext(WB.io.out.muxOut(15, 0))
 }
