@@ -3,9 +3,11 @@ package ChiselRISC.components.memory
 import ChiselRISC.utilities._
 import chisel3._
 import chisel3.util._
+import chisel3.experimental.{ChiselAnnotation, ChiselEnum, annotate}
+import firrtl.annotations.MemoryArrayInitAnnotation
 import chisel3.util.experimental.loadMemoryFromFileInline
 
-class InstructionMemoryFPGA(depth: Int, datawidth: Int, memoryFile: String = "") extends Module {
+class InstructionMemoryFPGA(depth: Int, datawidth: Int, init: Seq[BigInt]) extends Module {
   val bitwidth = log2Ceil(depth) // Calculate the number of bits needed to address the memory
   val actualDepth = math.pow(2, bitwidth).toInt // 2^bidwidth
 
@@ -22,11 +24,18 @@ class InstructionMemoryFPGA(depth: Int, datawidth: Int, memoryFile: String = "")
   // Instantiate the memory
   val mem = Mem(actualDepth, UInt(datawidth.W))
 
+
   // Fill memory with program
-  if (memoryFile.trim().nonEmpty) {
-    io.memIO.nonEmpty := false.B // Ready to read as memory is not empty
-    loadMemoryFromFileInline(mem, memoryFile)
-  }
+
+    annotate(new ChiselAnnotation {
+      override def toFirrtl = MemoryArrayInitAnnotation(mem.toTarget, init.padTo(depth, BigInt(0)))
+    })
+
+  // Fill memory with program
+//  if (memoryFile.trim().nonEmpty) {
+//    io.memIO.nonEmpty := false.B // Ready to read as memory is not empty
+//    loadMemoryFromFileInline(mem, memoryFile)
+//  }
 
   // Read from memory
   when(io.memIO.valid) {
