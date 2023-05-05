@@ -2,7 +2,9 @@ package ChiselRISC.components.memory
 
 import ChiselRISC.utilities._
 import chisel3._
+import chisel3.experimental.{ChiselAnnotation, annotate}
 import chisel3.util._
+import firrtl.annotations.MemoryArrayInitAnnotation
 
 /**
  * Instruction Memory
@@ -47,7 +49,13 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
   io.memIO.nonEmpty := bufferEmpty
 
   // Instantiate the memory
-  val mem = Reg(Vec(actualDepth, UInt(datawidth.W)))
+  val mem = RegInit(VecInit(Seq.fill(actualDepth) (0.U(datawidth.W))))
+  //val mem = Mem(actualDepth, UInt(datawidth.W))
+
+//  annotate(new ChiselAnnotation {
+//    override def toFirrtl = MemoryArrayInitAnnotation(mem.toTarget, init.padTo(actualDepth, BigInt(0)))
+//  })
+
 
   // Read from memory
   when(io.memIO.valid && !bufferEmpty) {

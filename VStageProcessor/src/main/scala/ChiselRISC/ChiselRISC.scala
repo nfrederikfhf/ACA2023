@@ -1,21 +1,29 @@
 package ChiselRISC
 
+import peripherals.SevenSegment
 import components.{ForwardingUnit, HazardControl}
 import stages._
 import utilities.{debugIO, memoryInterface, memoryInterfaceLight}
 import chisel3._
+import chisel3.util.Counter
 
 
 
-class ChiselRISC(simulation: Boolean = false) extends Module{
+class ChiselRISC(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigInt(0))) extends Module{
   val io = IO(new Bundle{
     val memIO = Flipped(new memoryInterfaceLight(32))
     val startPipeline = Input(Bool())
     val debug = if(simulation) Some(new debugIO(32, 5)) else None
-    val WB_out = Output(UInt(32.W))
+    //val WB_out = Output(UInt(32.W))
+    val add1 = Input(Bool())
+    val add2 = Input(Bool())
+    val add3 = Input(Bool())
+    val led0 = Output(Bool())
+    val seg = Output(UInt(7.W))
+    val an = Output(UInt(4.W))
   })
   // Pipeline ChiselRISC.stages
-  val IF = Module(new IF(32, 100, simulation))
+  val IF = Module(new IF(32, 100, simulation, init))
   val ID = Module(new ID(32, 5, simulation))
   val EX = Module(new EX(32, 5))
   val MEM = Module(new MEM(32, 5, 100, simulation))
@@ -66,7 +74,8 @@ class ChiselRISC(simulation: Boolean = false) extends Module{
   hazardControl.io.IDrs2 := ID.io.out.rs2
 
   // Forward the data to MEM to avoid a one clock cylce delay
-
+  IF.io.memIO.writeData := WireInit(0.U(32.W))
+  IF.io.memIO.ready := WireInit(false.B)
   //--------------Testing-----------------------
   io.memIO.valid := DontCare
   io.memIO.ready := DontCare
@@ -74,7 +83,8 @@ class ChiselRISC(simulation: Boolean = false) extends Module{
   io.memIO.addr := DontCare
   IF.io.memIO.ready := io.memIO.write
   IF.io.memIO.writeData := io.memIO.writeData
-
+//  IF.io.memIO.ready := WireInit(false.B)
+//  IF.io.memIO.writeData := WireInit(0.U(32.W))
   if(simulation){ // Connect the simulation wires
     IF.io.startPC.get := io.startPipeline
     //----- Debug bus--------------------------------
@@ -84,5 +94,36 @@ class ChiselRISC(simulation: Boolean = false) extends Module{
     io.debug.get.regFile := ID.io.debug.get.regFile
     io.debug.get.memoryIO <> MEM.io.debug.get.memoryIO
   }
-  io.WB_out := WB.io.out.muxOut
+
+  when(io.add1){
+    IF.io.memIO.ready := true.B
+    IF.io.memIO.writeData := "h00108093".U
+  }
+
+  when(io.add2) {
+    IF.io.memIO.ready := true.B
+    IF.io.memIO.writeData := "h00210113".U
+  }
+
+  when(io.add3) {
+    IF.io.memIO.ready := true.B
+    IF.io.memIO.writeData := "h002081B3".U
+  }
+
+  //------------------------------
+  // Top file connection to Basys3
+  //------------------------------
+  // Life-blink LED
+  val led = RegInit(false.B)
+  val (_, ledCounterWrap) = Counter(true.B, 10000000)
+  when(ledCounterWrap) {
+    led := ~led
+  }
+  io.led0 := led
+
+  //// Seven segment display
+//  val sevenSeg = Module(new SevenSegment)
+//  sevenSeg.io.in := RegNext(WB.io.out.muxOut(15, 0))
+//  io.seg := sevenSeg.io.seg
+//  io.an := sevenSeg.io.an
 }
