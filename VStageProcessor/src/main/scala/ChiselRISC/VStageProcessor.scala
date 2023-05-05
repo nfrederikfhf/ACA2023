@@ -12,8 +12,19 @@ class VStageProcessor (simulation: Boolean = false, init: Seq[BigInt] = Seq(BigI
     val startPipeline = Input(Bool())
     val start = Input(Bool())
     val add = Input(Bool())
+    val branchInst = Input(Bool())
+    val jumpInst = Input(Bool())
     val seg = Output(UInt(7.W))
     val an = Output(UInt(4.W))
+    val useImm = Output(Bool())
+    val useAlu = Output(Bool())
+    val branch = Output(Bool())
+    val jump = Output(Bool())
+    val load = Output(Bool())
+    val store = Output(Bool())
+    val changePC = Output(Bool())
+    val writeEnable = Output(Bool())
+
   })
 
   //Pipeline stages
@@ -76,21 +87,43 @@ class VStageProcessor (simulation: Boolean = false, init: Seq[BigInt] = Seq(BigI
   IF.io.startPC := io.startPipeline
 
   // Seven Segment Display
-  val sevenSegmentDisplay = Module(new SevenSegment(200))
+  val sevenSegmentDisplay = Module(new SevenSegment(200000))
   sevenSegmentDisplay.io.in := WB.io.out.muxOut(15,0)
   io.seg := sevenSegmentDisplay.io.seg
   io.an := sevenSegmentDisplay.io.an
 
-
+  // Force write instructions to memory - Since for some reason filling memory does not work
   when(io.add) {
     IF.io.startPC := true.B
     IF.io.memIO.ready := true.B
     IF.io.memIO.writeData := "h00210113".U
   }
 
+  when(io.branchInst){
+    IF.io.startPC := true.B
+    IF.io.memIO.ready := true.B
+    IF.io.memIO.writeData := "h00310863".U
+  }
+
+  when(io.jumpInst) {
+    IF.io.startPC := true.B
+    IF.io.memIO.ready := true.B
+    IF.io.memIO.writeData := "h0280006f".U
+  }
+
   when(io.start) {
     IF.io.startPC := true.B
   }
+  // FPGA debugging LEDS
+  io.useImm := ID.io.out.ctrl.useImm
+  io.useAlu := ID.io.out.ctrl.useALU
+  io.branch := ID.io.out.ctrl.branch
+  io.jump := ID.io.out.ctrl.jump
+  io.load := ID.io.out.ctrl.load
+  io.store := ID.io.out.ctrl.store
+  io.changePC := ID.io.out.ctrl.changePC
+  io.writeEnable := WB.io.in.writeEnable
+
 
   if (simulation) { // Connect the simulation wires
     //----- Debug bus--------------------------------

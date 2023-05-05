@@ -27,14 +27,14 @@ set_property PACKAGE_PIN V17 [get_ports {io_startPipeline}]
  
 
 ## LEDs
-#set_property PACKAGE_PIN U16 [get_ports {io_led0}]					
-#set_property PACKAGE_PIN E19 [get_ports {led_led[1]}]					
-#set_property PACKAGE_PIN U19 [get_ports {led_led[2]}]					
-#set_property PACKAGE_PIN V19 [get_ports {led_led[3]}]					
-#set_property PACKAGE_PIN W18 [get_ports {led_led[4]}]					
-#set_property PACKAGE_PIN U15 [get_ports {led_led[5]}]					
-#set_property PACKAGE_PIN U14 [get_ports {led_led[6]}]					
-#set_property PACKAGE_PIN V14 [get_ports {led_led[7]}]					
+set_property PACKAGE_PIN U16 [get_ports {io_useImm}]					
+set_property PACKAGE_PIN E19 [get_ports {io_useAlu}]					
+set_property PACKAGE_PIN U19 [get_ports {io_branch}]					
+set_property PACKAGE_PIN V19 [get_ports {io_jump}]					
+set_property PACKAGE_PIN W18 [get_ports {io_load}]					
+set_property PACKAGE_PIN U15 [get_ports {io_store}]					
+set_property PACKAGE_PIN U14 [get_ports {io_changePC}]					
+set_property PACKAGE_PIN V14 [get_ports {io_writeEnable}]					
 #set_property PACKAGE_PIN V13 [get_ports {led_led[8]}]					
 #set_property PACKAGE_PIN V3  [get_ports {led_led[9]}]					
 #set_property PACKAGE_PIN W3  [get_ports {led_led[10]}]					
@@ -46,8 +46,8 @@ set_property PACKAGE_PIN V17 [get_ports {io_startPipeline}]
 	
 	
 ##Buttons
-#set_property PACKAGE_PIN U18 [get_ports io_start]						
-#set_property PACKAGE_PIN T18 [get_ports btnU]						
+set_property PACKAGE_PIN U18 [get_ports {io_branchInst}]						
+set_property PACKAGE_PIN T18 [get_ports {io_jumpInst}]						
 set_property PACKAGE_PIN W19 [get_ports {io_add}]						
 set_property PACKAGE_PIN T17 [get_ports reset]						
 #set_property PACKAGE_PIN U17 [get_ports btnD]						
