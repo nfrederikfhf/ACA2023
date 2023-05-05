@@ -2,13 +2,13 @@ set_property IOSTANDARD LVCMOS33 [get_ports *]
 
 set_property CONFIG_VOLTAGE 3.3 [current_design]
 set_property CFGBVS VCCO [current_design]
-
+set_property BITSTREAM.General.UnconstrainedPins {Allow} [current_design]
 ## Clock signal
 set_property PACKAGE_PIN W5 [get_ports {clock}]							
 create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports {clock}]
  
 ## Switches
-set_property PACKAGE_PIN V17 [get_ports {io_start}]					
+set_property PACKAGE_PIN V17 [get_ports {io_startPipeline}]					
 #set_property PACKAGE_PIN V16 [get_ports {sw[1]}]					
 #set_property PACKAGE_PIN W16 [get_ports {sw[2]}]					
 #set_property PACKAGE_PIN W17 [get_ports {sw[3]}]					
