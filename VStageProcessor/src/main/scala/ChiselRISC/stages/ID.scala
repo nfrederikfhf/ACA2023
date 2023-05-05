@@ -7,18 +7,6 @@ import ChiselRISC.components.memory.RegisterFile
 import ChiselRISC.components.{ImmGenerator, Decoder}
 
 class ID(datawidth: Int, addrWidth: Int, simulation: Boolean = false) extends Module {
-  /*
-  * This stage is responsible for:
-  * - Generating the immediate
-  * - Decoding the instruction
-  * - Reading the register file
-  * - Writing the register file
-  * - Writing the control signals
-  * - Writing the ALU operation
-  * @param datawidth: The width of the data bus
-  * @param addrWidth: The width of the address bus
-   */
-
   val io = IO(new Bundle {
     val stallReg = Input(Bool())
     val flush = Input(Bool())

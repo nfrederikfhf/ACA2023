@@ -5,7 +5,7 @@ import ChiselRISC.stages._
 import org.scalatest.flatspec.AnyFlatSpec
 class IFSpec extends AnyFlatSpec with ChiselScalatestTester{
   it should "check instruction can be fetched" in {
-    test(new IF(32, 100,true)) { dut =>
+    test(new IF(32, 100)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       dut.io.changePC.poke(false.B)
       dut.io.newPCValue.poke(0.U)
       dut.clock.step(1)

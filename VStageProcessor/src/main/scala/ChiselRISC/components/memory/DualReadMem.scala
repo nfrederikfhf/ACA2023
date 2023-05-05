@@ -2,7 +2,8 @@ package ChiselRISC.components.memory
 
 import chisel3._
 import chisel3.util.log2Ceil
-
+import chisel3.experimental.{ChiselAnnotation, annotate}
+import firrtl.annotations.MemoryArrayInitAnnotation
 class DualReadMem(addrWidth: Int, dataWidth: Int, depth: Int) extends Module {
   val bitwidth = log2Ceil(depth) // Calculate the number of bits needed to address the memory
   val actualDepth = math.pow(2, bitwidth).toInt // 2^bidwidth
@@ -32,6 +33,10 @@ class DualReadMem(addrWidth: Int, dataWidth: Int, depth: Int) extends Module {
 
   // Instantiate the memory, syncronous read
   val mem: SyncReadMem[UInt] = SyncReadMem(actualDepth, UInt(dataWidth.W))
+
+  annotate(new ChiselAnnotation {
+    override def toFirrtl = MemoryArrayInitAnnotation(mem.toTarget, Seq(BigInt(0)).padTo(actualDepth, BigInt(0)))
+  })
 
   when(io.rden) { // Calculate the address to read from
     // Divide by four to get the correct address due to pc+4 addressing

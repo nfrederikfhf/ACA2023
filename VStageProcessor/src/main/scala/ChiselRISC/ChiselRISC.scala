@@ -11,12 +11,12 @@ import chisel3.util.Counter
 class ChiselRISC(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigInt(0))) extends Module {
   val io = IO(new Bundle {
     val memIO = Flipped(new memoryInterfaceLight(32))
-    val startPipeline = Input(Bool())
+//    val startPipeline = Input(Bool())
     val debug = if (simulation) Some(new debugIO(32, 5)) else None
     val WB_out = Output(UInt(32.W))
     //val seg = Output(UInt(7.W))
     //val an = Output(UInt(4.W))
-    //val led0 = Output(Bool())
+    val led0 = Output(Bool())
     val add = Input(Bool())
   })
   // Init
@@ -24,7 +24,7 @@ class ChiselRISC(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigInt(0))
   //io.an := WireInit(0.U(4.W))
 
   // Pipeline ChiselRISC.stages
-  val IF = Module(new IF(32, 100, simulation, init))
+  val IF = Module(new IF(32, 100,  init))
   val ID = Module(new ID(32, 5, simulation))
   val EX = Module(new EX(32, 5))
   val MEM = Module(new MEM(32, 5, 1000, simulation))
@@ -86,8 +86,10 @@ class ChiselRISC(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigInt(0))
 //  IF.io.memIO.writeData := io.memIO.writeData
   IF.io.memIO.ready := WireInit(false.B)
   IF.io.memIO.writeData := WireInit(0.U(32.W))
+  IF.io.startPC := WireInit(true.B)
 
   when(io.add){
+    IF.io.startPC := false.B
     ID.io.in.inst := "h00210113".U(32.W)
     ID.io.in.pc := 0.U(32.W)
     IF.io.memIO.writeData := "h00210113".U(32.W)
@@ -108,13 +110,12 @@ class ChiselRISC(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigInt(0))
   // Top file connection to Basys3
   //------------------------------
   // Life-blink LED
-  //val led = RegInit(false.B)
-  //val (_, ledCounterWrap) = Counter(true.B, 10000000)
-  //when(ledCounterWrap) {
-  //  led := ~led
-  //}
-  //io.led0 := led
-  IF.io.startPC := io.startPipeline
+  val led = RegInit(false.B)
+  val (_, ledCounterWrap) = Counter(true.B, 10000000)
+  when(ledCounterWrap) {
+    led := ~led
+  }
+  io.led0 := led
   //// Seven segment display
   //val sevenSeg = Module(new SevenSegment)
   //sevenSeg.io.in := RegNext(WB.io.out.muxOut(15, 0))

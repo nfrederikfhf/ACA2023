@@ -11,7 +11,7 @@ import java.nio.file.{Path, Paths}
 class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
 
   it should "execute an ADDI instruction correctly" in {
-    test(new ChiselRISC(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       val input = """addi x1, x1, 1"""
       FillInstructionMemory(input, dut.clock, dut.io.memIO)
       dut.io.startPipeline.poke(true.B)
@@ -22,7 +22,7 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
 
 
   it should "execute an ADD instruction correctly" in {
-    test(new ChiselRISC(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       // Instantiate data
       val input =
         """addi x1, x1, 1
@@ -43,7 +43,7 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
   }
 
   it should "execute an ADD instruction correctly with forwarding" in {
-    test(new ChiselRISC(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       // Instantiate data
       val input =
         """addi x1, x1, 1
@@ -61,7 +61,7 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
   }
 
   it should "execute an store and load instruction correctly" in {
-    test(new ChiselRISC(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut  =>
+    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut  =>
       // add value in register
       val addi = "addi x1, x1, 1"
       FillInstructionMemory(addi, dut.clock, dut.io.memIO)
@@ -88,7 +88,7 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
   }
 
   it should "execute JAL/JALR instructions" in {
-    test(new ChiselRISC(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       // Instantiate data
       val input =
         """
@@ -113,7 +113,7 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
   }
 
   it should "execute JAL an instruction and skip JALR instruction" in {
-    test(new ChiselRISC(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       // Should skip the JALR instruction due to the JAL instruction
       val input =
         """
@@ -136,7 +136,7 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
   }
 
   it should "execute branch instructions" in {
-    test(new ChiselRISC(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       val input =
         """
           addi x1, x0, 4
@@ -173,7 +173,7 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
   }
 
   it should "execute branch instructions - alternative" in {
-    test(new ChiselRISC(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       val input =
         """
           addi x1, x0, 6
@@ -209,14 +209,14 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.clock.step(3)
       dut.io.debug.get.pc.expect(36.U)
       dut.clock.step(3)
-      dut.io.debug.get.pc.expect(44.U)
+      dut.io.debug.get.pc.expect(48.U)
       dut.clock.step(3)
-      dut.io.debug.get.pc.expect(52.U)
+      dut.io.debug.get.pc.expect(60.U)
     }
   }
 
   it should "execute the LW instruction" in {
-    test(new ChiselRISC(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       val input =
         """
           lui x1, 0xf0f0f
@@ -247,7 +247,7 @@ class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
   }
 
   it should "execute the program that is tested on the FPGA" in {
-    test(new ChiselRISC(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       val input = RISCVAssembler.fromFile("Input.asm")
       FillInstructionMemoryFromFile(input, dut.clock, dut.io.memIO)
       dut.io.debug.get.regFile(1).expect(0.U)

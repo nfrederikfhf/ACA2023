@@ -13,13 +13,14 @@ class InstructionMemoryFPGA(depth: Int, datawidth: Int, init: Seq[BigInt] = Seq(
 
   val io = IO(new Bundle {
     val memIO = Flipped(new memoryInterfaceLight(datawidth)) // Memory interface
+    val writer = new writeToInstMem(datawidth)
     val memOut = Output(UInt(datawidth.W)) // Data read from memory
   })
 
   io.memOut := WireInit(0.U(datawidth.W))
   io.memIO.ready := DontCare
-  val readAddr = WireInit(0.U(bitwidth.W))
-  io.memIO.nonEmpty := WireInit(true.B)
+  val readAddr = WireInit(0.U(datawidth.W))
+  io.memIO.nonEmpty := WireInit(false.B)
   val writePtr = RegInit(0.U(bitwidth.W))
 
   // Instantiate the memory
@@ -40,14 +41,17 @@ class InstructionMemoryFPGA(depth: Int, datawidth: Int, init: Seq[BigInt] = Seq(
 //    loadMemoryFromFileInline(mem, memoryFile)
 //  }
 
-  // Read from memory
-  when(io.memIO.valid) {
-    readAddr := io.memIO.addr >> 2 // Divide by 4 to get the correct read address
-    io.memOut := mem(readAddr)
-  }
+  readAddr := io.memIO.addr >> 2 // Divide by 4 to get the correct read address
+  io.memOut := mem(readAddr)
 
-  when(io.memIO.write){
-    mem(writePtr) := io.memIO.writeData
+  // Read from memory
+//  when(io.memIO.valid) {
+//    readAddr := io.memIO.addr >> 2 // Divide by 4 to get the correct read address
+//    io.memOut := mem(readAddr)
+//  }
+
+  when(io.writer.ready){
+    mem(writePtr) := io.writer.data
     writePtr := writePtr + 1.U
     when(writePtr >= actualDepth.U){
       writePtr := 0.U

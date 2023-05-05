@@ -11,8 +11,6 @@ class ProgramCounter(bitWidth: Int) extends Module{
   //Init signals
   io.memIO.valid := WireInit(false.B)
   io.memIO.nonEmpty := DontCare
-  io.memIO.writeData := DontCare
-  io.memIO.write := DontCare
   io.memIO.addr := WireInit(0.U(bitWidth.W))
 
 

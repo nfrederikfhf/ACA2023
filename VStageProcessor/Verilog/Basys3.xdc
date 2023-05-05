@@ -8,7 +8,7 @@ set_property PACKAGE_PIN W5 [get_ports {clock}]
 create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports {clock}]
  
 ## Switches
-set_property PACKAGE_PIN V17 [get_ports {io_startPipeline}]					
+set_property PACKAGE_PIN V17 [get_ports {io_start}]					
 #set_property PACKAGE_PIN V16 [get_ports {sw[1]}]					
 #set_property PACKAGE_PIN W16 [get_ports {sw[2]}]					
 #set_property PACKAGE_PIN W17 [get_ports {sw[3]}]					
@@ -27,7 +27,7 @@ set_property PACKAGE_PIN V17 [get_ports {io_startPipeline}]
  
 
 ## LEDs
-set_property PACKAGE_PIN U16 [get_ports {io_led0}]					
+#set_property PACKAGE_PIN U16 [get_ports {io_led0}]					
 #set_property PACKAGE_PIN E19 [get_ports {led_led[1]}]					
 #set_property PACKAGE_PIN U19 [get_ports {led_led[2]}]					
 #set_property PACKAGE_PIN V19 [get_ports {led_led[3]}]					
@@ -46,10 +46,10 @@ set_property PACKAGE_PIN U16 [get_ports {io_led0}]
 	
 	
 ##Buttons
-#set_property PACKAGE_PIN U18 [get_ports btnC]						
+#set_property PACKAGE_PIN U18 [get_ports io_start]						
 #set_property PACKAGE_PIN T18 [get_ports btnU]						
 set_property PACKAGE_PIN W19 [get_ports {io_add}]						
-#set_property PACKAGE_PIN T17 [get_ports btnR]						
+set_property PACKAGE_PIN T17 [get_ports reset]						
 #set_property PACKAGE_PIN U17 [get_ports btnD]						
 
 
@@ -65,8 +65,7 @@ set_property PACKAGE_PIN U7 [get_ports {io_seg[6]}]
 set_property PACKAGE_PIN U2 [get_ports {io_an[0]}]					
 set_property PACKAGE_PIN U4 [get_ports {io_an[1]}]					
 set_property PACKAGE_PIN V4 [get_ports {io_an[2]}]					
-set_property PACKAGE_PIN W4 [get_ports {io_an[3]}]					
-
+set_property PACKAGE_PIN W4 [get_ports {io_an[3]}]
 
 ##VGA Connector
 #set_property PACKAGE_PIN G19 [get_ports {vgaRed[0]}]				
@@ -86,8 +85,8 @@ set_property PACKAGE_PIN W4 [get_ports {io_an[3]}]
 
  
 ##USB-RS232 Interface
-#set_property PACKAGE_PIN B18 [get_ports {RsRx}]						
-#set_property PACKAGE_PIN A18 [get_ports {RsTx}]						
+#set_property PACKAGE_PIN B18 [get_ports {io_UART0SerialPort_rx}]						
+#set_property PACKAGE_PIN A18 [get_ports {io_UART0SerialPort_tx}]						
 
 
 ##USB HID (PS/2)
@@ -109,8 +108,8 @@ set_property PACKAGE_PIN W4 [get_ports {io_an[3]}]
 
 
 ##Pmod Header JB
-set_property PACKAGE_PIN A14 [get_ports {reset}]					
-set_property PACKAGE_PIN A16 [get_ports {clock}]					
+#set_property PACKAGE_PIN A14 [get_ports {reset}]					
+#set_property PACKAGE_PIN A16 [get_ports {clock}]					
 #set_property PACKAGE_PIN B15 [get_ports {io_btn}]					
 #set_property PACKAGE_PIN B16 [get_ports {JB[3]}]					
 #set_property PACKAGE_PIN A15 [get_ports {JB[4]}]					

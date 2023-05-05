@@ -16,10 +16,10 @@ class InstMemSpec extends AnyFlatSpec with ChiselScalatestTester{
     test(new InstructionMemory(100, 32)) { dut =>
       // Write some data to the memory
       for (i <- 0 until dut.actualDepth) {
-        dut.io.memIO.write.poke(true.B)
-        dut.io.memIO.writeData.poke(i.U(32.W))
+        dut.io.writer.ready.poke(true.B)
+        dut.io.writer.data.poke(i.U(32.W))
         dut.clock.step(1)
-        dut.io.memIO.write.poke(false.B)
+        dut.io.writer.ready.poke(false.B)
         dut.clock.step(1)
       }
 
@@ -61,7 +61,7 @@ class InstMemSpec extends AnyFlatSpec with ChiselScalatestTester{
       for(i <- 0 until instructionsArray.length) {
         instructionsArray(i) = "h" + instructionsArray(i)
       }
-      FillInstructionMemory(input, dut.clock, dut.io.memIO)
+      FillInstructionMemory(input, dut.clock, dut.io.writer)
       dut.io.memIO.nonEmpty.expect(false.B)
 
       for (i <- 0 until instructionsArray.length) {

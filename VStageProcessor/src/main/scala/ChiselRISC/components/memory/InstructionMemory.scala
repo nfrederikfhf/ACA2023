@@ -3,7 +3,6 @@ package ChiselRISC.components.memory
 import ChiselRISC.utilities._
 import chisel3._
 import chisel3.util._
-import chisel3.util.experimental.loadMemoryFromFileInline
 
 /**
  * Instruction Memory
@@ -19,6 +18,7 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
 
   val io = IO(new Bundle {
     val memIO = Flipped(new memoryInterfaceLight(datawidth)) // Memory interface
+    val writer = new writeToInstMem(datawidth)
     val memOut = Output(UInt(datawidth.W)) // Data read from memory
   })
   // Buffer status signals
@@ -26,12 +26,8 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
   val bufferFull = WireInit(false.B)
 
   // Initialise the signals
-//  io.memIO.Response.data := WireInit(0.U(datawidth.W))
-//  io.memIO.Response.ready := WireInit(false.B)
-//  io.memIO.Response.nonEmpty := WireInit(false.B)
   io.memOut := WireInit(0.U(datawidth.W))
   io.memIO.ready := DontCare
-  io.memIO.nonEmpty := WireInit(false.B)
   val readAddr = WireInit(0.U(bitwidth.W))
 
   // Pointers to handle empty and full logic
@@ -48,15 +44,7 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
   io.memIO.nonEmpty := bufferEmpty
 
   // Instantiate the memory
-
-    val mem = Reg(Vec(actualDepth, UInt(datawidth.W)))
-
-//    if (memoryFile.trim().nonEmpty) {
-//      loadMemoryFromFileInline(mem, memoryFile)
-//    }
-
-  //val mem = Reg(Vec(actualDepth, UInt(datawidth.W)))
-
+  val mem = Reg(Vec(actualDepth, UInt(datawidth.W)))
 
   // Read from memory
   when(io.memIO.valid && !bufferEmpty) {
@@ -69,8 +57,8 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
   }
 
   // Write to memory - should only be needed for testing
-  when(io.memIO.write && !bufferFull) {
-    mem(writePtr) := io.memIO.writeData
+  when(io.writer.ready && !bufferFull) {
+    mem(writePtr) := io.writer.data
     writePtr := writePtr + 1.U
 
     when(writePtr >= actualDepth.U) {
