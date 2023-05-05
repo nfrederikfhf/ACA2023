@@ -1,4 +1,5 @@
 package ChiselRISC
+import utilities.Binaries.loadWords
 import utilities.helperFunctions.{FillInstructionMemory, FillInstructionMemoryFromFile}
 import chisel3._
 import chiseltest._
@@ -7,7 +8,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 class ChiselRISCFPGASpec extends AnyFlatSpec with ChiselScalatestTester {
 
   it should "execute the program that is tested on the FPGA from the text file" in {
-    test(new ChiselRISC(true, "InputHex.MEM")).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+    test(new ChiselRISC(true, loadWords("/home/williammathiassen/Github/ACA2023/VStageProcessor/asm/Input.bin"))).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       //      val input = RISCVAssembler.fromFile("Input.asm")
       //      FillInstructionMemoryFromFile(input, dut.clock, dut.io.memIO)
       //Users\frede\Desktop\UNI\MSc\02211 - Advanced Computer Architecture\ACA2023\VStageProcessor\ shit doesnt work

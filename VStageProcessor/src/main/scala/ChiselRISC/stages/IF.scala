@@ -6,7 +6,7 @@ import ChiselRISC.components._
 import ChiselRISC.components.memory._
 import ChiselRISC.utilities._
 
-class IF(datawidth: Int, depth: Int, simulation: Boolean = false, init: Seq[BigInt]) extends Module {
+class IF(datawidth: Int, depth: Int, simulation: Boolean = false, init: Seq[BigInt] = Seq(BigInt(0))) extends Module {
   val io = IO(new Bundle {
     val stallReg = Input(Bool())
     val flush = Input(Bool())
@@ -21,7 +21,7 @@ class IF(datawidth: Int, depth: Int, simulation: Boolean = false, init: Seq[BigI
   })
   // ----- Testing ------------
   val PC = Module(new ProgramCounter(datawidth))
-  val instMem = Module(new InstructionMemoryFPGA(depth, datawidth, init: Seq[BigInt]))
+  val instMem = Module(new InstructionMemoryFPGA(depth, datawidth, init))
   //val instMem = Module(new InstructionMemory(depth, datawidth))
 
   val outReg = RegEnable(io.out, !io.stallReg)

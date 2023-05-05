@@ -8,7 +8,7 @@ import chisel3._
 import chisel3.util.Counter
 
 
-class ChiselRISC(simulation: Boolean = false, init: Seq[BigInt]) extends Module {
+class ChiselRISC(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigInt(0))) extends Module {
   val io = IO(new Bundle {
     val memIO = Flipped(new memoryInterfaceLight(32))
     val startPipeline = Input(Bool())
@@ -24,7 +24,7 @@ class ChiselRISC(simulation: Boolean = false, init: Seq[BigInt]) extends Module 
   //io.an := WireInit(0.U(4.W))
 
   // Pipeline ChiselRISC.stages
-  val IF = Module(new IF(32, 100, simulation, init: Seq[BigInt]))
+  val IF = Module(new IF(32, 100, simulation, init))
   val ID = Module(new ID(32, 5, simulation))
   val EX = Module(new EX(32, 5))
   val MEM = Module(new MEM(32, 5, 1000, simulation))
@@ -82,8 +82,8 @@ class ChiselRISC(simulation: Boolean = false, init: Seq[BigInt]) extends Module 
   io.memIO.ready := DontCare
   io.memIO.nonEmpty := DontCare
   io.memIO.addr := DontCare
-  IF.io.memIO.ready := io.memIO.write
-  IF.io.memIO.writeData := io.memIO.writeData
+//  IF.io.memIO.ready := io.memIO.write
+//  IF.io.memIO.writeData := io.memIO.writeData
   IF.io.memIO.ready := WireInit(false.B)
   IF.io.memIO.writeData := WireInit(0.U(32.W))
 

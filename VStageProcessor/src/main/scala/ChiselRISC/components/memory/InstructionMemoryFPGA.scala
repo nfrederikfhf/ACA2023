@@ -7,7 +7,7 @@ import chisel3.experimental.{ChiselAnnotation, ChiselEnum, annotate}
 import firrtl.annotations.MemoryArrayInitAnnotation
 import chisel3.util.experimental.loadMemoryFromFileInline
 
-class InstructionMemoryFPGA(depth: Int, datawidth: Int, init: Seq[BigInt]) extends Module {
+class InstructionMemoryFPGA(depth: Int, datawidth: Int, init: Seq[BigInt] = Seq(BigInt(0))) extends Module {
   val bitwidth = log2Ceil(depth) // Calculate the number of bits needed to address the memory
   val actualDepth = math.pow(2, bitwidth).toInt // 2^bidwidth
 
@@ -20,6 +20,7 @@ class InstructionMemoryFPGA(depth: Int, datawidth: Int, init: Seq[BigInt]) exten
   io.memIO.ready := DontCare
   val readAddr = WireInit(0.U(bitwidth.W))
   io.memIO.nonEmpty := WireInit(true.B)
+  val writePtr = RegInit(0.U(bitwidth.W))
 
   // Instantiate the memory
   val mem = Mem(actualDepth, UInt(datawidth.W))
@@ -28,8 +29,10 @@ class InstructionMemoryFPGA(depth: Int, datawidth: Int, init: Seq[BigInt]) exten
   // Fill memory with program
 
     annotate(new ChiselAnnotation {
-      override def toFirrtl = MemoryArrayInitAnnotation(mem.toTarget, init.padTo(depth, BigInt(0)))
+      override def toFirrtl = MemoryArrayInitAnnotation(mem.toTarget, init.padTo(actualDepth, BigInt(0))) // Ready to read as memory is not empty
+      io.memIO.nonEmpty := false.B
     })
+
 
   // Fill memory with program
 //  if (memoryFile.trim().nonEmpty) {
@@ -42,4 +45,13 @@ class InstructionMemoryFPGA(depth: Int, datawidth: Int, init: Seq[BigInt]) exten
     readAddr := io.memIO.addr >> 2 // Divide by 4 to get the correct read address
     io.memOut := mem(readAddr)
   }
+
+  when(io.memIO.write){
+    mem(writePtr) := io.memIO.writeData
+    writePtr := writePtr + 1.U
+    when(writePtr >= actualDepth.U){
+      writePtr := 0.U
+    }
+  }
+
 }
