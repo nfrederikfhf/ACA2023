@@ -21,8 +21,8 @@ class IF(datawidth: Int, depth: Int, init: Seq[BigInt] = Seq(BigInt(0))) extends
   })
   // ----- Testing ------------
   val PC = Module(new ProgramCounter(datawidth))
-  val instMem = Module(new InstructionMemoryFPGA(depth, datawidth, init))
-  //val instMem = Module(new InstructionMemory(depth, datawidth))
+  //val instMem = Module(new InstructionMemoryFPGA(depth, datawidth, init))
+  val instMem = Module(new InstructionMemory(depth, datawidth))
   val pc = WireDefault(PC.io.memIO.addr)
 
   val outReg = RegEnable(io.out, !io.stallReg)

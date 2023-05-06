@@ -87,7 +87,7 @@ class VStageProcessor (simulation: Boolean = false, init: Seq[BigInt] = Seq(BigI
   IF.io.startPC := io.startPipeline
 
   // Seven Segment Display
-  val sevenSegmentDisplay = Module(new SevenSegment(200000))
+  val sevenSegmentDisplay = Module(new SevenSegment(10))
   sevenSegmentDisplay.io.in := WB.io.out.muxOut(15,0)
   io.seg := sevenSegmentDisplay.io.seg
   io.an := sevenSegmentDisplay.io.an
