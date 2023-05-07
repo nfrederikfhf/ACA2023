@@ -76,7 +76,6 @@ class VStageProcessor (simulation: Boolean = false, init: Seq[BigInt] = Seq(BigI
   ID.io.stallReg := hazardControl.io.IFStall
   EX.io.stallReg := hazardControl.io.IFStall
   MEM.io.stallReg := hazardControl.io.IFStall
-  WB.io.stallReg := hazardControl.io.IFStall
 
   // Test write interface
   IF.io.memIO.ready := io.memIO.ready

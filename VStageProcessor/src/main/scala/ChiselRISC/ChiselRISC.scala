@@ -51,7 +51,6 @@ class ChiselRISC(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigInt(0))
   ID.io.stallReg := IF.io.stallReg
   EX.io.stallReg := ID.io.stallReg
   MEM.io.stallReg := EX.io.stallReg
-  WB.io.stallReg := MEM.io.stallReg
 
   // Connect the forwarding unit
   forwardingUnit.io.id_rs1 := ID.io.out.rs1
