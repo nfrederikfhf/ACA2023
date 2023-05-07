@@ -41,11 +41,9 @@ class IF(datawidth: Int, depth: Int, init: Seq[BigInt] = Seq(BigInt(0))) extends
   instMem.io.writer.data := io.memIO.writeData
   instMem.io.memIO.valid := WireInit(false.B)
 
+  // Mux for handling new PC logic when branch or jump
   val addr = Mux(io.changePC, io.newPCValue, pc)
 
-  when(io.startPC && !instMem.io.memIO.nonEmpty) {
-    instMem.io.memIO.valid := true.B
-  }
   // Program counter
   when(!instMem.io.memIO.nonEmpty && io.startPC) {
     PC.io.memIO.ready := true.B
@@ -59,15 +57,12 @@ class IF(datawidth: Int, depth: Int, init: Seq[BigInt] = Seq(BigInt(0))) extends
   }
 
   instMem.io.memIO.addr := addr
+  instMem.io.memIO.valid := PC.io.memIO.valid
 
-  //val muxOutPC = addr
   val muxOutInst = Mux(io.flush, 0.U, instMem.io.memOut)
-
-
 
   outReg.inst := muxOutInst
   outReg.pc := addr
   io.out.inst := outReg.inst
   io.out.pc := outReg.pc
-
 }

@@ -41,8 +41,10 @@ class InstructionMemoryFPGA(depth: Int, datawidth: Int, init: Seq[BigInt] = Seq(
 //    loadMemoryFromFileInline(mem, memoryFile)
 //  }
 
-  readAddr := io.memIO.addr >> 2 // Divide by 4 to get the correct read address
-  io.memOut := mem(readAddr)
+  when(io.memIO.valid) {
+    readAddr := io.memIO.addr >> 2 // Divide by 4 to get the correct read address
+    io.memOut := mem(readAddr)
+  }
 
   // Read from memory
 //  when(io.memIO.valid) {

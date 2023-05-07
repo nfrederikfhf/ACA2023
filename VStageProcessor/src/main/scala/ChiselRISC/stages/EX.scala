@@ -16,7 +16,8 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
     val changePC = Output(Bool())
     val newPCValue = Output(UInt(datawidth.W))
   })
-  // Creating the modules
+
+  // Creating the ALU
   val ALU = Module(new ALU(datawidth, addrWidth))
 
   // Initialise signals
@@ -29,17 +30,14 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   outReg.ctrl.load := io.in.ctrl.load
   outReg.ctrl.store := io.in.ctrl.store
   outReg.rd := io.in.rd
-  //outReg.wrData := io.in.val2
   outReg.ctrl.writeEnable := !(io.in.ctrl.branch || io.in.ctrl.store)
 
-
-  // Muxes
-  val mux2 = Mux(io.in.ctrl.useImm, io.in.imm, io.in.val2)
+  // Mux for deciding whether to use immediate value
+  val useImm = Mux(io.in.ctrl.useImm, io.in.imm, io.in.val2)
 
   // Jumping and branching
   val changePC = io.in.ctrl.jump || (io.in.ctrl.branch && ALU.io.aluOut === 1.U)
   val newPCValue = Cat((Mux(io.in.ctrl.changePC, io.in.val1, io.in.pc) + io.in.imm)(datawidth - 1, 1), 0.U(1.W))
-
 
   // Loading
   when(io.in.memOp === LW) { // Load word
@@ -58,7 +56,6 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
     outReg.wrData := Cat(Fill(24, 0.U), io.in.val2(7, 0))
   }
 
-
   // Storing
   when(io.in.memOp === SW){ // Store word
     outReg.wrData := io.in.val2
@@ -70,10 +67,9 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
     outReg.wrData := Cat(Fill(24,0.U), io.in.val2(7, 0))
   }
 
-
-  when(io.in.ctrl.useALU) {
+  when(io.in.ctrl.useALU) { // ALU operations
     ALU.io.val1 := io.in.val1
-    ALU.io.val2 := mux2
+    ALU.io.val2 := useImm
   }.otherwise {
     ALU.io.val1 := 0.U
     ALU.io.val2 := 0.U
@@ -86,7 +82,7 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   io.out.ctrl.writeEnable := outReg.ctrl.writeEnable
   io.out.rd := outReg.rd
   io.out.wrData := outReg.wrData
-  io.PCout := RegNext(io.in.pc + (mux2 << 1))
+  io.PCout := RegNext(io.in.pc + (useImm << 1))
   io.changePC := RegNext(changePC)
   io.newPCValue := RegNext(newPCValue)
 }

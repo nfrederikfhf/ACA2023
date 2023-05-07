@@ -25,13 +25,15 @@ class ID(datawidth: Int, addrWidth: Int, simulation: Boolean = false) extends Mo
   regfile.io.wrAddr := WireInit(0.U(addrWidth.W))
   regfile.io.wrData := WireInit(0.U(datawidth.W))
   decoder.io.inInst := WireInit(0.U(datawidth.W))
-  if (simulation) { // Get the register file
+
+  if (simulation) { // Get the register file, instruction and pc
     io.debug.get.out := DontCare // Only used in WB
     io.debug.get.memoryIO := DontCare // Only used in MEM
     io.debug.get.regFile := regfile.io.regFile.get
     io.debug.get.inst := io.in.inst
     io.debug.get.pc := io.in.pc
   }
+
   // Connecting the signals through
   immGenerator.io.immIn := io.in.inst
   decoder.io.inInst := io.in.inst
@@ -51,7 +53,6 @@ class ID(datawidth: Int, addrWidth: Int, simulation: Boolean = false) extends Mo
   io.out.ctrl.useALU := RegEnable(Mux(io.flush, 0.U, decoder.io.ctrlSignals.useALU), !io.stallReg)
   io.out.ctrl.useImm := RegEnable(Mux(io.flush, 0.U, decoder.io.ctrlSignals.useImm), !io.stallReg)
   io.out.ctrl.changePC := RegEnable(Mux(io.flush, 0.U, decoder.io.ctrlSignals.changePC), !io.stallReg)
-  //io.out.ctrl <> RegEnable(decoder.io.ctrlSignals, !io.stallReg)
 
   // Forwarding from WB to ID values, incase of read/write in the same clock cycle
   val val1 = Mux(io.wbIn.writeEnable && io.wbIn.rd === decoder.io.rs1, io.wbIn.muxOut, regfile.io.rdData1)
