@@ -1,47 +1,92 @@
 package ChiselRISC.periph
 
 import chisel3._
-import chisel3.util.{Counter, MuxLookup}
-
-class SevenSegment(period: Int) extends Module {
-
+import chisel3.util._
+/*
+   This SevenSegment is based on previous work i did in course Digital Elections 2, and some of the code has been reused
+    from that project. However it has been adapted to be more modern and to fit the needs of this project.
+ */
+class  SevenSegment(maxCount: Int) extends Module {
   val io = IO(new Bundle {
-    val in = Input(UInt(16.W))
-    val an = Output(UInt(4.W))
+    val rd = Input(UInt(7.W))
+    val val1 = Input(UInt(7.W))
     val seg = Output(UInt(7.W))
+    val an = Output(UInt(4.W))
   })
 
-  val decoder = VecInit(
-    "b1000000".U,
-    "b1111001".U,
-    "b0100100".U,
-    "b0110000".U,
-    "b0011001".U,
-    "b0010010".U,
-    "b0000010".U,
-    "b1111000".U,
-    "b0000000".U,
-    "b0010000".U,
-    "b0001000".U,
-    "b0000011".U,
-    "b1000110".U,
-    "b0100001".U,
-    "b0000110".U,
-    "b0001110".U
-  )
+  val sevSeg = WireDefault("b1111111".U(7.W)) //Cathode signal
+  val select = WireDefault("b0001".U(4.W)) //Anode selection signal
 
-  val counter = Counter(period)
-  val anReg = RegInit("b0001".U(4.W))
+  val counter = Counter(maxCount) // Counter
 
+  val cntRegSel = RegInit(0.U(2.W)) //The counter used to shift anode signal every tick
   when(counter.inc()) {
-    anReg := anReg(2,0) ## anReg(3)
+    cntRegSel := cntRegSel + 1.U
   }
-  io.an := ~anReg
-  io.seg := decoder(MuxLookup(anReg, 0.U, Seq(
-    "b0001".U -> io.in(3,0),
-    "b0010".U -> io.in(7,4),
-    "b0100".U -> io.in(11,8),
-    "b1000".U -> io.in(15,12)
-  )))
 
+  switch(cntRegSel){ //Multiplexing the anodes
+    is("b00".U){select := "b0001".U}
+    is("b01".U){select := "b0010".U}
+    is("b10".U){select := "b0100".U}
+    is("b11".U){select := "b1000".U}
+  }
+  val wire1 = WireDefault(0.U(8.W))
+
+  val table = Wire(Vec (100 , UInt (8.W))) //Creating a look-up table function
+
+  for (i <- 0 until 100) { // BCD encoding algorithm
+    table(i) := (((i/10) <<4) + i%10).U
+  }
+
+  val sevSegIn = WireDefault("b0000".U(4.W))
+  switch(cntRegSel){ //Choosing which half of the bit bus to decode (because of the BCD coding)
+    is("b00".U){sevSegIn := table(wire1)(3,0)}
+    is("b01".U){sevSegIn := table(wire1)(7,4)}
+    is("b10".U){sevSegIn := table(wire1)(3,0)}
+    is("b11".U){sevSegIn := table(wire1)(7,4)}
+  }
+
+
+  switch(sevSegIn) { //The implementation is simply a look-up table.
+    is("b0000".U) {
+      sevSeg := "b0111111".U
+    }
+    is("b0001".U) {
+      sevSeg := "b0000110".U
+    }
+    is("b0010".U) {
+      sevSeg := "b1011011".U
+    }
+    is("b0011".U) {
+      sevSeg := "b1001111".U
+    }
+    is("b0100".U) {
+      sevSeg := "b1100110".U
+    }
+    is("b0101".U) {
+      sevSeg := "b1101101".U
+    }
+    is("b0110".U) {
+      sevSeg := "b1111101".U
+    }
+    is("b0111".U) {
+      sevSeg := "b0000111".U
+    }
+    is("b1000".U) {
+      sevSeg := "b1111111".U
+    }
+    is("b1001".U) {
+      sevSeg := "b1101111".U
+    }
+  }
+
+  switch(cntRegSel){ // Necessary to choose which half of the bit bus to decode
+    is("b00".U){wire1 := io.rd}
+    is("b01".U){wire1 := io.rd}
+    is("b10".U){wire1 := io.val1}
+    is("b11".U){wire1 := io.val1}
+  }
+
+  io.seg := ~sevSeg
+  io.an := ~select
 }

@@ -2,14 +2,12 @@
 
 
 ASRCS := $(wildcard *.s)
-CSRCS := $(wildcard *.c)
 AOBJ := $(ASRCS:%.s=%.out)
-COBJ := $(CSRCS:%.c=%.out)
-BINS := $(COBJ:%.out=%.bin) $(AOBJ:%.out=%.bin)
+BINS := $(AOBJ:%.out=%.bin)
 
 GCC := riscv64-linux-gnu
 
-all: ${AOBJ} ${COBJ} ${BINS}
+all: ${AOBJ} ${BINS}
 
 obj: ${OBJ}
 

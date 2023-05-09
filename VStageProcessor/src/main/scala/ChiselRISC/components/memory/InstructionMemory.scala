@@ -44,7 +44,7 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
   io.memIO.nonEmpty := bufferEmpty
 
   // Instantiate the memory
-  val mem = Reg(Vec(actualDepth, UInt(datawidth.W)))
+  val mem = RegInit(VecInit(Seq.fill(actualDepth)(0.U(datawidth.W))))
 
   // Read from memory
   when(io.memIO.valid && !bufferEmpty) {

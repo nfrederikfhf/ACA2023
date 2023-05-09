@@ -8,7 +8,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 
 import java.nio.file.{Path, Paths}
 
-class ChiselRISCSpec extends AnyFlatSpec with ChiselScalatestTester {
+class VStageProcessorSpec extends AnyFlatSpec with ChiselScalatestTester {
 
   it should "execute an ADDI instruction correctly" in {
     test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>

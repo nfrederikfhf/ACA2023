@@ -23,7 +23,8 @@ class RegisterFile(addressSize: Int, bitWidth: Int, simulation: Boolean = false)
   io.rdData2 := WireInit(0.U(bitWidth.W))
 
 
-  val registers = Reg(Vec(bitWidth, UInt(bitWidth.W)))
+  val registers = RegInit(VecInit(Seq.fill(bitWidth)(0.U(bitWidth.W))))
+
   when(io.rdAddr1 === 0.U) {
     io.rdData1 := 0.U
   }

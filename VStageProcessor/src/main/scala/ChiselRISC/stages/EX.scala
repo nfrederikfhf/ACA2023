@@ -24,6 +24,8 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   io.PCout := RegInit(0.U(datawidth.W))
   val outReg = RegEnable(io.out, !io.stallReg)
   io.hazardAluOut := WireDefault(ALU.io.aluOut)
+  ALU.io.val1 := WireInit(0.U(datawidth.W))
+  ALU.io.val2 := WireInit(0.U(datawidth.W))
   // Connecting the I/O through
   ALU.io.aluOp := io.in.aluOp
   outReg.aluOut := Mux(io.in.ctrl.jump, io.in.pc + 4.U, ALU.io.aluOut)
@@ -70,9 +72,6 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   when(io.in.ctrl.useALU) { // ALU operations
     ALU.io.val1 := io.in.val1
     ALU.io.val2 := useImm
-  }.otherwise {
-    ALU.io.val1 := 0.U
-    ALU.io.val2 := 0.U
   }
 
   //-------output-------------
