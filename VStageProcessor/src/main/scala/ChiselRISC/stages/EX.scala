@@ -33,6 +33,7 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   outReg.ctrl.store := io.in.ctrl.store
   outReg.rd := io.in.rd
   outReg.ctrl.writeEnable := !(io.in.ctrl.branch || io.in.ctrl.store)
+  outReg.memOp := io.in.memOp
 
   // Mux for deciding whether to use immediate value
   val useImm = Mux(io.in.ctrl.useImm, io.in.imm, io.in.val2)
@@ -81,6 +82,7 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   io.out.ctrl.writeEnable := outReg.ctrl.writeEnable
   io.out.rd := outReg.rd
   io.out.wrData := outReg.wrData
+  io.out.memOp := outReg.memOp
   io.PCout := RegNext(io.in.pc + (useImm << 1))
   io.changePC := RegNext(changePC)
   io.newPCValue := RegNext(newPCValue)
