@@ -4,7 +4,7 @@ import chisel3._
 import chisel3.util._
 /*
    This SevenSegment is based on previous work i did in course Digital Elections 2, and some of the code has been reused
-    from that project. However it has been adapted to be more modern and to fit the needs of this project.
+    from that project. However it has been adapted to be more modern and to fit the needs of this project. - William
  */
 class  SevenSegment(maxCount: Int) extends Module {
   val io = IO(new Bundle {
