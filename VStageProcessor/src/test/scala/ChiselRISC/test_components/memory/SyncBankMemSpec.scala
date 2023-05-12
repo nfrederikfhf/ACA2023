@@ -12,11 +12,14 @@ class SyncBankMemSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.wren.poke(true.B)
       dut.io.wrAddr.poke(0.U)
       dut.io.wrData.poke(42.U)
+      dut.io.memOp.poke(Funct3.SW.litValue)
       dut.clock.step(1)
       dut.io.wren.poke(false.B)
       dut.io.rden.poke(true.B)
+      dut.io.memOp.poke(Funct3.LW.litValue)
       dut.io.rdAddr1.poke(0.U)
       dut.clock.step(1)
+      dut.io.rden.poke(false.B)
       dut.io.rdData1.expect(42.U)
     }
   }
@@ -32,6 +35,7 @@ class SyncBankMemSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.rden.poke(true.B)
       dut.io.rdAddr1.poke(0.U)
       dut.clock.step(1)
+      dut.io.rden.poke(false.B)
       dut.io.rdData1.expect("h0000FFFF".U)
     }
   }
@@ -47,12 +51,13 @@ class SyncBankMemSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.rden.poke(true.B)
       dut.io.rdAddr1.poke(0.U)
       dut.clock.step(1)
+      dut.io.rden.poke(false.B)
       dut.io.rdData1.expect("h000000FF".U)
     }
   }
 
   it should "check if store/load as a word works with not address % 4 = 0" in {
-    test(new SyncBankMemory(32, 1024, 4)) { dut =>
+    test(new SyncBankMemory(32, 1024, 4)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       dut.io.wren.poke(true.B)
       dut.io.wrAddr.poke(5.U)
       dut.io.wrData.poke("h123456FF".U)
@@ -61,7 +66,9 @@ class SyncBankMemSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.wren.poke(false.B)
       dut.io.rden.poke(true.B)
       dut.io.rdAddr1.poke(5.U)
+      dut.io.memOp.poke(Funct3.LW.litValue)
       dut.clock.step(1)
+      dut.io.rden.poke(false.B)
       dut.io.rdData1.expect("h123456FF".U)
     }
   }
@@ -78,6 +85,7 @@ class SyncBankMemSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.rden.poke(true.B)
       dut.io.rdAddr1.poke(7.U)
       dut.clock.step(1)
+      dut.io.rden.poke(false.B)
       dut.io.rdData1.expect("h12".U)
     }
   }
@@ -98,6 +106,7 @@ class SyncBankMemSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.rden.poke(true.B)
       dut.io.rdAddr1.poke(0.U)
       dut.clock.step(1)
+      dut.io.rden.poke(false.B)
       dut.io.rdData1.expect("hDE".U)
     }
   }

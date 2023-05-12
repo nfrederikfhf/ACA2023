@@ -25,7 +25,8 @@ class MEM(dataWidth: Int, addrWidth: Int, depth: Int, simulation: Boolean = fals
   outReg.memOut := DontCare
 
   // Creating the dual read memory module
-  val MEM = Module(new DualReadMem(addrWidth, dataWidth, depth))
+  //val MEM = Module(new DualReadMem(addrWidth, dataWidth, depth))
+  val MEM = Module(new SyncBankMemory(dataWidth, depth, 4))
 
   // Init the unused side of the Dual memory
   MEM.io.rdAddr2 := DontCare
@@ -36,7 +37,7 @@ class MEM(dataWidth: Int, addrWidth: Int, depth: Int, simulation: Boolean = fals
   MEM.io.rdAddr1 := io.in.aluOut
   MEM.io.wrAddr := io.in.aluOut
   MEM.io.wrData := io.in.wrData
-  //MEM.io.memOp := io.in.memOp
+  MEM.io.memOp := io.in.memOp
 
   if(simulation){ // Debugging
     io.debug.get.regFile := DontCare // Only used in ID

@@ -28,7 +28,6 @@ class InstructionMemoryFPGA(depth: Int, datawidth: Int, init: Seq[BigInt] = Seq(
 
 
   // Fill memory with program
-
     annotate(new ChiselAnnotation {
       override def toFirrtl = MemoryArrayInitAnnotation(mem.toTarget, init.padTo(actualDepth, BigInt(0))) // Ready to read as memory is not empty
       io.memIO.nonEmpty := false.B

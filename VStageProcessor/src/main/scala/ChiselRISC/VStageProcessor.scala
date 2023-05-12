@@ -8,7 +8,7 @@ import periph._
 
 class VStageProcessor(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigInt(0))) extends Module {
   val io = IO(new Bundle {
-    //val memIO = new writeToInstMem(32)
+    val memIO = new writeToInstMem(32)
     val debug = if (simulation) Some(new debugIO(32, 5)) else None
     val startPipeline = Input(Bool())
     //    val start = Input(Bool())
@@ -25,8 +25,8 @@ class VStageProcessor(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigIn
     val store = Output(Bool())
     val changePC = Output(Bool())
     val writeEnable = Output(Bool())
-    val val1 = Output(Bool())
-    val val2 = Output(Bool())
+    //    val val1 = Output(Bool())
+    //    val val2 = Output(Bool())
   })
 
   //Pipeline stages
@@ -80,11 +80,11 @@ class VStageProcessor(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigIn
   MEM.io.stallReg := hazardControl.io.IFStall
 
   // Test write interface
-  //  IF.io.memIO.ready := io.memIO.ready
-  //  IF.io.memIO.writeData := io.memIO.data
+    IF.io.memIO.ready := io.memIO.ready
+    IF.io.memIO.writeData := io.memIO.data
 
-  IF.io.memIO.ready := WireInit(false.B)
-  IF.io.memIO.writeData := WireInit(0.U(32.W))
+//  IF.io.memIO.ready := WireInit(false.B)
+//  IF.io.memIO.writeData := WireInit(0.U(32.W))
   IF.io.startPC := io.startPipeline
   // Seven Segment Display
   //  val sevenSegmentDisplay = Module(new SevenSegment(1000000))
@@ -94,9 +94,10 @@ class VStageProcessor(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigIn
   val sevenSegmentDisplay = Module(new SevenSegment(100000))
   io.seg := sevenSegmentDisplay.io.seg
   io.an := sevenSegmentDisplay.io.an
-  sevenSegmentDisplay.io.val1 := WB.io.out.rd
-  io.val1 := RegInit(false.B)
-  io.val2 := RegInit(false.B)
+  sevenSegmentDisplay.io.val1 := ID.io.out.val1
+  sevenSegmentDisplay.io.rd := ID.io.out.val2
+  //  io.val1 := RegInit(false.B)
+  //  io.val2 := RegInit(false.B)
   // Force write instructions to memory - Since for some reason filling memory does not work
   when(io.add) {
     IF.io.startPC := true.B
@@ -104,29 +105,29 @@ class VStageProcessor(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigIn
     IF.io.memIO.writeData := "h00108093".U // addi x1, 1
   }
 
-  //  when(io.branchInst){
-  //    IF.io.startPC := true.B
-  //    IF.io.memIO.ready := true.B
-  //    IF.io.memIO.writeData := "h00310863".U
-  //  }
-
   when(io.branchInst) {
     IF.io.startPC := true.B
     IF.io.memIO.ready := true.B
-    IF.io.memIO.writeData := "h00210113".U // addi x2, 2
+    IF.io.memIO.writeData := "h00310863".U
   }
 
-  when(io.jumpInst) {
-    IF.io.startPC := true.B
-    IF.io.memIO.ready := true.B
-    IF.io.memIO.writeData := "h002081B3".U // add x3, x1,x2
-  }
+  //  when(io.branchInst) {
+  //    IF.io.startPC := true.B
+  //    IF.io.memIO.ready := true.B
+  //    IF.io.memIO.writeData := "h00210113".U // addi x2, 2
+  //  }
 
   //  when(io.jumpInst) {
   //    IF.io.startPC := true.B
   //    IF.io.memIO.ready := true.B
-  //    IF.io.memIO.writeData := "h0280006f".U
+  //    IF.io.memIO.writeData := "h002081B3".U // add x3, x1,x2
   //  }
+
+  when(io.jumpInst) {
+    IF.io.startPC := true.B
+    IF.io.memIO.ready := true.B
+    IF.io.memIO.writeData := "h0280006f".U
+  }
 
   //  when(io.start) {
   //    IF.io.startPC := true.B

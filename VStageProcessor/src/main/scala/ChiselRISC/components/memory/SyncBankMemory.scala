@@ -31,8 +31,8 @@ class SyncBankMemory(dataWidth: Int, depth: Int, banks: Int) extends Module {
   //Init
   io.rdData1 := WireInit(0.U(dataWidth.W))
   io.rdData2 := WireInit(0.U(dataWidth.W))
-  val rdData1 = VecInit(Seq.fill(banks)(0.U((dataWidth / banks).W))) // To allow for reading next clock cycle
-  val rdData2 = VecInit(Seq.fill(banks)(0.U((dataWidth / banks).W)))
+  val rdData1 = WireInit(Vec(banks,(UInt((dataWidth/banks).W))), DontCare) // To allow for reading next clock cycle
+  val rdData2 = WireInit(Vec(banks,(UInt((dataWidth/banks).W))), DontCare)
   val readAddress1 = WireInit(0.U(bitwidth.W)) // To allow for reading next clock cycle
   val readAddress2 = WireInit(0.U(bitwidth.W))
   val writeAddress = WireInit(0.U(bitwidth.W))
@@ -87,17 +87,19 @@ class SyncBankMemory(dataWidth: Int, depth: Int, banks: Int) extends Module {
     rdData2 := mem.read(readAddress2)
   }
 
+
+
   when(RegNext(io.rden)) { // Only update the output if the read is enabled, or if it was enabled last cycle
-    when(io.memOp === Funct3.LB) {
-      io.rdData1 := rdData1(vecIndexRd1).asUInt
-      io.rdData2 := rdData2(vecIndexRd2).asUInt
-    }.elsewhen(io.memOp === Funct3.LH) {
-      io.rdData1 := (rdData1(vecIndexRd1 + 1.U) ## rdData1(vecIndexRd1)).asUInt
-      io.rdData2 := (rdData2(vecIndexRd2 + 1.U) ## rdData2(vecIndexRd2)).asUInt
-    }.otherwise {
-      io.rdData1 := (rdData1(3) ## rdData1(2) ## rdData1(1) ## rdData1(0)).asUInt
-      io.rdData2 := (rdData2(3) ## rdData2(2) ## rdData2(1) ## rdData2(0)).asUInt
-    }
+        when(RegNext(io.memOp) === Funct3.LB) {
+          io.rdData1 := rdData1(vecIndexRd1).asUInt
+          io.rdData2 := rdData2(vecIndexRd2).asUInt
+        }.elsewhen(RegNext(io.memOp) === Funct3.LH) {
+          io.rdData1 := (rdData1(vecIndexRd1 + 1.U) ## rdData1(vecIndexRd1)).asUInt
+          io.rdData2 := (rdData2(vecIndexRd2 + 1.U) ## rdData2(vecIndexRd2)).asUInt
+        }.otherwise {
+          io.rdData1 := (rdData1(3) ## rdData1(2) ## rdData1(1) ## rdData1(0)).asUInt
+          io.rdData2 := (rdData2(3) ## rdData2(2) ## rdData2(1) ## rdData2(0)).asUInt
+        }
   }
 
   when(io.wren) {
