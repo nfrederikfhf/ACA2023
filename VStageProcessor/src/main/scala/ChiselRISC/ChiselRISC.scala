@@ -1,7 +1,7 @@
 package ChiselRISC
 
 import periph.SevenSegment
-import components.{ForwardingUnit, HazardControl}
+import components.{BranchPredictor, ForwardingUnit, HazardControl}
 import stages._
 import utilities.{debugIO, memoryInterface, memoryInterfaceLight}
 import chisel3._
@@ -32,6 +32,7 @@ class ChiselRISC(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigInt(0))
   // Forwarding and Hazard Control units
   val forwardingUnit = Module(new ForwardingUnit(32, 5))
   val hazardControl = Module(new HazardControl(32, 5))
+  val branchPredictor = Module(new BranchPredictor(32, 4))
 
   // Connect the pipeline ChiselRISC.stages
   IF.io.out <> ID.io.in
@@ -63,8 +64,8 @@ class ChiselRISC(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigInt(0))
   EX.io.in.val2 := forwardingUnit.io.val2
 
   // Connect the hazard control unit
-  IF.io.flush := hazardControl.io.IFFlush
-  ID.io.flush := hazardControl.io.IDFlush
+  IF.io.flush := hazardControl.io.IFFlush || EX.io.flush
+  ID.io.flush := hazardControl.io.IDFlush || EX.io.flush
   IF.io.stallReg := hazardControl.io.IFStall
   hazardControl.io.EXaluOut := EX.io.hazardAluOut
   hazardControl.io.EXctrlBranch := EX.io.in.ctrl.branch
@@ -74,7 +75,17 @@ class ChiselRISC(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigInt(0))
   hazardControl.io.IDrs1 := ID.io.out.rs1
   hazardControl.io.IDrs2 := ID.io.out.rs2
 
-  // Forward the data to MEM to avoid a one clock cylce delay
+  // Connect Branch Predictor
+  ID.io.branchingPredictionIn := branchPredictor.io.changePC
+  EX.io.branchingPredictionIn := ID.io.branchingPredictionOut
+  branchPredictor.io.historicalPc := EX.io.brancingPC
+  branchPredictor.io.branchTaken := EX.io.branchingResult
+  branchPredictor.io.historicaBranching := EX.io.branchingInst
+  IF.io.changePCByPrediction := branchPredictor.io.changePC
+  IF.io.newPCValueByPrediction := branchPredictor.io.targetPc
+
+
+  // Forward the data to MEM to avoid a one clock cycle delay
 
   //--------------Testing-----------------------
   io.memIO.valid := DontCare

@@ -14,6 +14,8 @@ class ID(datawidth: Int, addrWidth: Int, simulation: Boolean = false) extends Mo
     val wbIn = Flipped(new WB_ID_IO(datawidth, addrWidth))
     val out = new ID_EX_IO(datawidth, addrWidth)
     val debug = if (simulation) Some(new debugIO(datawidth, addrWidth)) else None // Debugging
+    val branchingPredictionIn = Input(Bool())
+    val branchingPredictionOut = Output(Bool())
   })
 
   val immGenerator = Module(new ImmGenerator(datawidth))
