@@ -37,6 +37,7 @@ class EX_MEM_IO(datawidth: Int, addrWidth: Int) extends Bundle { // Output from 
   val rd = Output(UInt(addrWidth.W)) // Destination Register
   val aluOut = Output(UInt(datawidth.W)) // Result of ALU
   val wrData = Output(UInt(datawidth.W)) // Data to be written to memory
+  val memOp = Output(UInt(4.W))
   val ctrl = new Bundle { // Control Signals
     val writeEnable = Output(Bool()) // Write to register file
     val store = Output(Bool()) // Save to memory

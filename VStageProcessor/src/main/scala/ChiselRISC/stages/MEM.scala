@@ -25,28 +25,29 @@ class MEM(dataWidth: Int, addrWidth: Int, depth: Int, simulation: Boolean = fals
   outReg.memOut := DontCare
 
   // Creating the dual read memory module
-  val DRMEM = Module(new DualReadMem(addrWidth, dataWidth, depth))
+  val MEM = Module(new DualReadMem(addrWidth, dataWidth, depth))
 
   // Init the unused side of the Dual memory
-  DRMEM.io.rdAddr2 := DontCare
+  MEM.io.rdAddr2 := DontCare
 
   // Connecting the I/O through
-  DRMEM.io.wren := io.in.ctrl.store
-  DRMEM.io.rden := io.in.ctrl.load
-  DRMEM.io.rdAddr1 := io.in.aluOut
-  DRMEM.io.wrAddr := io.in.aluOut
-  DRMEM.io.wrData := io.in.wrData
+  MEM.io.wren := io.in.ctrl.store
+  MEM.io.rden := io.in.ctrl.load
+  MEM.io.rdAddr1 := io.in.aluOut
+  MEM.io.wrAddr := io.in.aluOut
+  MEM.io.wrData := io.in.wrData
+  //MEM.io.memOp := io.in.memOp
 
   if(simulation){ // Debugging
     io.debug.get.regFile := DontCare // Only used in ID
     io.debug.get.inst := DontCare
     io.debug.get.pc := DontCare
     io.debug.get.out := DontCare
-    io.debug.get.memoryIO.wren := DRMEM.io.wren
-    io.debug.get.memoryIO.rden := DRMEM.io.rden
-    io.debug.get.memoryIO.rdAddr1 := DRMEM.io.rdAddr1
-    io.debug.get.memoryIO.wrAddr := DRMEM.io.wrAddr
-    io.debug.get.memoryIO.wrData := DRMEM.io.wrData
+    io.debug.get.memoryIO.wren := MEM.io.wren
+    io.debug.get.memoryIO.rden := MEM.io.rden
+    io.debug.get.memoryIO.rdAddr1 := MEM.io.rdAddr1
+    io.debug.get.memoryIO.wrAddr := MEM.io.wrAddr
+    io.debug.get.memoryIO.wrData := MEM.io.wrData
   }
 
   // ---------- output---------------
@@ -54,7 +55,7 @@ class MEM(dataWidth: Int, addrWidth: Int, depth: Int, simulation: Boolean = fals
   io.out.aluOut := outReg.aluOut
   io.out.load := outReg.load
   io.out.writeEnable := outReg.writeEnable
-  io.out.memOut := DRMEM.io.rdData1
+  io.out.memOut := MEM.io.rdData1
 
   //------------ Forwarding----------------
   io.mem_fwd.rd := io.in.rd
