@@ -15,6 +15,12 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
     val hazardAluOut = Output(UInt(datawidth.W))
     val changePC = Output(Bool())
     val newPCValue = Output(UInt(datawidth.W))
+//    branch prediction
+    val branchingPredictionIn = Input(Bool())
+    val branchingInst = Output(Bool())
+    val branchingResult = Output(Bool())
+    val brancingPC = Output(UInt(datawidth.W))
+    val flush = Output(Bool())
   })
 
   // Creating the ALU
@@ -26,6 +32,10 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   io.hazardAluOut := WireDefault(ALU.io.aluOut)
   ALU.io.val1 := WireInit(0.U(datawidth.W))
   ALU.io.val2 := WireInit(0.U(datawidth.W))
+//  TODO init
+//  branchingResult
+//  flush
+
   // Connecting the I/O through
   ALU.io.aluOp := io.in.aluOp
   outReg.aluOut := Mux(io.in.ctrl.jump, io.in.pc + 4.U, ALU.io.aluOut)
@@ -34,12 +44,14 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   outReg.rd := io.in.rd
   outReg.ctrl.writeEnable := !(io.in.ctrl.branch || io.in.ctrl.store)
   outReg.memOp := io.in.memOp
+  io.branchingInst := io.in.ctrl.branch
+  io.brancingPC := io.in.pc
 
   // Mux for deciding whether to use immediate value
   val useImm = Mux(io.in.ctrl.useImm, io.in.imm, io.in.val2)
 
   // Jumping and branching
-  val changePC = io.in.ctrl.jump || (io.in.ctrl.branch && ALU.io.aluOut === 1.U)
+  val changePC = io.in.ctrl.jump || (io.in.ctrl.branch && ALU.io.aluOut === 1.U && !io.branchingPredictionIn)
   val newPCValue = Cat((Mux(io.in.ctrl.changePC, io.in.val1.asSInt, io.in.pc.asSInt) + io.in.imm.asSInt)(datawidth - 1, 1), 0.U(1.W))
 
   // Loading
@@ -73,6 +85,17 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   when(io.in.ctrl.useALU) { // ALU operations
     ALU.io.val1 := io.in.val1
     ALU.io.val2 := useImm
+  }
+
+  when(io.in.ctrl.branch) {
+    when(ALU.io.aluOut === 0.U) {
+      io.branchingResult := false.B
+    } .otherwise {
+      io.branchingResult := true.B
+    }
+    when(!(io.branchingPredictionIn === io.branchingResult)){
+      io.flush := true.B
+    }
   }
 
   //-------output-------------

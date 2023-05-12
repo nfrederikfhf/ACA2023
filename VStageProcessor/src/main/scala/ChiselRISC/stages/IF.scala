@@ -12,12 +12,15 @@ class IF(datawidth: Int, depth: Int, init: Seq[BigInt] = Seq(BigInt(0))) extends
     val flush = Input(Bool())
     val out = new IF_ID_IO(datawidth)
     val newPCValue = Input(UInt(datawidth.W)) //ALU calculated Addr
+    val newPCValueByPrediction = Input(UInt(datawidth.W)) //BR calculated Addr
     val changePC = Input(Bool())
+    val changePCByPrediction = Input(Bool())
     val memIO = new Bundle {
       val ready = Input(Bool())
       val writeData = Input(UInt(datawidth.W))
     }
     val startPC = Input(Bool())
+    val branchingPrediction = Output(Bool())
   })
   // ----- Testing ------------
   val PC = Module(new ProgramCounter(datawidth))
@@ -43,7 +46,7 @@ class IF(datawidth: Int, depth: Int, init: Seq[BigInt] = Seq(BigInt(0))) extends
   instMem.io.memIO.valid := WireInit(false.B)
 
   // Mux for handling new PC logic when branch or jump
-  val addr = Mux(io.changePC, io.newPCValue, pc)
+  val addr = Mux(io.changePC, io.newPCValue, Mux(io.changePCByPrediction, io.newPCValueByPrediction, pc))
 
   // Program counter
   when(!instMem.io.memIO.nonEmpty && io.startPC) {
