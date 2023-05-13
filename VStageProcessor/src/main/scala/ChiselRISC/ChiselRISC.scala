@@ -79,7 +79,7 @@ class ChiselRISC(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigInt(0))
   branchPredictor.io.inst := IF.io.out.inst
   branchPredictor.io.EXbranchPC := EX.io.BRbranchPC
   branchPredictor.io.EXbranchResult := EX.io.BRbranchResult
-  branchPredictor.io.EXbranchInst := EX.io.BRbranchInst
+  branchPredictor.io.EXbranching := EX.io.BRbranching
   IF.io.BRchangePC := branchPredictor.io.changePC
   IF.io.BRnewPCValue := branchPredictor.io.targetPC
   ID.io.BRpredictionIn := branchPredictor.io.changePC

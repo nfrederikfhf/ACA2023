@@ -27,6 +27,7 @@ class ID(datawidth: Int, addrWidth: Int, simulation: Boolean = false) extends Mo
   regfile.io.wrAddr := WireInit(0.U(addrWidth.W))
   regfile.io.wrData := WireInit(0.U(datawidth.W))
   decoder.io.inInst := WireInit(0.U(datawidth.W))
+  io.BRpredictionOut := RegNext(io.BRpredictionIn)
 
   if (simulation) { // Get the register file, instruction and pc
     io.debug.get.out := DontCare // Only used in WB
@@ -41,7 +42,6 @@ class ID(datawidth: Int, addrWidth: Int, simulation: Boolean = false) extends Mo
   decoder.io.inInst := io.in.inst
   regfile.io.rdAddr1 := decoder.io.rs1
   regfile.io.rdAddr2 := decoder.io.rs2
-  io.BRpredictionOut := io.BRpredictionIn
   // Write back
   regfile.io.wren := io.wbIn.writeEnable
   regfile.io.wrAddr := io.wbIn.rd

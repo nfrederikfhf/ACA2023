@@ -17,7 +17,7 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
     val newPCValue = Output(UInt(datawidth.W))
 //    branch prediction
     val BRpredictionIn = Input(Bool())
-    val BRbranchInst = Output(Bool())
+    val BRbranching = Output(Bool())
     val BRbranchResult = Output(Bool())
     val BRbranchPC = Output(UInt(datawidth.W))
     val misprediction = Output(Bool())
@@ -43,7 +43,7 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   outReg.rd := io.in.rd
   outReg.ctrl.writeEnable := !(io.in.ctrl.branch || io.in.ctrl.store)
   outReg.memOp := io.in.memOp
-  io.BRbranchInst := io.in.ctrl.branch
+  io.BRbranching := io.in.ctrl.branch
   io.BRbranchPC := io.in.pc
 
   // Mux for deciding whether to use immediate value
