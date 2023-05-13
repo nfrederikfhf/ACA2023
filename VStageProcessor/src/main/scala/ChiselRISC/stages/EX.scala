@@ -40,7 +40,7 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
 
   // Jumping and branching
   val changePC = io.in.ctrl.jump || (io.in.ctrl.branch && ALU.io.aluOut === 1.U)
-  val newPCValue = Cat((Mux(io.in.ctrl.changePC, io.in.val1, io.in.pc) + io.in.imm)(datawidth - 1, 1), 0.U(1.W))
+  val newPCValue = Cat((Mux(io.in.ctrl.changePC, io.in.val1.asSInt, io.in.pc.asSInt) + io.in.imm.asSInt)(datawidth - 1, 1), 0.U(1.W))
 
   // Loading
   when(io.in.memOp === LW) { // Load word
