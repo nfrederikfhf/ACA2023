@@ -16,11 +16,11 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
     val changePC = Output(Bool())
     val newPCValue = Output(UInt(datawidth.W))
 //    branch prediction
-    val branchingPredictionIn = Input(Bool())
-    val branchingInst = Output(Bool())
-    val branchingResult = Output(Bool())
-    val brancingPC = Output(UInt(datawidth.W))
-    val flush = Output(Bool())
+    val BRpredictionIn = Input(Bool())
+    val BRbranchInst = Output(Bool())
+    val BRbranchResult = Output(Bool())
+    val BRbranchPC = Output(UInt(datawidth.W))
+    val misprediction = Output(Bool())
   })
 
   // Creating the ALU
@@ -32,9 +32,8 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   io.hazardAluOut := WireDefault(ALU.io.aluOut)
   ALU.io.val1 := WireInit(0.U(datawidth.W))
   ALU.io.val2 := WireInit(0.U(datawidth.W))
-//  TODO init
-//  branchingResult
-//  flush
+  io.BRbranchResult := WireInit(0.U(datawidth.W))
+  io.misprediction := WireInit(0.U(datawidth.W))
 
   // Connecting the I/O through
   ALU.io.aluOp := io.in.aluOp
@@ -44,8 +43,8 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   outReg.rd := io.in.rd
   outReg.ctrl.writeEnable := !(io.in.ctrl.branch || io.in.ctrl.store)
   outReg.memOp := io.in.memOp
-  io.branchingInst := io.in.ctrl.branch
-  io.brancingPC := io.in.pc
+  io.BRbranchInst := io.in.ctrl.branch
+  io.BRbranchPC := io.in.pc
 
   // Mux for deciding whether to use immediate value
   val useImm = Mux(io.in.ctrl.useImm, io.in.imm, io.in.val2)
@@ -89,12 +88,12 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
 
   when(io.in.ctrl.branch) {
     when(ALU.io.aluOut === 0.U) {
-      io.branchingResult := false.B
+      io.BRbranchResult := false.B
     } .otherwise {
-      io.branchingResult := true.B
+      io.BRbranchResult := true.B
     }
-    when(!(io.branchingPredictionIn === io.branchingResult)){
-      io.flush := true.B
+    when(!(io.BRpredictionIn === io.BRbranchResult)){
+      io.misprediction := true.B
     }
   }
 
