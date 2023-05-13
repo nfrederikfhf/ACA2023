@@ -50,7 +50,7 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   val useImm = Mux(io.in.ctrl.useImm, io.in.imm, io.in.val2)
 
   // Jumping and branching
-  val changePC = io.in.ctrl.jump || (io.in.ctrl.branch && ALU.io.aluOut === 1.U && !io.branchingPredictionIn)
+  val changePC = io.in.ctrl.jump || (io.in.ctrl.branch && ALU.io.aluOut === 1.U && !io.BRpredictionIn)
   val newPCValue = Cat((Mux(io.in.ctrl.changePC, io.in.val1.asSInt, io.in.pc.asSInt) + io.in.imm.asSInt)(datawidth - 1, 1), 0.U(1.W))
 
   // Loading
