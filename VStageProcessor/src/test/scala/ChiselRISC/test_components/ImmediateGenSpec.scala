@@ -3,7 +3,7 @@ import chisel3.util._
 import chisel3._
 import chiseltest._
 import ChiselRISC.components.ImmGenerator
-import ChiselRISC.components.memory.InstructionMemory
+import ChiselRISC.components.memory.InstructionMemoryCircBuf
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.must.Matchers
 // TODO: Add more complex tests for the immediate generator

@@ -18,7 +18,7 @@ class ImmGenerator(dataWidth: Int) extends Module{
   val immS = Cat(Fill(21, io.immIn(31)),io.immIn(30,25),io.immIn(11,7))
   val immB = Cat(Fill(20,io.immIn(31)),io.immIn(7),io.immIn(30,25),io.immIn(11,8), 0.U)
   val immU = Cat(io.immIn(31,12), Fill(12, 0.U))
-  val immJ = Cat(Fill(11,io.immIn(31)),io.immIn(19,12),io.immIn(20),io.immIn(30,21),0.U)
+  val immJ = Cat(Fill(12,io.immIn(31)),io.immIn(19,12),io.immIn(20),io.immIn(30,21),0.U)
 
   val imm = WireDefault(immI) // Default immediate value is immI
 

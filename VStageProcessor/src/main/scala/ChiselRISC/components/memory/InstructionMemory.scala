@@ -1,17 +1,13 @@
 package ChiselRISC.components.memory
-
+/*
+ Redudant implementation as it uses circular buffer logic, which is not need for instruction memory
+ */
 import ChiselRISC.utilities._
 import chisel3._
+import chisel3.experimental.{ChiselAnnotation, annotate}
 import chisel3.util._
+import firrtl.annotations.MemoryArrayInitAnnotation
 
-/**
- * Instruction Memory
- * Is implemented as a circular buffer
- *
- * @param depth     The depth of the memory
- * @param datawidth The width of the data
- *
- */
 class InstructionMemory(depth: Int, datawidth: Int) extends Module {
   val bitwidth = log2Ceil(depth) // Calculate the number of bits needed to address the memory
   val actualDepth = math.pow(2, bitwidth).toInt // 2^bidwidth
@@ -21,55 +17,28 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
     val writer = new writeToInstMem(datawidth)
     val memOut = Output(UInt(datawidth.W)) // Data read from memory
   })
-  // Buffer status signals
-  val bufferEmpty = WireInit(true.B)
-  val bufferFull = WireInit(false.B)
 
-  // Initialise the signals
   io.memOut := WireInit(0.U(datawidth.W))
   io.memIO.ready := DontCare
-  val readAddr = WireInit(0.U(bitwidth.W))
-
-  // Pointers to handle empty and full logic
-  val readPtr = RegInit(0.U(bitwidth.W))
+  val readAddr = WireInit(0.U(datawidth.W))
+  io.memIO.nonEmpty := WireInit(true.B)
   val writePtr = RegInit(0.U(bitwidth.W))
-  val count = WireInit(0.U((bitwidth).W)) // Count of the number of elements in the memory
-
-  // Check instruction memory status
-  bufferEmpty := count === 0.U
-  //--------
-  bufferFull := count >= actualDepth.U - 1.U
-
-  // Ready to receive a read address if memory is not empty
-  io.memIO.nonEmpty := bufferEmpty
-
+  when(writePtr > 0.U){
+    io.memIO.nonEmpty := false.B
+  }
   // Instantiate the memory
   val mem = RegInit(VecInit(Seq.fill(actualDepth)(0.U(datawidth.W))))
 
-  // Read from memory
-  when(io.memIO.valid && !bufferEmpty) {
+  when(io.memIO.valid) {
     readAddr := io.memIO.addr >> 2 // Divide by 4 to get the correct read address
     io.memOut := mem(readAddr)
-    readPtr := readPtr + 1.U
-    when(readPtr >= actualDepth.U) {
-      readPtr := 0.U // Wrap around
-    }
   }
 
-  // Write to memory - should only be needed for testing
-  when(io.writer.ready && !bufferFull) {
+  when(io.writer.ready){
     mem(writePtr) := io.writer.data
     writePtr := writePtr + 1.U
-
-    when(writePtr >= actualDepth.U) {
+    when(writePtr >= actualDepth.U){
       writePtr := 0.U
     }
-  }
-  // Calculate the number of elements in the memory
-  val difference = writePtr - readPtr
-  when(difference <= 0.U) { // Wrap around
-    count := difference + actualDepth.U
-  }.otherwise {
-    count := difference
   }
 }
