@@ -11,7 +11,6 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
     val stallReg = Input(Bool())
     val in = Flipped(new ID_EX_IO(datawidth, addrWidth))
     val out = new EX_MEM_IO(datawidth, addrWidth)
-    val PCout = Output(UInt(datawidth.W))
     val hazardAluOut = Output(UInt(datawidth.W))
     val changePC = Output(Bool())
     val newPCValue = Output(UInt(datawidth.W))
@@ -21,7 +20,6 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   val ALU = Module(new ALU(datawidth, addrWidth))
 
   // Initialise signals
-  io.PCout := RegInit(0.U(datawidth.W))
   val outReg = RegEnable(io.out, !io.stallReg)
   io.hazardAluOut := WireDefault(ALU.io.aluOut)
   ALU.io.val1 := WireInit(0.U(datawidth.W))
@@ -36,6 +34,7 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   outReg.memOp := io.in.memOp
 
   // Mux for deciding whether to use immediate value
+  val usePC = Mux(io.in.ctrl.usePC, io.in.pc, io.in.val1)
   val useImm = Mux(io.in.ctrl.useImm, io.in.imm, io.in.val2)
 
   // Jumping and branching
@@ -71,7 +70,7 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   }
 
   when(io.in.ctrl.useALU) { // ALU operations
-    ALU.io.val1 := io.in.val1
+    ALU.io.val1 := usePC
     ALU.io.val2 := useImm
   }
 
@@ -83,7 +82,6 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   io.out.rd := outReg.rd
   io.out.wrData := outReg.wrData
   io.out.memOp := outReg.memOp
-  io.PCout := RegNext(io.in.pc + (useImm << 1))
   io.changePC := RegNext(changePC)
   io.newPCValue := RegNext(newPCValue)
 }

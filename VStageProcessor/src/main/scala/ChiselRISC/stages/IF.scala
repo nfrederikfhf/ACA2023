@@ -27,6 +27,7 @@ class IF(datawidth: Int, depth: Int, init: Seq[BigInt] = Seq(BigInt(0))) extends
   val pc = WireDefault(PC.io.memIO.addr)
 
   val outReg = RegEnable(io.out, !io.stallReg)
+  //val outReg = RegNext(io.out)
   PC.io.memIO.nonEmpty := DontCare
   PC.io.memIO.ready := WireInit(false.B)
   PC.io.in := WireInit(0.U(datawidth.W))
@@ -50,7 +51,7 @@ class IF(datawidth: Int, depth: Int, init: Seq[BigInt] = Seq(BigInt(0))) extends
     PC.io.memIO.ready := true.B
     PC.io.in := MuxCase(pc + 4.U, Seq(
       (io.changePC, io.newPCValue),
-      (io.stallReg, pc)
+      (io.stallReg, pc - 4.U)
     ))
   }.otherwise {
     PC.io.memIO.ready := false.B

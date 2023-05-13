@@ -63,10 +63,10 @@ class VStageProcessor(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigIn
 
   // Hazard Control
   hazardControl.io.EXaluOut := EX.io.hazardAluOut
-  hazardControl.io.EXrd := EX.io.in.rd
-  hazardControl.io.EXctrlLoad := EX.io.in.ctrl.load
-  hazardControl.io.EXctrlBranch := EX.io.in.ctrl.branch
-  hazardControl.io.EXctrlJump := EX.io.in.ctrl.jump
+  hazardControl.io.EXrd := EX.io.out.rd
+  hazardControl.io.EXctrlLoad := ID.io.out.ctrl.load
+  hazardControl.io.EXctrlBranch := ID.io.out.ctrl.branch
+  hazardControl.io.EXctrlJump := ID.io.out.ctrl.jump
   hazardControl.io.IDrs1 := ID.io.out.rs1
   hazardControl.io.IDrs2 := ID.io.out.rs2
 
@@ -75,9 +75,9 @@ class VStageProcessor(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigIn
   ID.io.flush := hazardControl.io.IDFlush
   // Stall signals for the whole pipeline
   IF.io.stallReg := hazardControl.io.IFStall
-  ID.io.stallReg := hazardControl.io.IFStall
-  EX.io.stallReg := hazardControl.io.IFStall
-  MEM.io.stallReg := hazardControl.io.IFStall
+  ID.io.stallReg := DontCare // Not yet implemented - Should handle delayed memory load/store with extern memory
+  EX.io.stallReg := DontCare // Not yet implemented - Should handle delayed memory load/store with extern memory
+  MEM.io.stallReg := DontCare // Not yet implemented - Should handle delayed memory load/store with extern memory
 
   // Test write interface
     IF.io.memIO.ready := io.memIO.ready

@@ -47,6 +47,7 @@ class DecoderSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.ctrlSignals.load.expect(false.B)
       dut.io.ctrlSignals.useALU.expect(true.B)
       dut.io.ctrlSignals.useImm.expect(true.B)
+      dut.io.ctrlSignals.usePC.expect(true.B)
       dut.io.rd.expect(10.U)
     }
   }

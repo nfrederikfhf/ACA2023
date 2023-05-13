@@ -1,7 +1,8 @@
 package ChiselRISC.components.memory
 
+import Chisel.Fill
 import chisel3._
-import chisel3.util.log2Ceil
+import chisel3.util.{Cat, log2Ceil}
 import chisel3.experimental.{ChiselAnnotation, annotate}
 import firrtl.annotations.MemoryArrayInitAnnotation
 import ChiselRISC.utilities.Funct3
@@ -39,10 +40,8 @@ class SyncBankMemory(dataWidth: Int, depth: Int, banks: Int) extends Module {
   val memMask = VecInit(Seq.fill(banks)(false.B))
   val wrData = VecInit(io.wrData(7, 0), io.wrData(15, 8), io.wrData(23, 16), io.wrData(31, 24))
   val vecIndexWr = WireInit(0.U(bitwidth.W))
-  val vecIndexRd1 = WireInit(0.U(bitwidth.W))
-  val vecIndexRd2 = WireInit(0.U(bitwidth.W))
-  // Instantiate the memory, syncronous read
-  //val mem: SyncReadMem[UInt] = SyncReadMem(actualDepth, UInt(dataWidth.W))
+  val vecIndexRd1 = RegInit(0.U(bitwidth.W))
+  val vecIndexRd2 = RegInit(0.U(bitwidth.W))
 
   // Get the correct banks to write and read to/from
   vecIndexWr := io.wrAddr % 4.U
@@ -56,6 +55,11 @@ class SyncBankMemory(dataWidth: Int, depth: Int, banks: Int) extends Module {
   ) {
     // Select correct mask
     memMask(vecIndexWr) := true.B
+    // To allow for correct masking
+    wrData(0) := io.wrData(7,0)
+    wrData(1) := io.wrData(7,0)
+    wrData(2) := io.wrData(7,0)
+    wrData(3) := io.wrData(7,0)
   }
     .elsewhen(
       io.memOp === Funct3.SH ||
@@ -65,6 +69,11 @@ class SyncBankMemory(dataWidth: Int, depth: Int, banks: Int) extends Module {
       // Select correct masks
       memMask(vecIndexWr) := true.B
       memMask(vecIndexWr + 1.U) := true.B
+      // To allow for correct masking
+      wrData(0) := io.wrData(7, 0)
+      wrData(1) := io.wrData(15,8)
+      wrData(2) := io.wrData(7, 0)
+      wrData(3) := io.wrData(15,8)
     }.otherwise {
     memMask := Seq.fill(banks)(true.B)
     // Get the correct banks to write and read to/from
@@ -72,7 +81,7 @@ class SyncBankMemory(dataWidth: Int, depth: Int, banks: Int) extends Module {
     vecIndexRd1 := 0.U
     vecIndexRd2 := 0.U
   }
-
+  // Instantiate the memory, syncronous read
   val mem = SyncReadMem(actualDepth, Vec(banks, UInt((dataWidth / banks).W)))
 
   //  annotate(new ChiselAnnotation {
@@ -87,15 +96,13 @@ class SyncBankMemory(dataWidth: Int, depth: Int, banks: Int) extends Module {
     rdData2 := mem.read(readAddress2)
   }
 
-
-
   when(RegNext(io.rden)) { // Only update the output if the read is enabled, or if it was enabled last cycle
         when(RegNext(io.memOp) === Funct3.LB) {
-          io.rdData1 := rdData1(vecIndexRd1).asUInt
-          io.rdData2 := rdData2(vecIndexRd2).asUInt
+          io.rdData1 := Cat(Fill(24,rdData1(vecIndexRd1)(7).asUInt), rdData1(vecIndexRd1)(7,0).asUInt)
+          io.rdData2 := Cat(Fill(24,rdData2(vecIndexRd2)(7).asUInt), rdData2(vecIndexRd2)(7,0).asUInt)
         }.elsewhen(RegNext(io.memOp) === Funct3.LH) {
-          io.rdData1 := (rdData1(vecIndexRd1 + 1.U) ## rdData1(vecIndexRd1)).asUInt
-          io.rdData2 := (rdData2(vecIndexRd2 + 1.U) ## rdData2(vecIndexRd2)).asUInt
+          io.rdData1 := Cat(Fill(16,rdData1(vecIndexRd1 + 1.U)(7).asUInt),rdData1(vecIndexRd1 + 1.U).asUInt, rdData1(vecIndexRd1).asUInt)
+          io.rdData2 := Cat(Fill(16,rdData2(vecIndexRd2 + 1.U)(7).asUInt),rdData2(vecIndexRd2 + 1.U).asUInt, rdData2(vecIndexRd2).asUInt)
         }.otherwise {
           io.rdData1 := (rdData1(3) ## rdData1(2) ## rdData1(1) ## rdData1(0)).asUInt
           io.rdData2 := (rdData2(3) ## rdData2(2) ## rdData2(1) ## rdData2(0)).asUInt

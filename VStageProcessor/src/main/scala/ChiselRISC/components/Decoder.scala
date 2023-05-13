@@ -15,6 +15,7 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
     val rd = Output(UInt(addrWidth.W))
     val ctrlSignals = new Bundle { // Control Signals
       val useImm = Output(Bool())
+      val usePC = Output(Bool())
       val useALU = Output(Bool())
       val branch = Output(Bool())
       val jump = Output(Bool())
@@ -32,6 +33,7 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
   io.ctrlSignals.useImm := WireInit(false.B)
   io.ctrlSignals.branch := WireInit(false.B)
   io.ctrlSignals.useALU := WireInit(false.B)
+  io.ctrlSignals.usePC := WireInit(false.B)
   io.ctrlSignals.jump := WireInit(false.B)
   io.ctrlSignals.load := WireInit(false.B)
   io.ctrlSignals.store := WireInit(false.B)
@@ -103,6 +105,7 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
       is(OP.AUIPC) {
         io.ctrlSignals.useImm := true.B
         io.ctrlSignals.useALU := true.B
+        io.ctrlSignals.usePC := true.B
       }
 
       is(OP.ST) { // Store instructions

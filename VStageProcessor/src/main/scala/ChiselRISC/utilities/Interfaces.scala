@@ -23,6 +23,7 @@ class ID_EX_IO(datawidth: Int, addrWidth: Int) extends Bundle {
   val memOp = Output(UInt(4.W))
   val ctrl = new Bundle { // Control Signals
     val useImm = Output(Bool())
+    val usePC = Output(Bool())
     val useALU = Output(Bool())
     val branch = Output(Bool())
     val jump = Output(Bool())

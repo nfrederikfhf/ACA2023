@@ -41,5 +41,4 @@ class ALU (bitWidth: Int = 32, addrWidth: Int) extends Module {
     is(ALUOp.BGEU) {io.aluOut := Mux(io.val1 >= io.val2, 1.U, 0.U)}
   }
 
-  //match a
 }

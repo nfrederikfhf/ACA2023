@@ -36,7 +36,7 @@ class SyncBankMemSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.rdAddr1.poke(0.U)
       dut.clock.step(1)
       dut.io.rden.poke(false.B)
-      dut.io.rdData1.expect("h0000FFFF".U)
+      dut.io.rdData1.expect("hFFFFFFFF".U)
     }
   }
 
@@ -52,7 +52,7 @@ class SyncBankMemSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.rdAddr1.poke(0.U)
       dut.clock.step(1)
       dut.io.rden.poke(false.B)
-      dut.io.rdData1.expect("h000000FF".U)
+      dut.io.rdData1.expect("hFFFFFFFF".U)
     }
   }
 
@@ -89,7 +89,7 @@ class SyncBankMemSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.rdData1.expect("h12".U)
     }
   }
-  it should "bruh" in {
+  it should "check if storing a byte at an adress, and loading a byte works" in {
     test(new SyncBankMemory(32, 1024, 4)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       dut.io.wren.poke(true.B)
       dut.io.wrAddr.poke(0.U)
@@ -107,7 +107,7 @@ class SyncBankMemSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.rdAddr1.poke(0.U)
       dut.clock.step(1)
       dut.io.rden.poke(false.B)
-      dut.io.rdData1.expect("hDE".U)
+      dut.io.rdData1.expect("hffffffDE".U)
     }
   }
 }

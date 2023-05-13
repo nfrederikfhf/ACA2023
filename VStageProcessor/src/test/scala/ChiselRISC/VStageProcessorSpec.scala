@@ -6,8 +6,6 @@ import chiseltest._
 import com.carlosedp.riscvassembler.RISCVAssembler
 import org.scalatest.flatspec.AnyFlatSpec
 
-import java.nio.file.{Path, Paths}
-
 class VStageProcessorSpec extends AnyFlatSpec with ChiselScalatestTester {
 
   it should "execute an ADDI instruction correctly" in {
@@ -37,6 +35,24 @@ class VStageProcessorSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.clock.step(1)
       // Check the register
       dut.io.debug.get.regFile(3).expect(2.U)
+    }
+  }
+
+  it should "execute an AUIPC instruction and LUI instruction correctly" in {
+    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      // Instantiate data
+      val input =
+        """lui x1, 0xf0f0
+          nop
+          auipc x2, 0xf0
+          """
+      FillInstructionMemory(input, dut.clock, dut.io.memIO)
+      dut.io.startPipeline.poke(true.B)
+      dut.clock.step(5)
+      // Check the result
+      dut.io.debug.get.regFile(1).expect(0xf0f0000L.U)
+      dut.clock.step(2)
+      dut.io.debug.get.regFile(2).expect(0xf0008L.U) // rd <- pc + imm << 12
     }
   }
 
@@ -223,7 +239,7 @@ class VStageProcessorSpec extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 
-  it should "execute the LW instruction" in {
+  it should "execute the SW and LW instruction" in {
     test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       val input =
         """
@@ -254,6 +270,65 @@ class VStageProcessorSpec extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 
+  it should "execute the SB and LB instruction" in {
+    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      val input =
+        """
+          addi x1, x1, 240
+          addi x2, x0, 10
+          sb x1, 0(x2)
+          lb x3, 0(x2)
+        """
+      FillInstructionMemory(input, dut.clock, dut.io.memIO)
+      dut.io.debug.get.regFile(1).expect(0.U)
+      dut.io.debug.get.regFile(2).expect(0.U)
+      dut.io.debug.get.regFile(3).expect(0.U)
+      dut.io.startPipeline.poke(true.B)
+      dut.clock.step(5)
+      dut.io.debug.get.regFile(1).expect(240.U) // L is to assign scala to evaluate it as a long
+      dut.io.debug.get.memoryIO.wren.expect(true.B)
+      dut.io.debug.get.memoryIO.wrData.expect(0xF0.U)
+      dut.io.debug.get.memoryIO.wrAddr.expect(10.U)
+      dut.clock.step(1)
+      dut.io.debug.get.memoryIO.rden.expect(true.B)
+      dut.io.debug.get.memoryIO.rdAddr1.expect(10.U)
+      dut.io.debug.get.regFile(2).expect(10.U)
+      dut.clock.step(2)
+      dut.io.debug.get.regFile(3).expect(0xFFFFFFF0L.U)
+    }
+  }
+
+  it should "execute the SH and LH instruction" in {
+    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      val input =
+        """
+          lui x1, 0xf0f0f
+          addi x1, x1, 240
+          addi x2, x0, 10
+          sh x1, 0(x2)
+          lh x3, 0(x2)
+        """
+      FillInstructionMemory(input, dut.clock, dut.io.memIO)
+      dut.io.debug.get.regFile(1).expect(0.U)
+      dut.io.debug.get.regFile(2).expect(0.U)
+      dut.io.debug.get.regFile(3).expect(0.U)
+      dut.io.startPipeline.poke(true.B)
+      dut.clock.step(5)
+      dut.io.debug.get.regFile(1).expect(0xf0f0f000L.U) // L is to assign scala to evaluate it as a long
+      dut.clock.step(1)
+      dut.io.debug.get.regFile(1).expect(0xf0f0f0f0L.U)
+      dut.io.debug.get.memoryIO.wren.expect(true.B)
+      dut.io.debug.get.memoryIO.wrData.expect(0xf0f0.U)
+      dut.io.debug.get.memoryIO.wrAddr.expect(10.U)
+      dut.clock.step(1)
+      dut.io.debug.get.memoryIO.rden.expect(true.B)
+      dut.io.debug.get.memoryIO.rdAddr1.expect(10.U)
+      dut.io.debug.get.regFile(2).expect(10.U)
+      dut.clock.step(2)
+      dut.io.debug.get.regFile(3).expect(0xfffff0f0L.U)
+    }
+  }
+
   it should "execute the program that is tested on the FPGA" in {
     test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       val input = RISCVAssembler.fromFile("Input.asm")
@@ -274,4 +349,98 @@ class VStageProcessorSpec extends AnyFlatSpec with ChiselScalatestTester {
   }
 
 
+  it should "execute a program with different instructions" in {
+    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      val input =
+        """
+          addi x1, x0, 42
+          addi x2, x0, 69
+          sub x3, x2, x1
+          sb x3, 1(x3)
+          lb x4, 1(x3)
+          nop
+          addi x4, x4, 1
+          beq x3, x4, -8
+          lui x6, 0xfffff
+          addi x7, x0, 42
+          beq x1, x7, +8
+          jal x0, -8
+          slti x8, x1, 3
+          addi x8, x8, 84
+        """
+      FillInstructionMemory(input, dut.clock, dut.io.memIO)
+      dut.io.startPipeline.poke(true.B)
+      dut.clock.step(5)
+      dut.io.debug.get.regFile(1).expect(42.U)
+      dut.clock.step(1)
+      dut.io.debug.get.regFile(2).expect(69.U)
+      dut.io.debug.get.memoryIO.wren.expect(true.B)
+      dut.io.debug.get.memoryIO.wrData.expect(27.U)
+      dut.io.debug.get.memoryIO.wrAddr.expect(28.U)
+      dut.clock.step(1)
+      dut.io.debug.get.regFile(3).expect(27.U)
+      dut.io.debug.get.memoryIO.rden.expect(true.B)
+      dut.io.debug.get.memoryIO.rdAddr1.expect(28.U)
+      dut.clock.step(2)
+      dut.io.debug.get.regFile(4).expect(27.U)
+      dut.clock.step(2)
+      dut.io.debug.get.regFile(4).expect(28.U)
+      dut.clock.step(4)
+      dut.io.debug.get.regFile(6).expect("hfffff000".U)
+      dut.clock.step(1)
+      dut.io.debug.get.regFile(7).expect(42.U)
+      dut.clock.step(1)
+      dut.io.debug.get.regFile(8).expect(0.U)
+      dut.clock.step(5)
+      dut.io.debug.get.regFile(8).expect(84.U)
+    }
+  }
+
+//  it should "Work in bruh2" in {
+//    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+//      val input =
+//        """
+//          addi x1, x0, 1
+//          sb x1, 1(x1)
+//          lb x2, 1(x1)
+//          addi x2, x2, 1
+//          beq x2, x1, +4
+//          nop
+//          addi x4, x0, 42
+//        """
+//      FillInstructionMemory(input, dut.clock, dut.io.memIO)
+//      dut.io.startPipeline.poke(true.B)
+//      dut.clock.step(4)
+//      dut.io.debug.get.memoryIO.wren.expect(true.B)
+//      dut.io.debug.get.memoryIO.wrData.expect(1.U)
+//      dut.io.debug.get.memoryIO.wrAddr.expect(2.U)
+//      dut.clock.step(1)
+//      dut.io.debug.get.regFile(1).expect(1.U)
+//      dut.io.debug.get.memoryIO.rden.expect(true.B)
+//      dut.io.debug.get.memoryIO.rdAddr1.expect(2.U)
+//      dut.clock.step(2)
+//      dut.io.debug.get.regFile(2).expect(1.U)
+//      dut.clock.step(5)
+//      dut.io.debug.get.regFile(2).expect(2.U)
+//      dut.clock.step(1)
+//    }
+//  }
+//
+//  it should "Work in bruh3" in {
+//    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+//      val input =
+//        """
+//          addi x1, x0, 1
+//          sb x1, 1(x1)
+//          lb x2, 1(x1)
+//          addi x2, x2, 1
+//        """
+//      FillInstructionMemory(input, dut.clock, dut.io.memIO)
+//      dut.io.startPipeline.poke(true.B)
+//      dut.clock.step(5)
+//      dut.io.debug.get.regFile(1).expect(1.U)
+//      dut.clock.step(5)
+//      dut.io.debug.get.regFile(2).expect(2.U)
+//    }
+//  }
 }
