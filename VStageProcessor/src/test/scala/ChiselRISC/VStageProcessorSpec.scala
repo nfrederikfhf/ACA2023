@@ -180,6 +180,59 @@ class VStageProcessorSpec extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 
+//flip BranchHistory init to 2.U
+  it should "execute branch prediction" in {
+    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      val input =
+        """
+          addi x1, x0, 4
+          addi x2, x0, 2
+          beq x1, x2, +32
+          addi x3, x0, 6
+          nop
+          nop
+          nop
+          nop
+          nop
+          nop
+          addi x4, x0, 42
+        """
+        FillInstructionMemory(input, dut.clock, dut.io.memIO)
+        dut.io.debug.get.regFile(1).expect(0.U)
+        dut.io.debug.get.regFile(2).expect(0.U)
+        dut.io.debug.get.regFile(3).expect(0.U)
+        dut.io.startPipeline.poke(true.B)
+        dut.clock.step(1)  // 1 - 0
+        dut.clock.step(1)  // 2 - 4
+        dut.clock.step(1)  // 3 - 8
+        dut.clock.step(1)  // 4 - 40
+        dut.io.debug.get.pc.expect(40.U)
+        dut.io.debug.get.regFile(1).expect(0.U)
+        dut.clock.step(1)  // 5 - 44
+        dut.io.debug.get.regFile(1).expect(4.U)
+        dut.clock.step(1)  // 6 - 12
+        dut.io.debug.get.regFile(2).expect(2.U)
+        dut.io.debug.get.pc.expect(12.U)
+        dut.clock.step(1)  // 7 - 16  but actually 12
+        dut.io.debug.get.pc.expect(16.U)
+        dut.clock.step(1)  // 8 - 20
+        dut.io.debug.get.pc.expect(20.U)
+        dut.clock.step(1)  // 9 - 24
+        dut.io.debug.get.pc.expect(24.U)
+        dut.clock.step(1)  // 10 - 28
+        dut.io.debug.get.regFile(3).expect(6.U)
+        dut.io.debug.get.pc.expect(28.U)
+//        dut.clock.step(2)
+//        dut.io.debug.get.regFile(3).expect(6.U)
+//        dut.io.debug.get.pc.expect(28.U)
+//        dut.clock.step(5)
+//        dut.io.debug.get.pc.expect(52.U)
+//        dut.io.debug.get.regFile(4).expect(42.U)
+
+
+    }
+  }
+
   it should "execute branch instructions - alternative" in {
     test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       val input =
