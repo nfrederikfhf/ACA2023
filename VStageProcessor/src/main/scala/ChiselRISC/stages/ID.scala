@@ -14,8 +14,8 @@ class ID(datawidth: Int, addrWidth: Int, simulation: Boolean = false) extends Mo
     val wbIn = Flipped(new WB_ID_IO(datawidth, addrWidth))
     val out = new ID_EX_IO(datawidth, addrWidth)
     val debug = if (simulation) Some(new debugIO(datawidth, addrWidth)) else None // Debugging
-    val branchingPredictionIn = Input(Bool())
-    val branchingPredictionOut = Output(Bool())
+    val BRpredictionIn = Input(Bool())
+    val BRpredictionOut = Output(Bool())
   })
 
   val immGenerator = Module(new ImmGenerator(datawidth))
@@ -41,6 +41,7 @@ class ID(datawidth: Int, addrWidth: Int, simulation: Boolean = false) extends Mo
   decoder.io.inInst := io.in.inst
   regfile.io.rdAddr1 := decoder.io.rs1
   regfile.io.rdAddr2 := decoder.io.rs2
+  io.BRpredictionOut := io.BRpredictionIn
   // Write back
   regfile.io.wren := io.wbIn.writeEnable
   regfile.io.wrAddr := io.wbIn.rd
