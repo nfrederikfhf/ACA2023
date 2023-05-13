@@ -68,7 +68,7 @@ class IFTest() extends Module {
 
 
   val sevenSegmentDisplay = Module(new SevenSegment(200))
-  sevenSegmentDisplay.io.in := ID.io.out.aluOp
+  sevenSegmentDisplay.io.rd := ID.io.out.aluOp
   io.seg := sevenSegmentDisplay.io.seg
   io.an := sevenSegmentDisplay.io.an
 }
