@@ -19,7 +19,6 @@ class BranchPredictor(datawidth: Int = 32, pcStep: Int = 4) extends Module {
   val stepBits = log2Ceil(pcStep)
   val historyVec = RegInit(VecInit(Seq.fill(entries)(0.U(2.W))))
   val tag = io.pc(indexBits + stepBits - 1, stepBits)
-  //   TODO init stuff
 
   io.targetPC := Cat(Fill(20, io.inst(31)), io.inst(7), io.inst(30, 25), io.inst(11, 8), 0.U)
   io.changePC := Mux(io.inst(6, 0) === "b1100011".U, historyVec(tag)(1, 1) === 1.U, false.B)
