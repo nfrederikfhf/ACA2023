@@ -55,8 +55,8 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   val aluResult = Mux(ALU.io.aluOut === 0.U, false.B, true.B)
   val misprediction = Mux(io.in.ctrl.branch, !(aluResult === io.BRpredictionIn), false.B)
   val changePC = io.in.ctrl.jump || misprediction
-  val target = Mux(io.in.ctrl.changePC, io.in.val1.asSInt, io.in.pc.asSInt) + io.in.imm.asSInt
-  val newPCValue = Cat(Mux(misprediction, Mux(aluResult, target, io.in.pc.asSInt + 4.asSInt), target)(datawidth - 1, 1), 0.U(1.W))
+  val newPCValue = Cat((Mux(misprediction && !aluResult, io.in.pc.asSInt + 4.asSInt, Mux(io.in.ctrl.changePC, io.in.val1.asSInt, io.in.pc.asSInt) + io.in.imm.asSInt))(datawidth - 1, 1), 0.U(1.W))
+
 
   // Loading
   when(io.in.memOp === LW) { // Load word
