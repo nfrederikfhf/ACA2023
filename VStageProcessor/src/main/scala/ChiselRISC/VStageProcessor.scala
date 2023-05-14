@@ -63,12 +63,12 @@ class VStageProcessor(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigIn
 
   // Hazard Control
   hazardControl.io.EXaluOut := EX.io.hazardAluOut
-  hazardControl.io.EXrd := EX.io.out.rd
+  hazardControl.io.EXrd := ID.io.out.rd
   hazardControl.io.EXctrlLoad := ID.io.out.ctrl.load
   hazardControl.io.EXctrlBranch := ID.io.out.ctrl.branch
   hazardControl.io.EXctrlJump := ID.io.out.ctrl.jump
-  hazardControl.io.IDrs1 := ID.io.out.rs1
-  hazardControl.io.IDrs2 := ID.io.out.rs2
+  hazardControl.io.IDrs1 := ID.io.hazard_IDrs1
+  hazardControl.io.IDrs2 := ID.io.hazard_IDrs2
 
   // Control signals
   IF.io.flush := hazardControl.io.IFFlush

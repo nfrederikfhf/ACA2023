@@ -8,7 +8,7 @@ import chisel3._
 import chisel3.util.Counter
 
 
-class ChiselRISC(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigInt(0))) extends Module {
+class VStageProcessorOLD(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigInt(0))) extends Module {
   val io = IO(new Bundle {
     val memIO = Flipped(new memoryInterfaceLight(32))
 //    val startPipeline = Input(Bool())
