@@ -180,6 +180,54 @@ class VStageProcessorSpec extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 
+  it should "execute branch prediction history" in {
+    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      val input =
+        """
+          beq x4, x5, 8
+          addi x1, x0, +4
+          jal x3, -8
+          addi x2, x0, +8
+        """
+        FillInstructionMemory(input, dut.clock, dut.io.memIO)
+        dut.io.startPipeline.poke(true.B)
+        dut.clock.step(1)
+        dut.io.debug.get.pc.expect(0.U)   //beq
+        dut.clock.step(1)
+        dut.io.debug.get.pc.expect(4.U)   //addi_1
+        dut.clock.step(1)
+        dut.io.debug.get.pc.expect(8.U)   //jal -> flush
+        dut.clock.step(1)
+        dut.io.debug.get.pc.expect(8.U)   //jal
+        dut.clock.step(1)
+        dut.io.debug.get.pc.expect(12.U)  //addi_2
+        dut.clock.step(1)
+        dut.io.debug.get.pc.expect(16.U)  //nop -> flush
+        dut.clock.step(1)
+        dut.io.debug.get.pc.expect(0.U)   //beq
+        dut.clock.step(1)
+        dut.io.debug.get.pc.expect(4.U)   //addi_1
+        dut.clock.step(1)
+        dut.io.debug.get.pc.expect(8.U)   //jal -> flush
+        dut.clock.step(1)
+        dut.io.debug.get.pc.expect(8.U)   //jal
+        dut.clock.step(1)
+        dut.io.debug.get.pc.expect(12.U)  //addi_2
+        dut.clock.step(1)
+        dut.io.debug.get.pc.expect(16.U)  //nop -> flush
+        dut.clock.step(1)
+        dut.io.debug.get.pc.expect(0.U)   //beq
+        dut.clock.step(1)
+        dut.io.debug.get.pc.expect(8.U)   //jal
+        dut.clock.step(1)
+        dut.io.debug.get.pc.expect(12.U)  //addi_2
+        dut.clock.step(1)
+        dut.io.debug.get.pc.expect(16.U)  //nop -> flush
+        dut.clock.step(1)
+        dut.io.debug.get.pc.expect(0.U)   //beq
+    }
+  }
+
 //flip BranchHistory init to 2.U
 //  it should "execute branch prediction" in {
 //    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>

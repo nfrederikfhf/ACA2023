@@ -5,7 +5,7 @@ import chiseltest._
 import ChiselRISC.components.BranchPredictor
 import org.scalatest.flatspec.AnyFlatSpec
 
-class BranchPredictorTest extends AnyFlatSpec with ChiselScalatestTester {
+class BranchPredictorSpec extends AnyFlatSpec with ChiselScalatestTester {
   it should "update history and make prediction accordingly" in {
     test(new BranchPredictor()) { dut =>
       dut.io.EXbranching.poke(true.B)
