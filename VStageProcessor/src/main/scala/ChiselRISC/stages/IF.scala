@@ -51,7 +51,7 @@ class IF(datawidth: Int, depth: Int, init: Seq[BigInt] = Seq(BigInt(0))) extends
   when(!instMem.io.memIO.nonEmpty && io.startPC) {
     PC.io.memIO.ready := true.B
     PC.io.in := MuxCase(pc + 4.U, Seq(
-      (io.changePC, io.newPCValue),
+      (io.changePC, io.newPCValue + 4.U),
       (io.BRchangePC, io.BRnewPCValue + 4.U),
       (io.stallReg, pc)
     ))

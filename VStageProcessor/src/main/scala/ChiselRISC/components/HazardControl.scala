@@ -26,7 +26,7 @@ class HazardControl(dataWidth: Int, addrWidth: Int) extends Module {
   io.IFStall := WireInit(false.B)
 
   val use_load = io.EXctrlLoad && (io.EXrd === io.IDrs1 || io.EXrd === io.IDrs2) && io.EXrd =/= 0.U
-  val branch_jump = (io.EXaluOut === 1.U && io.EXctrlBranch && io.EXmisprediction) || io.EXctrlJump
+  val branch_jump = (io.EXctrlBranch && io.EXmisprediction) || io.EXctrlJump
 
   io.IFFlush := branch_jump
   io.IFStall := use_load
