@@ -293,8 +293,6 @@ class VStageProcessorSpec extends AnyFlatSpec with ChiselScalatestTester {
 //        dut.io.debug.get.pc.expect(48.U)
 //        dut.io.debug.get.regFile(4).expect(42.U)
 //        dut.io.debug.get.regFile(5).expect(0.U)
-//
-//
 //    }
 //  }
 

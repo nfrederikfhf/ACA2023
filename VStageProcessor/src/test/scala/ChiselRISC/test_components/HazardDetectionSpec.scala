@@ -50,6 +50,7 @@ class HazardDetectionSpec extends AnyFlatSpec with ChiselScalatestTester {
     test(new HazardControl(32, 5)) { dut =>
       dut.io.EXaluOut.poke(1.U(5.W))
       dut.io.EXctrlBranch.poke(true.B)
+      dut.io.EXmisprediction.poke(true.B)
       dut.io.IFFlush.expect(true.B)
       dut.io.IFStall.expect(false.B)
       dut.io.IDFlush.expect(true.B)
