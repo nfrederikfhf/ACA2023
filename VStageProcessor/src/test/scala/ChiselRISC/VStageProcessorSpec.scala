@@ -396,51 +396,33 @@ class VStageProcessorSpec extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 
-//  it should "Work in bruh2" in {
-//    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
-//      val input =
-//        """
-//          addi x1, x0, 1
-//          sb x1, 1(x1)
-//          lb x2, 1(x1)
-//          addi x2, x2, 1
-//          beq x2, x1, +4
-//          nop
-//          addi x4, x0, 42
-//        """
-//      FillInstructionMemory(input, dut.clock, dut.io.memIO)
-//      dut.io.startPipeline.poke(true.B)
-//      dut.clock.step(4)
-//      dut.io.debug.get.memoryIO.wren.expect(true.B)
-//      dut.io.debug.get.memoryIO.wrData.expect(1.U)
-//      dut.io.debug.get.memoryIO.wrAddr.expect(2.U)
-//      dut.clock.step(1)
-//      dut.io.debug.get.regFile(1).expect(1.U)
-//      dut.io.debug.get.memoryIO.rden.expect(true.B)
-//      dut.io.debug.get.memoryIO.rdAddr1.expect(2.U)
-//      dut.clock.step(2)
-//      dut.io.debug.get.regFile(2).expect(1.U)
-//      dut.clock.step(5)
-//      dut.io.debug.get.regFile(2).expect(2.U)
-//      dut.clock.step(1)
-//    }
-//  }
-//
-//  it should "Work in bruh3" in {
-//    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
-//      val input =
-//        """
-//          addi x1, x0, 1
-//          sb x1, 1(x1)
-//          lb x2, 1(x1)
-//          addi x2, x2, 1
-//        """
-//      FillInstructionMemory(input, dut.clock, dut.io.memIO)
-//      dut.io.startPipeline.poke(true.B)
-//      dut.clock.step(5)
-//      dut.io.debug.get.regFile(1).expect(1.U)
-//      dut.clock.step(5)
-//      dut.io.debug.get.regFile(2).expect(2.U)
-//    }
-//  }
+  it should "should handle the use_load hazard correctly" in {
+    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      val input =
+        """
+          addi x1, x0, 1
+          sb x1, 1(x1)
+          lb x2, 1(x1)
+          addi x2, x2, 1
+          beq x2, x1, +4
+          nop
+          addi x4, x0, 42
+        """
+      FillInstructionMemory(input, dut.clock, dut.io.memIO)
+      dut.io.startPipeline.poke(true.B)
+      dut.clock.step(4)
+      dut.io.debug.get.memoryIO.wren.expect(true.B)
+      dut.io.debug.get.memoryIO.wrData.expect(1.U)
+      dut.io.debug.get.memoryIO.wrAddr.expect(2.U)
+      dut.clock.step(1)
+      dut.io.debug.get.regFile(1).expect(1.U)
+      dut.io.debug.get.memoryIO.rden.expect(true.B)
+      dut.io.debug.get.memoryIO.rdAddr1.expect(2.U)
+      dut.clock.step(2)
+      dut.io.debug.get.regFile(2).expect(1.U)
+      dut.clock.step(5)
+      dut.io.debug.get.regFile(2).expect(2.U)
+      dut.clock.step(1)
+    }
+  }
 }

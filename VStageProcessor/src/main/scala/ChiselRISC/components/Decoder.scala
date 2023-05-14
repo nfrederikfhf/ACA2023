@@ -209,8 +209,8 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
     }
 
     //---------outputs----------------
-    io.rs1 := Mux(op === OP.JAL, 0.U, io.inInst(19, 15)) // Reset rsX to 0 if JAL to avoid false forwarding
-    io.rs2 := Mux(op === OP.JAL, 0.U, io.inInst(24, 20))
+    io.rs1 := Mux(op === OP.JAL || op === OP.LUI || op === OP.AUIPC, 0.U, io.inInst(19, 15)) // Reset rsX to 0 if JAL/LUI/AUIPC to avoid false forwarding
+    io.rs2 := Mux(op === OP.JAL || op === OP.LUI || op === OP.AUIPC || op === OP.LD, 0.U, io.inInst(24, 20)) // Reset rs2 to 0 if JAL/LUI/AUIPC/LD to avoid false forwarding
     io.rd := io.inInst(11, 7)
 
 }

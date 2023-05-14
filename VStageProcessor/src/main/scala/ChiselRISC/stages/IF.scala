@@ -26,7 +26,7 @@ class IF(datawidth: Int, depth: Int, init: Seq[BigInt] = Seq(BigInt(0))) extends
   val instMem = Module(new InstructionMemory(depth, datawidth))
   val pc = WireDefault(PC.io.memIO.addr)
 
-  val outReg = RegEnable(io.out, !io.stallReg)
+  val outReg = RegNext(io.out)
   //val outReg = RegNext(io.out)
   PC.io.memIO.nonEmpty := DontCare
   PC.io.memIO.ready := WireInit(false.B)
@@ -51,7 +51,7 @@ class IF(datawidth: Int, depth: Int, init: Seq[BigInt] = Seq(BigInt(0))) extends
     PC.io.memIO.ready := true.B
     PC.io.in := MuxCase(pc + 4.U, Seq(
       (io.changePC, io.newPCValue + 4.U),
-      (io.stallReg, pc - 4.U)
+      (io.stallReg, pc)
     ))
   }.otherwise {
     PC.io.memIO.ready := false.B
@@ -63,8 +63,8 @@ class IF(datawidth: Int, depth: Int, init: Seq[BigInt] = Seq(BigInt(0))) extends
 
   val muxOutInst = Mux(io.flush, 0.U, instMem.io.memOut)
 
-  outReg.inst := muxOutInst
-  outReg.pc := addr
+  outReg.inst := Mux(io.stallReg, outReg.inst, muxOutInst)
+  outReg.pc := Mux(io.stallReg, outReg.pc, addr)
   io.out.inst := outReg.inst
   io.out.pc := outReg.pc
 }
