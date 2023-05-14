@@ -3,7 +3,7 @@ import chisel3._
 import ChiselRISC.utilities._
 import chisel3.util._
 import ChiselRISC.components.memory.RegisterFile
-import ChiselRISC.components.{ADDER, ALU, ForwardingUnit}
+import ChiselRISC.components.{ALU, ForwardingUnit}
 import ChiselRISC.utilities.Funct3._
 
 class EX(datawidth: Int, addrWidth: Int) extends Module {
@@ -11,7 +11,6 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
     val stallReg = Input(Bool())
     val in = Flipped(new ID_EX_IO(datawidth, addrWidth))
     val out = new EX_MEM_IO(datawidth, addrWidth)
-    val hazardAluOut = Output(UInt(datawidth.W))
     val changePC = Output(Bool())
     val newPCValue = Output(UInt(datawidth.W))
 //    branch prediction
@@ -27,7 +26,6 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
 
   // Initialise signals
   val outReg = RegEnable(io.out, !io.stallReg)
-  io.hazardAluOut := WireDefault(ALU.io.aluOut)
   ALU.io.val1 := WireInit(0.U(datawidth.W))
   ALU.io.val2 := WireInit(0.U(datawidth.W))
   io.BRbranchResult := WireInit(0.U(datawidth.W))
@@ -43,8 +41,8 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   outReg.rd := io.in.rd
   outReg.ctrl.writeEnable := !(io.in.ctrl.branch || io.in.ctrl.store)
   outReg.memOp := io.in.memOp
-  io.BRbranching := io.in.ctrl.branch
-  io.BRbranchPC := io.in.pc
+  io.BRbranching := io.in.ctrl.branch // ID.out.ctrl.branch
+  io.BRbranchPC := io.in.pc // ID.out.pc
 
   // Mux for deciding whether to use immediate value
   val usePC = Mux(io.in.ctrl.usePC, io.in.pc, io.in.val1)

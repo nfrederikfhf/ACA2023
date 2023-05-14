@@ -48,7 +48,6 @@ class HazardDetectionSpec extends AnyFlatSpec with ChiselScalatestTester {
 
   it should "Flush everything if we get a taken branch instruction" in {
     test(new HazardControl(32, 5)) { dut =>
-      dut.io.EXaluOut.poke(1.U(5.W))
       dut.io.EXctrlBranch.poke(true.B)
       dut.io.EXmisprediction.poke(true.B)
       dut.io.IFFlush.expect(true.B)
@@ -59,7 +58,7 @@ class HazardDetectionSpec extends AnyFlatSpec with ChiselScalatestTester {
 
   it should "not flush and stall if we get an untaken branch instruction" in {
     test(new HazardControl(32, 5)) { dut =>
-      dut.io.EXaluOut.poke(0.U(5.W))
+      dut.io.EXmisprediction.poke(false.B)
       dut.io.EXctrlBranch.poke(true.B)
       dut.io.IFFlush.expect(false.B)
       dut.io.IFStall.expect(false.B)

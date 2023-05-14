@@ -63,7 +63,6 @@ class VStageProcessor(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigIn
   IF.io.newPCValue := EX.io.newPCValue
 
   // Hazard Control
-  hazardControl.io.EXaluOut := EX.io.hazardAluOut
   hazardControl.io.EXrd := ID.io.out.rd
   hazardControl.io.EXmisprediction := EX.io.misprediction
   hazardControl.io.EXctrlLoad := ID.io.out.ctrl.load

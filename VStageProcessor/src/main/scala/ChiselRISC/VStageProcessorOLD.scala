@@ -67,7 +67,7 @@ class VStageProcessorOLD(simulation: Boolean = false, init: Seq[BigInt] = Seq(Bi
   IF.io.flush := hazardControl.io.IFFlush
   ID.io.flush := hazardControl.io.IDFlush
   IF.io.stallReg := hazardControl.io.IFStall
-  hazardControl.io.EXaluOut := EX.io.hazardAluOut
+  //hazardControl.io.EXaluOut := EX.io.hazardAluOut
   hazardControl.io.EXmisprediction := EX.io.misprediction
   hazardControl.io.EXctrlBranch := EX.io.in.ctrl.branch
   hazardControl.io.EXctrlJump := EX.io.in.ctrl.jump
