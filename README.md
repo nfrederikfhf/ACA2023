@@ -51,7 +51,7 @@ These files are found in:
 .\VstageProcessor\asm
 ```
 
-Running the Simulation
+Running the Test Suite
 ======================
 The current implementation uses sbt, as such navigating to the directory .\VStageProcessor and typing:
 ```
