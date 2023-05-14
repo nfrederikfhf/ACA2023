@@ -15,7 +15,6 @@ class ForwardingUnit(dataWidth: Int, addrWidth: Int) extends Module {
     // ID output to EX input
     val val1 = Output(UInt(dataWidth.W))
     val val2 = Output(UInt(dataWidth.W))
-    val is_forwarding = Output(Bool())
   })
   //-------------------------Forwarding MEM----------------------------------------------------------
   val forwardingMEMrs1 = (io.mem_fwd.rd === io.id_rs1 && io.id_rs1 =/= 0.U && io.mem_fwd.writeEnable)
@@ -24,7 +23,7 @@ class ForwardingUnit(dataWidth: Int, addrWidth: Int) extends Module {
   val forwardingWBrs1 = (io.wb_fwd.rd === io.id_rs1 && io.id_rs1 =/= 0.U && io.wb_fwd.writeEnable)
   val forwardingWBrs2 = (io.wb_fwd.rd === io.id_rs2 && io.id_rs2 =/= 0.U && io.wb_fwd.writeEnable)
   // ------------------------Forwarding--------------------------------------------------------------
-  io.is_forwarding := forwardingMEMrs1 || forwardingMEMrs2 || forwardingWBrs1 || forwardingWBrs2
+  //io.is_forwarding := forwardingMEMrs1 || forwardingMEMrs2 || forwardingWBrs1 || forwardingWBrs2
   
   when(forwardingMEMrs1) { // When output from the MEM stage is needed in EX val1, if rd is equal to rs1
     io.val1 := io.mem_fwd.stageOutput
