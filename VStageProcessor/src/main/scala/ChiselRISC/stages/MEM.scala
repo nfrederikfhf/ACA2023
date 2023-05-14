@@ -59,7 +59,7 @@ class MEM(dataWidth: Int, addrWidth: Int, depth: Int, simulation: Boolean = fals
   io.out.memOut := MEM.io.rdData1
 
   //------------ Forwarding----------------
-  io.mem_fwd.rd := io.in.rd
-  io.mem_fwd.stageOutput := Mux(io.in.ctrl.load, MEM.io.rdData1, io.in.aluOut)
-  io.mem_fwd.writeEnable := io.in.ctrl.writeEnable
+  io.mem_fwd.rd := Mux(io.in.ctrl.load, 0.U ,io.in.rd) // Dont allow for forwarding on load
+  io.mem_fwd.stageOutput := Mux(io.in.ctrl.load, 0.U, io.in.aluOut)
+  io.mem_fwd.writeEnable := Mux(io.in.ctrl.load, 0.U, io.in.ctrl.writeEnable)
 }

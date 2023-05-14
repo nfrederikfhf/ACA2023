@@ -95,10 +95,10 @@ class VStageProcessorSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.debug.get.regFile(2).expect(0.U)
       dut.io.startPipeline.poke(true.B)
       dut.clock.step(5)
-      dut.io.debug.get.pc.expect(16.U)
+      dut.io.debug.get.pc.expect(20.U)
       dut.io.debug.get.regFile(1).expect(4.U)
       dut.clock.step(3)
-      dut.io.debug.get.pc.expect(2004.U)
+      dut.io.debug.get.pc.expect(2008.U)
       dut.io.debug.get.regFile(2).expect(20.U)
     }
   }
@@ -121,7 +121,7 @@ class VStageProcessorSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.clock.step(2) //step 2 more for register rd writeback
       dut.io.debug.get.regFile(1).expect(4.U)
       dut.clock.step(4)
-      dut.io.debug.get.pc.expect(52.U)
+      dut.io.debug.get.pc.expect(56.U)
       dut.io.debug.get.regFile(2).expect(0.U)
     }
   }
@@ -153,7 +153,7 @@ class VStageProcessorSpec extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.debug.get.regFile(2).expect(1.U)
       dut.io.debug.get.pc.expect(0.U)
       dut.clock.step(5)
-      dut.io.debug.get.pc.expect(16.U)
+      dut.io.debug.get.pc.expect(20.U)
       dut.io.debug.get.regFile(3).expect(2.U)
     }
   }
@@ -172,7 +172,7 @@ class VStageProcessorSpec extends AnyFlatSpec with ChiselScalatestTester {
           nop
           nop
           nop
-          addi x4, x0, 42
+          add x2, x1, x2
         """
         FillInstructionMemory(input, dut.clock, dut.io.memIO)
         dut.io.debug.get.regFile(1).expect(0.U)
@@ -189,8 +189,8 @@ class VStageProcessorSpec extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.debug.get.regFile(3).expect(6.U)
         dut.io.debug.get.pc.expect(36.U)
         dut.clock.step(5)
-        dut.io.debug.get.pc.expect(52.U)
-        dut.io.debug.get.regFile(4).expect(42.U)
+        dut.io.debug.get.pc.expect(56.U)
+        dut.io.debug.get.regFile(2).expect(8.U)
 
 
     }
@@ -358,7 +358,7 @@ class VStageProcessorSpec extends AnyFlatSpec with ChiselScalatestTester {
           sub x3, x2, x1
           sb x3, 1(x3)
           lb x4, 1(x3)
-          nop
+          blt x2, x1, +24
           addi x4, x4, 1
           beq x3, x4, -8
           lui x6, 0xfffff

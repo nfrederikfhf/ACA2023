@@ -16,7 +16,6 @@ class HazardControl(dataWidth: Int, addrWidth: Int) extends Module {
     val IDFlush = Output(Bool())
     val IFFlush = Output(Bool())
     val IFStall = Output(Bool())
-    val IDStall = Output(Bool())
   })
 
   //Init Outputs
@@ -28,7 +27,6 @@ class HazardControl(dataWidth: Int, addrWidth: Int) extends Module {
   val branch_jump = (io.EXaluOut === 1.U && io.EXctrlBranch) || io.EXctrlJump
 
   io.IFFlush := branch_jump
-  io.IDStall := use_load //Not currently connected
   io.IFStall := use_load
   io.IDFlush := branch_jump || use_load
 }
