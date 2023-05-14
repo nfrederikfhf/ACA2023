@@ -9,7 +9,7 @@ import ChiselRISC.utilities.Funct3
 
 class SyncBankMemory(dataWidth: Int, depth: Int, banks: Int) extends Module {
   val bitwidth = log2Ceil(depth) // Calculate the number of bits needed to address the memory
-  val actualDepth = math.pow(2, bitwidth).toInt // 2^bidwidth
+  val actualDepth = (math.pow(2, bitwidth)/4).toInt // 2^bidwidth
 
   val io = IO(new Bundle {
     // Read Enable
@@ -32,8 +32,8 @@ class SyncBankMemory(dataWidth: Int, depth: Int, banks: Int) extends Module {
   //Init
   io.rdData1 := WireInit(0.U(dataWidth.W))
   io.rdData2 := WireInit(0.U(dataWidth.W))
-  val rdData1 = WireInit(Vec(banks,(UInt((dataWidth/banks).W))), DontCare) // To allow for reading next clock cycle
-  val rdData2 = WireInit(Vec(banks,(UInt((dataWidth/banks).W))), DontCare)
+  val rdData1 = WireInit(Vec(banks, (UInt((dataWidth / banks).W))), DontCare) // To allow for reading next clock cycle
+  val rdData2 = WireInit(Vec(banks, (UInt((dataWidth / banks).W))), DontCare)
   val readAddress1 = WireInit(0.U(bitwidth.W)) // To allow for reading next clock cycle
   val readAddress2 = WireInit(0.U(bitwidth.W))
   val writeAddress = WireInit(0.U(bitwidth.W))
@@ -56,10 +56,10 @@ class SyncBankMemory(dataWidth: Int, depth: Int, banks: Int) extends Module {
     // Select correct mask
     memMask(vecIndexWr) := true.B
     // To allow for correct masking
-    wrData(0) := io.wrData(7,0)
-    wrData(1) := io.wrData(7,0)
-    wrData(2) := io.wrData(7,0)
-    wrData(3) := io.wrData(7,0)
+    wrData(0) := io.wrData(7, 0)
+    wrData(1) := io.wrData(7, 0)
+    wrData(2) := io.wrData(7, 0)
+    wrData(3) := io.wrData(7, 0)
   }
     .elsewhen(
       io.memOp === Funct3.SH ||
@@ -71,9 +71,9 @@ class SyncBankMemory(dataWidth: Int, depth: Int, banks: Int) extends Module {
       memMask(vecIndexWr + 1.U) := true.B
       // To allow for correct masking
       wrData(0) := io.wrData(7, 0)
-      wrData(1) := io.wrData(15,8)
+      wrData(1) := io.wrData(15, 8)
       wrData(2) := io.wrData(7, 0)
-      wrData(3) := io.wrData(15,8)
+      wrData(3) := io.wrData(15, 8)
     }.otherwise {
     memMask := Seq.fill(banks)(true.B)
     // Get the correct banks to write and read to/from
@@ -97,16 +97,16 @@ class SyncBankMemory(dataWidth: Int, depth: Int, banks: Int) extends Module {
   }
 
   when(RegNext(io.rden)) { // Only update the output if the read is enabled, or if it was enabled last cycle
-        when(RegNext(io.memOp) === Funct3.LB) {
-          io.rdData1 := Cat(Fill(24,rdData1(vecIndexRd1)(7).asUInt), rdData1(vecIndexRd1)(7,0).asUInt)
-          io.rdData2 := Cat(Fill(24,rdData2(vecIndexRd2)(7).asUInt), rdData2(vecIndexRd2)(7,0).asUInt)
-        }.elsewhen(RegNext(io.memOp) === Funct3.LH) {
-          io.rdData1 := Cat(Fill(16,rdData1(vecIndexRd1 + 1.U)(7).asUInt),rdData1(vecIndexRd1 + 1.U).asUInt, rdData1(vecIndexRd1).asUInt)
-          io.rdData2 := Cat(Fill(16,rdData2(vecIndexRd2 + 1.U)(7).asUInt),rdData2(vecIndexRd2 + 1.U).asUInt, rdData2(vecIndexRd2).asUInt)
-        }.otherwise {
-          io.rdData1 := (rdData1(3) ## rdData1(2) ## rdData1(1) ## rdData1(0)).asUInt
-          io.rdData2 := (rdData2(3) ## rdData2(2) ## rdData2(1) ## rdData2(0)).asUInt
-        }
+    when(RegNext(io.memOp) === Funct3.LB) {
+      io.rdData1 := Cat(Fill(24, rdData1(vecIndexRd1)(7).asUInt), rdData1(vecIndexRd1)(7, 0).asUInt)
+      io.rdData2 := Cat(Fill(24, rdData2(vecIndexRd2)(7).asUInt), rdData2(vecIndexRd2)(7, 0).asUInt)
+    }.elsewhen(RegNext(io.memOp) === Funct3.LH) {
+      io.rdData1 := Cat(Fill(16, rdData1(vecIndexRd1 + 1.U)(7).asUInt), rdData1(vecIndexRd1 + 1.U).asUInt, rdData1(vecIndexRd1).asUInt)
+      io.rdData2 := Cat(Fill(16, rdData2(vecIndexRd2 + 1.U)(7).asUInt), rdData2(vecIndexRd2 + 1.U).asUInt, rdData2(vecIndexRd2).asUInt)
+    }.otherwise {
+      io.rdData1 := (rdData1(3) ## rdData1(2) ## rdData1(1) ## rdData1(0)).asUInt
+      io.rdData2 := (rdData2(3) ## rdData2(2) ## rdData2(1) ## rdData2(0)).asUInt
+    }
   }
 
   when(io.wren) {

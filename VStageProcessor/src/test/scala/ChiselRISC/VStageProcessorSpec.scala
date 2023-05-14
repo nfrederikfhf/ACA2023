@@ -57,10 +57,10 @@ class VStageProcessorSpec extends AnyFlatSpec with ChiselScalatestTester {
   }
 
   it should "execute an store and load instruction correctly" in {
-    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut  =>
+    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       // add value in register
       val input =
-      """
+        """
         addi x1, x1, 1
         sw x1, 4(x2)
         lw x3, 4(x2)
@@ -174,23 +174,23 @@ class VStageProcessorSpec extends AnyFlatSpec with ChiselScalatestTester {
           nop
           add x2, x1, x2
         """
-        FillInstructionMemory(input, dut.clock, dut.io.memIO)
-        dut.io.debug.get.regFile(1).expect(0.U)
-        dut.io.debug.get.regFile(2).expect(0.U)
-        dut.io.debug.get.regFile(3).expect(0.U)
-        dut.io.startPipeline.poke(true.B)
-        dut.clock.step(5)
-        dut.io.debug.get.regFile(1).expect(4.U)
-        dut.io.debug.get.pc.expect(16.U)
-        dut.clock.step(1)
-        dut.io.debug.get.regFile(2).expect(4.U)
-        dut.io.debug.get.pc.expect(20.U)
-        dut.clock.step(1)
-        dut.io.debug.get.regFile(3).expect(6.U)
-        dut.io.debug.get.pc.expect(36.U)
-        dut.clock.step(5)
-        dut.io.debug.get.pc.expect(56.U)
-        dut.io.debug.get.regFile(2).expect(8.U)
+      FillInstructionMemory(input, dut.clock, dut.io.memIO)
+      dut.io.debug.get.regFile(1).expect(0.U)
+      dut.io.debug.get.regFile(2).expect(0.U)
+      dut.io.debug.get.regFile(3).expect(0.U)
+      dut.io.startPipeline.poke(true.B)
+      dut.clock.step(5)
+      dut.io.debug.get.regFile(1).expect(4.U)
+      dut.io.debug.get.pc.expect(16.U)
+      dut.clock.step(1)
+      dut.io.debug.get.regFile(2).expect(4.U)
+      dut.io.debug.get.pc.expect(20.U)
+      dut.clock.step(1)
+      dut.io.debug.get.regFile(3).expect(6.U)
+      dut.io.debug.get.pc.expect(36.U)
+      dut.clock.step(5)
+      dut.io.debug.get.pc.expect(56.U)
+      dut.io.debug.get.regFile(2).expect(8.U)
 
 
     }
@@ -205,96 +205,96 @@ class VStageProcessorSpec extends AnyFlatSpec with ChiselScalatestTester {
           jal x3, -8
           addi x2, x0, +8
         """
-        FillInstructionMemory(input, dut.clock, dut.io.memIO)
-        dut.io.startPipeline.poke(true.B)
-        dut.clock.step(1)
-        dut.io.debug.get.pc.expect(0.U)   //beq
-        dut.clock.step(1)
-        dut.io.debug.get.pc.expect(4.U)   //addi_1
-        dut.clock.step(1)
-        dut.io.debug.get.pc.expect(8.U)   //jal -> flush
-        dut.clock.step(1)
-        dut.io.debug.get.pc.expect(8.U)   //jal
-        dut.clock.step(1)
-        dut.io.debug.get.pc.expect(12.U)  //addi_2
-        dut.clock.step(1)
-        dut.io.debug.get.pc.expect(16.U)  //nop -> flush
-        dut.clock.step(1)
-        dut.io.debug.get.pc.expect(0.U)   //beq
-        dut.clock.step(1)
-        dut.io.debug.get.pc.expect(4.U)   //addi_1
-        dut.clock.step(1)
-        dut.io.debug.get.pc.expect(8.U)   //jal -> flush
-        dut.clock.step(1)
-        dut.io.debug.get.pc.expect(8.U)   //jal
-        dut.clock.step(1)
-        dut.io.debug.get.pc.expect(12.U)  //addi_2
-        dut.clock.step(1)
-        dut.io.debug.get.pc.expect(16.U)  //nop -> flush
-        dut.clock.step(1)
-        dut.io.debug.get.pc.expect(0.U)   //beq
-        dut.clock.step(1)
-        dut.io.debug.get.pc.expect(8.U)   //jal
-        dut.clock.step(1)
-        dut.io.debug.get.pc.expect(12.U)  //addi_2
-        dut.clock.step(1)
-        dut.io.debug.get.pc.expect(16.U)  //nop -> flush
-        dut.clock.step(1)
-        dut.io.debug.get.pc.expect(0.U)   //beq
+      FillInstructionMemory(input, dut.clock, dut.io.memIO)
+      dut.io.startPipeline.poke(true.B)
+      dut.clock.step(1)
+      dut.io.debug.get.pc.expect(0.U) //beq
+      dut.clock.step(1)
+      dut.io.debug.get.pc.expect(4.U) //addi_1
+      dut.clock.step(1)
+      dut.io.debug.get.pc.expect(8.U) //jal -> flush
+      dut.clock.step(1)
+      dut.io.debug.get.pc.expect(8.U) //jal
+      dut.clock.step(1)
+      dut.io.debug.get.pc.expect(12.U) //addi_2
+      dut.clock.step(1)
+      dut.io.debug.get.pc.expect(16.U) //nop -> flush
+      dut.clock.step(1)
+      dut.io.debug.get.pc.expect(0.U) //beq
+      dut.clock.step(1)
+      dut.io.debug.get.pc.expect(4.U) //addi_1
+      dut.clock.step(1)
+      dut.io.debug.get.pc.expect(8.U) //jal -> flush
+      dut.clock.step(1)
+      dut.io.debug.get.pc.expect(8.U) //jal
+      dut.clock.step(1)
+      dut.io.debug.get.pc.expect(12.U) //addi_2
+      dut.clock.step(1)
+      dut.io.debug.get.pc.expect(16.U) //nop -> flush
+      dut.clock.step(1)
+      dut.io.debug.get.pc.expect(0.U) //beq
+      dut.clock.step(1)
+      dut.io.debug.get.pc.expect(8.U) //jal
+      dut.clock.step(1)
+      dut.io.debug.get.pc.expect(12.U) //addi_2
+      dut.clock.step(1)
+      dut.io.debug.get.pc.expect(16.U) //nop -> flush
+      dut.clock.step(1)
+      dut.io.debug.get.pc.expect(0.U) //beq
     }
   }
 
-//flip BranchHistory init to 2.U
-//  it should "execute branch prediction" in {
-//    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
-//      val input =
-//        """
-//          addi x1, x0, 4
-//          addi x2, x0, 2
-//          beq x1, x2, +24
-//          addi x3, x0, 6
-//          nop
-//          nop
-//          nop
-//          nop
-//          addi x4, x0, 42
-//          addi x5, x0, 36
-//        """
-//        FillInstructionMemory(input, dut.clock, dut.io.memIO)
-//        dut.io.debug.get.regFile(1).expect(0.U)
-//        dut.io.debug.get.regFile(2).expect(0.U)
-//        dut.io.debug.get.regFile(3).expect(0.U)
-//        dut.io.startPipeline.poke(true.B)
-//        dut.clock.step(1)  // 1 - 0
-//        dut.clock.step(1)  // 2 - 4
-//        dut.clock.step(1)  // 3 - 8
-//        dut.clock.step(1)  // 4 - 40
-//        dut.io.debug.get.pc.expect(32.U)
-//        dut.io.debug.get.regFile(1).expect(0.U)
-//        dut.clock.step(1)  // 5 - 44
-//        dut.io.debug.get.pc.expect(36.U)
-//        dut.io.debug.get.regFile(1).expect(4.U)
-//        dut.clock.step(1)  // 6 - 12
-//        dut.io.debug.get.regFile(2).expect(2.U)
-//        dut.io.debug.get.pc.expect(12.U)
-//        dut.clock.step(1)  // 7 - 16  but actually 12
-//        dut.io.debug.get.pc.expect(16.U)
-//        dut.clock.step(1)  // 8 - 20
-//        dut.io.debug.get.pc.expect(20.U)
-//        dut.clock.step(1)  // 9 - 24
-//        dut.io.debug.get.pc.expect(24.U)
-//        dut.clock.step(1)  // 10 - 28
-//        dut.io.debug.get.regFile(3).expect(6.U)
-//        dut.io.debug.get.pc.expect(28.U)
-//        dut.clock.step(4)  // 14 - 44
-//        dut.io.debug.get.regFile(4).expect(0.U)
-//        dut.io.debug.get.pc.expect(44.U)
-//        dut.clock.step(1)  // 15 - 48
-//        dut.io.debug.get.pc.expect(48.U)
-//        dut.io.debug.get.regFile(4).expect(42.U)
-//        dut.io.debug.get.regFile(5).expect(0.U)
-//    }
-//  }
+  //flip BranchHistory init to 2.U
+  //  it should "execute branch prediction" in {
+  //    test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+  //      val input =
+  //        """
+  //          addi x1, x0, 4
+  //          addi x2, x0, 2
+  //          beq x1, x2, +24
+  //          addi x3, x0, 6
+  //          nop
+  //          nop
+  //          nop
+  //          nop
+  //          addi x4, x0, 42
+  //          addi x5, x0, 36
+  //        """
+  //        FillInstructionMemory(input, dut.clock, dut.io.memIO)
+  //        dut.io.debug.get.regFile(1).expect(0.U)
+  //        dut.io.debug.get.regFile(2).expect(0.U)
+  //        dut.io.debug.get.regFile(3).expect(0.U)
+  //        dut.io.startPipeline.poke(true.B)
+  //        dut.clock.step(1)  // 1 - 0
+  //        dut.clock.step(1)  // 2 - 4
+  //        dut.clock.step(1)  // 3 - 8
+  //        dut.clock.step(1)  // 4 - 40
+  //        dut.io.debug.get.pc.expect(32.U)
+  //        dut.io.debug.get.regFile(1).expect(0.U)
+  //        dut.clock.step(1)  // 5 - 44
+  //        dut.io.debug.get.pc.expect(36.U)
+  //        dut.io.debug.get.regFile(1).expect(4.U)
+  //        dut.clock.step(1)  // 6 - 12
+  //        dut.io.debug.get.regFile(2).expect(2.U)
+  //        dut.io.debug.get.pc.expect(12.U)
+  //        dut.clock.step(1)  // 7 - 16  but actually 12
+  //        dut.io.debug.get.pc.expect(16.U)
+  //        dut.clock.step(1)  // 8 - 20
+  //        dut.io.debug.get.pc.expect(20.U)
+  //        dut.clock.step(1)  // 9 - 24
+  //        dut.io.debug.get.pc.expect(24.U)
+  //        dut.clock.step(1)  // 10 - 28
+  //        dut.io.debug.get.regFile(3).expect(6.U)
+  //        dut.io.debug.get.pc.expect(28.U)
+  //        dut.clock.step(4)  // 14 - 44
+  //        dut.io.debug.get.regFile(4).expect(0.U)
+  //        dut.io.debug.get.pc.expect(44.U)
+  //        dut.clock.step(1)  // 15 - 48
+  //        dut.io.debug.get.pc.expect(48.U)
+  //        dut.io.debug.get.regFile(4).expect(42.U)
+  //        dut.io.debug.get.regFile(5).expect(0.U)
+  //    }
+  //  }
 
   it should "execute branch instructions - alternative" in {
     test(new VStageProcessor(true)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>

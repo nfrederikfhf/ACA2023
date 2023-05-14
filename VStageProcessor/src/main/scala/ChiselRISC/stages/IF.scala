@@ -27,15 +27,14 @@ class IF(datawidth: Int, depth: Int, init: Seq[BigInt] = Seq(BigInt(0))) extends
   val instMem = Module(new InstructionMemory(depth, datawidth))
   val pc = WireDefault(PC.io.memIO.addr)
 
+  // Output register
   val outReg = RegNext(io.out)
-  //val outReg = RegNext(io.out)
+
   PC.io.memIO.nonEmpty := DontCare
   PC.io.memIO.ready := WireInit(false.B)
   PC.io.in := WireInit(0.U(datawidth.W))
 
   // Instruction memory
-  //instMem.io.memIO.addr := WireInit(0.U(datawidth.W))
-  //instMem.io.memIO.valid := WireInit(false.B)
   instMem.io.writer.ready := WireInit(false.B)
   instMem.io.writer.data := WireInit(0.U(datawidth.W))
 

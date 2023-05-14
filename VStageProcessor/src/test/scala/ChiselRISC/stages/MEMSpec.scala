@@ -9,7 +9,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 class MEMSpec extends AnyFlatSpec with ChiselScalatestTester {
 
   it should "pass through aluOut, rd, and memOut signals" in {
-    test(new MEM(32, 5, 100)).withAnnotations(Seq(WriteVcdAnnotation))  { dut =>
+    test(new MEM(32, 5, 100)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       dut.io.in.ctrl.load.poke(true.B)
       dut.io.in.ctrl.store.poke(false.B)
       dut.io.in.aluOut.poke(0.U)

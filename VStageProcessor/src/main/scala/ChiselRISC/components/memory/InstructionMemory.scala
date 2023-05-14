@@ -1,7 +1,5 @@
 package ChiselRISC.components.memory
-/*
- Redudant implementation as it uses circular buffer logic, which is not need for instruction memory
- */
+
 import ChiselRISC.utilities._
 import chisel3._
 import chisel3.experimental.{ChiselAnnotation, annotate}
@@ -23,7 +21,7 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
   val readAddr = WireInit(0.U(datawidth.W))
   io.memIO.nonEmpty := WireInit(true.B)
   val writePtr = RegInit(0.U(bitwidth.W))
-  when(writePtr > 0.U){
+  when(writePtr > 0.U) {
     io.memIO.nonEmpty := false.B
   }
   // Instantiate the memory
@@ -34,10 +32,10 @@ class InstructionMemory(depth: Int, datawidth: Int) extends Module {
     io.memOut := mem(readAddr)
   }
 
-  when(io.writer.ready){
+  when(io.writer.ready) {
     mem(writePtr) := io.writer.data
     writePtr := writePtr + 1.U
-    when(writePtr >= actualDepth.U){
+    when(writePtr >= actualDepth.U) {
       writePtr := 0.U
     }
   }

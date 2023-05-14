@@ -1,4 +1,5 @@
 package ChiselRISC.stages
+
 import chisel3.{util, _}
 import chisel3.util._
 import ChiselRISC.components._
@@ -10,7 +11,7 @@ class MEM(dataWidth: Int, addrWidth: Int, depth: Int, simulation: Boolean = fals
     val stallReg = Input(Bool())
     val in = Flipped(new EX_MEM_IO(dataWidth, addrWidth))
     val out = new MEM_WB_IO(dataWidth, addrWidth)
-    val debug = if(simulation) Some(new debugIO(dataWidth, addrWidth)) else None
+    val debug = if (simulation) Some(new debugIO(dataWidth, addrWidth)) else None
     val mem_fwd = new forwardingIO(dataWidth, addrWidth)
   })
 
@@ -25,7 +26,6 @@ class MEM(dataWidth: Int, addrWidth: Int, depth: Int, simulation: Boolean = fals
   outReg.memOut := DontCare
 
   // Creating the dual read memory module
-  //val MEM = Module(new DualReadMem(addrWidth, dataWidth, depth))
   val MEM = Module(new SyncBankMemory(dataWidth, depth, 4))
 
   // Init the unused side of the Dual memory
@@ -39,7 +39,7 @@ class MEM(dataWidth: Int, addrWidth: Int, depth: Int, simulation: Boolean = fals
   MEM.io.wrData := io.in.wrData
   MEM.io.memOp := io.in.memOp
 
-  if(simulation){ // Debugging
+  if (simulation) { // Debugging
     io.debug.get.regFile := DontCare // Only used in ID
     io.debug.get.inst := DontCare
     io.debug.get.pc := DontCare
@@ -59,7 +59,7 @@ class MEM(dataWidth: Int, addrWidth: Int, depth: Int, simulation: Boolean = fals
   io.out.memOut := MEM.io.rdData1
 
   //------------ Forwarding----------------
-  io.mem_fwd.rd := Mux(io.in.ctrl.load, 0.U ,io.in.rd) // Dont allow for forwarding on load
+  io.mem_fwd.rd := Mux(io.in.ctrl.load, 0.U, io.in.rd) // Dont allow for forwarding on load
   io.mem_fwd.stageOutput := Mux(io.in.ctrl.load, 0.U, io.in.aluOut)
   io.mem_fwd.writeEnable := Mux(io.in.ctrl.load, false.B, io.in.ctrl.writeEnable)
 }

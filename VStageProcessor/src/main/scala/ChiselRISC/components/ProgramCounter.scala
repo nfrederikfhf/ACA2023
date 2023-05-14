@@ -3,7 +3,8 @@ package ChiselRISC.components
 import Chisel.DecoupledIO
 import chisel3._
 import ChiselRISC.utilities._
-class ProgramCounter(bitWidth: Int) extends Module{
+
+class ProgramCounter(bitWidth: Int) extends Module {
   val io = IO(new Bundle {
     val memIO = new memoryInterfaceLight(bitWidth)
     val in = Input(UInt(bitWidth.W))
@@ -16,11 +17,11 @@ class ProgramCounter(bitWidth: Int) extends Module{
 
   val reg = RegInit(0.U(bitWidth.W))
 
-  when(io.memIO.ready){
+  when(io.memIO.ready) {
     io.memIO.valid := true.B
-  }.otherwise{
+  }.otherwise {
     io.memIO.valid := false.B
   }
-    io.memIO.addr := reg
-    reg := io.in
+  io.memIO.addr := reg
+  reg := io.in
 }

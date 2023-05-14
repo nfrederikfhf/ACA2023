@@ -11,7 +11,6 @@ class VStageProcessor(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigIn
     val memIO = new writeToInstMem(32)
     val debug = if (simulation) Some(new debugIO(32, 5)) else None
     val startPipeline = Input(Bool())
-    //    val start = Input(Bool())
     val add = Input(Bool())
     val branchInst = Input(Bool())
     val jumpInst = Input(Bool())
@@ -25,8 +24,6 @@ class VStageProcessor(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigIn
     val store = Output(Bool())
     val changePC = Output(Bool())
     val writeEnable = Output(Bool())
-    //    val val1 = Output(Bool())
-    //    val val2 = Output(Bool())
   })
 
   //Pipeline stages
@@ -92,25 +89,20 @@ class VStageProcessor(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigIn
   MEM.io.stallReg := DontCare // Not yet implemented - Should handle delayed memory load/store with extern memory
 
   // Test write interface
-    IF.io.memIO.ready := io.memIO.ready
-    IF.io.memIO.writeData := io.memIO.data
+  IF.io.memIO.ready := io.memIO.ready
+  IF.io.memIO.writeData := io.memIO.data
 
-//  IF.io.memIO.ready := WireInit(false.B)
-//  IF.io.memIO.writeData := WireInit(0.U(32.W))
+  //  IF.io.memIO.ready := WireInit(false.B)
+  //  IF.io.memIO.writeData := WireInit(0.U(32.W))
   IF.io.startPC := io.startPipeline
   // Seven Segment Display
-  //  val sevenSegmentDisplay = Module(new SevenSegment(1000000))
-  //  io.seg := sevenSegmentDisplay.io.seg
-  //  io.an := sevenSegmentDisplay.io.an
-  //  sevenSegmentDisplay.io.in := WireInit("b1111111".U)
   val sevenSegmentDisplay = Module(new SevenSegment(100000))
   io.seg := sevenSegmentDisplay.io.seg
   io.an := sevenSegmentDisplay.io.an
   sevenSegmentDisplay.io.val1 := ID.io.out.val1
   sevenSegmentDisplay.io.rd := ID.io.out.val2
-  //  io.val1 := RegInit(false.B)
-  //  io.val2 := RegInit(false.B)
-  // Force write instructions to memory - Since for some reason filling memory does not work
+
+  // Force write instructions to memoryork
   when(io.add) {
     IF.io.startPC := true.B
     IF.io.memIO.ready := true.B
@@ -149,6 +141,7 @@ class VStageProcessor(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigIn
   //    IF.io.startPC := true.B
   //    sevenSegmentDisplay.io.in :=  RegNext(EX.io.out.aluOut(15,0))
   //  }
+
   // FPGA debugging LEDS
   io.useImm := ID.io.out.ctrl.useImm
   io.useAlu := ID.io.out.ctrl.useALU
@@ -158,7 +151,6 @@ class VStageProcessor(simulation: Boolean = false, init: Seq[BigInt] = Seq(BigIn
   io.store := ID.io.out.ctrl.store
   io.changePC := ID.io.out.ctrl.changePC
   io.writeEnable := WB.io.in.writeEnable
-
 
   if (simulation) { // Connect the simulation wires
     //----- Debug bus--------------------------------

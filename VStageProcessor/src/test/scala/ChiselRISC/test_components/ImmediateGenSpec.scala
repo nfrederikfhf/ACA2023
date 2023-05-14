@@ -1,4 +1,5 @@
 package ChiselRISC.test_components
+
 import chisel3.util._
 import chisel3._
 import chiseltest._
@@ -6,6 +7,7 @@ import ChiselRISC.components.ImmGenerator
 import ChiselRISC.components.memory.InstructionMemoryCircBuf
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.must.Matchers
+
 // TODO: Add more complex tests for the immediate generator
 class ImmediateGenSpec extends AnyFlatSpec with ChiselScalatestTester {
   it should "generate the correct immediate value for the LUI instruction" in {
@@ -52,12 +54,11 @@ class ImmediateGenSpec extends AnyFlatSpec with ChiselScalatestTester {
     test(new ImmGenerator(32)) { dut =>
       dut.io.immIn.poke("h81234523".U) // opcode=SW
       dut.clock.step(1)
-      dut.io.immOut.expect("hFFFFF80A".U)  // Expected negative value
+      dut.io.immOut.expect("hFFFFF80A".U) // Expected negative value
 
       dut.io.immIn.poke("h1234523".U) // opcode=SW
       dut.clock.step(1)
       dut.io.immOut.expect("h000000A".U) // Expected positive value
-
 
 
     }

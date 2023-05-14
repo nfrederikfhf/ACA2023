@@ -1,9 +1,11 @@
 package ChiselRISC.test_components
+
 import chisel3._
 import chiseltest._
 import ChiselRISC.components._
 import ChiselRISC.utilities._
 import org.scalatest.flatspec.AnyFlatSpec
+
 class DecoderSpec extends AnyFlatSpec with ChiselScalatestTester {
   it should "check if decoder sets correct control values for BEQ instruction" in {
     test(new Decoder(32, 5)) { dut =>

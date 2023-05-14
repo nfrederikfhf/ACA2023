@@ -8,7 +8,7 @@ import ChiselRISC.components.ALU
 import ChiselRISC.utilities.ALUOp
 import org.scalatest.flatspec.AnyFlatSpec
 
-class ALUSpec extends AnyFlatSpec with ChiselScalatestTester{
+class ALUSpec extends AnyFlatSpec with ChiselScalatestTester {
 
   it should "add 2 integers correctly" in {
     test(new ALU(32, 5)) { dut =>
@@ -79,10 +79,4 @@ class ALUSpec extends AnyFlatSpec with ChiselScalatestTester{
       dut.io.aluOut.expect(0.U)
     }
   }
-
-  //The following still needs testing:
-  //SRA
-  //SRL
-  //SLL
-  //SLTU
 }

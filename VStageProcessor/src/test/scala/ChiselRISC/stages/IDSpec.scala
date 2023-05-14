@@ -28,7 +28,7 @@ class IDSpec extends AnyFlatSpec with ChiselScalatestTester {
     test(new ID(datawidth = 32, addrWidth = 5)) { dut =>
       val input =
         """addi x3, x0, 16"""
-      val inst = assemblyToHex(input)// prefix binary with b to convert to binary
+      val inst = assemblyToHex(input) // prefix binary with b to convert to binary
       dut.io.in.inst.poke(inst.U(32.W))
       dut.io.in.pc.poke(0.U(32.W))
       dut.clock.step(1)
@@ -48,10 +48,10 @@ class IDSpec extends AnyFlatSpec with ChiselScalatestTester {
   }
 
   it should "output correct values for the LW instruction" in {
-    test(new ID(32,5)) { dut =>
+    test(new ID(32, 5)) { dut =>
       val input =
         """lw x7, 4(x2)"""
-      val inst = assemblyToHex(input)// prefix binary with b to convert to binary
+      val inst = assemblyToHex(input) // prefix binary with b to convert to binary
       dut.io.in.inst.poke(inst.U(32.W))
       dut.io.in.pc.poke(0.U(32.W))
       dut.clock.step(1)
@@ -69,7 +69,7 @@ class IDSpec extends AnyFlatSpec with ChiselScalatestTester {
     test(new ID(32, 5)) { dut =>
       val input =
         """add x3, x1, x2"""
-      val inst = assemblyToHex(input)// prefix binary with b to convert to binary
+      val inst = assemblyToHex(input) // prefix binary with b to convert to binary
       dut.io.in.inst.poke(inst.U(32.W))
       dut.io.in.pc.poke(0.U(32.W))
       dut.clock.step(1)
@@ -86,7 +86,7 @@ class IDSpec extends AnyFlatSpec with ChiselScalatestTester {
     test(new ID(32, 5)) { dut =>
       val input =
         """addi x3, x0, 16"""
-      val inst = assemblyToHex(input)// prefix binary with b to convert to binary
+      val inst = assemblyToHex(input) // prefix binary with b to convert to binary
       dut.io.in.inst.poke(inst.U(32.W))
       dut.clock.step(1)
       dut.io.out.val1.expect(0.U)
@@ -99,7 +99,6 @@ class IDSpec extends AnyFlatSpec with ChiselScalatestTester {
       //      dut.io.out.val1.expect(0.U)
       //      dut.io.out.val2.expect(16.U)
       dut.io.out.aluOp.expect(ALUOp.ADD.litValue)
-
 
 
     }

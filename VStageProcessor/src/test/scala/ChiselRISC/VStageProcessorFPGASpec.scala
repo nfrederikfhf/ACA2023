@@ -1,4 +1,7 @@
 package ChiselRISC
+/*
+ Uncomment this test, to test the program before implementation of the VStageProcessor is correct
+ */
 import utilities.Binaries.loadWords
 import utilities.helperFunctions.{FillInstructionMemory, FillInstructionMemoryFromFile}
 import chisel3._

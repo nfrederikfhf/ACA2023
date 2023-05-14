@@ -16,7 +16,7 @@ class RegisterFile(addressSize: Int, bitWidth: Int, simulation: Boolean = false)
     val wrData: UInt = Input(UInt(bitWidth.W))
     val wren: Bool = Input(Bool())
     // Debug
-    val regFile = if(simulation) Some(Output(Vec(bitWidth, UInt(bitWidth.W)))) else None
+    val regFile = if (simulation) Some(Output(Vec(bitWidth, UInt(bitWidth.W)))) else None
   })
   //init
   io.rdData1 := WireInit(0.U(bitWidth.W))
@@ -42,6 +42,8 @@ class RegisterFile(addressSize: Int, bitWidth: Int, simulation: Boolean = false)
     registers(io.wrAddr) := io.wrData
   }
   // Debug
-  if(simulation){ io.regFile.get := registers }
+  if (simulation) {
+    io.regFile.get := registers
+  }
 
 }

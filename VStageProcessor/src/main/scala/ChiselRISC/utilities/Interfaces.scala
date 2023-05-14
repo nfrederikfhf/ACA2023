@@ -7,7 +7,6 @@ import chisel3._
 class IF_ID_IO(datawidth: Int) extends Bundle {
   val inst = Output(UInt(datawidth.W))
   val pc = Output(UInt(datawidth.W)) //PassThrough
-  //val branchPredict = Output(UInt(datawidth.W)) // TODO: Implement branch prediction
 }
 
 // Use flipped to make the interface as input - use as is for output
@@ -31,7 +30,6 @@ class ID_EX_IO(datawidth: Int, addrWidth: Int) extends Bundle {
     val store = Output(Bool())
     val changePC = Output(Bool())
   }
-  //val branchPredict = UInt(32.W) // TODO: Implement branch prediction
 }
 
 class EX_MEM_IO(datawidth: Int, addrWidth: Int) extends Bundle { // Output from EX to MEM
@@ -44,7 +42,6 @@ class EX_MEM_IO(datawidth: Int, addrWidth: Int) extends Bundle { // Output from 
     val store = Output(Bool()) // Save to memory
     val load = Output(Bool()) // Load from memory
   }
-  //val branchPredict = UInt(32.W) // TODO: Implement branch prediction
 }
 
 class MEM_WB_IO(datawidth: Int, addrWidth: Int) extends Bundle {
@@ -88,7 +85,7 @@ class memoryInterfaceLight(dataWidth: Int) extends Bundle { // Interface for mem
   val addr = Output(UInt(dataWidth.W))
 }
 
-class writeToInstMem(datawidth: Int) extends Bundle{
+class writeToInstMem(datawidth: Int) extends Bundle {
   val ready = Input(Bool())
   val data = Input(UInt(datawidth.W))
 }

@@ -52,7 +52,7 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
       io.ctrlSignals.useImm := true.B
       io.ctrlSignals.useALU := true.B
       io.aluOp := ALUOp.ADD.asUInt
-      switch(funct3){
+      switch(funct3) {
         is(Funct3.LB) {
           io.memOp := Funct3.LB.asUInt
         }
@@ -102,115 +102,115 @@ class Decoder(datawidth: Int, addrWidth: Int) extends Module {
         }
       }
     }
-      is(OP.AUIPC) {
-        io.ctrlSignals.useImm := true.B
-        io.ctrlSignals.useALU := true.B
-        io.ctrlSignals.usePC := true.B
-      }
+    is(OP.AUIPC) {
+      io.ctrlSignals.useImm := true.B
+      io.ctrlSignals.useALU := true.B
+      io.ctrlSignals.usePC := true.B
+    }
 
-      is(OP.ST) { // Store instructions
-        io.ctrlSignals.useALU := true.B
-        io.ctrlSignals.store := true.B
-        io.ctrlSignals.useImm := true.B
-        switch(funct3) {
-          is(Funct3.SB) {
-            io.memOp := Funct3.SB.asUInt
-          }
-          is(Funct3.SH) {
-            io.memOp := Funct3.SH.asUInt
-          }
-          is(Funct3.SW) {
-            io.memOp := Funct3.SW.asUInt
-          }
+    is(OP.ST) { // Store instructions
+      io.ctrlSignals.useALU := true.B
+      io.ctrlSignals.store := true.B
+      io.ctrlSignals.useImm := true.B
+      switch(funct3) {
+        is(Funct3.SB) {
+          io.memOp := Funct3.SB.asUInt
         }
-      }
-
-      is(OP.AR) { // Arithmetic instructions
-        io.ctrlSignals.useALU := true.B
-        switch(funct3) {
-          is(Funct3.ADDSUB) {
-            switch(funct7) {
-              is(Funct7.ADD) {
-                io.aluOp := ALUOp.ADD.asUInt
-              }
-              is(Funct7.SUB) {
-                io.aluOp := ALUOp.SUB.asUInt
-              }
-            }
-          }
-          is(Funct3.SLL) {
-            io.aluOp := ALUOp.SLL.asUInt
-          }
-          is(Funct3.SLT) {
-            io.aluOp := ALUOp.SLT.asUInt
-          }
-          is(Funct3.SLTU) {
-            io.aluOp := ALUOp.SLTU.asUInt
-          }
-          is(Funct3.XOR) {
-            io.aluOp := ALUOp.XOR.asUInt
-          }
-          is(Funct3.SR) {
-            switch(funct7) {
-              is(Funct7.SRA) {
-                io.aluOp := ALUOp.SRA.asUInt
-              }
-              is(Funct7.SRL) {
-                io.aluOp := ALUOp.SRL.asUInt
-              }
-            }
-          }
-          is(Funct3.OR) {
-            io.aluOp := ALUOp.OR.asUInt
-          }
-          is(Funct3.AND) {
-            io.aluOp := ALUOp.AND.asUInt
-          }
+        is(Funct3.SH) {
+          io.memOp := Funct3.SH.asUInt
         }
-      }
-
-      is(OP.LUI) {
-        io.ctrlSignals.useImm := true.B
-        io.ctrlSignals.useALU := true.B
-      }
-      is(OP.BR) {
-        io.ctrlSignals.branch := true.B
-        io.ctrlSignals.useALU := true.B
-        switch(funct3){
-          is(Funct3.BEQ) {
-            io.aluOp := ALUOp.BEQ.asUInt
-          }
-          is(Funct3.BNE) {
-            io.aluOp := ALUOp.BNE.asUInt
-          }
-          is(Funct3.BLT) {
-            io.aluOp := ALUOp.BLT.asUInt
-          }
-          is(Funct3.BGE) {
-            io.aluOp := ALUOp.BGE.asUInt
-          }
-          is(Funct3.BLTU) {
-            io.aluOp := ALUOp.BLTU.asUInt
-          }
-          is(Funct3.BGEU) {
-            io.aluOp := ALUOp.BGEU.asUInt
-          }
+        is(Funct3.SW) {
+          io.memOp := Funct3.SW.asUInt
         }
-      }
-      is(OP.JALR) {
-        io.ctrlSignals.jump := true.B
-        io.ctrlSignals.useImm := true.B
-        io.ctrlSignals.changePC := true.B
-      }
-      is(OP.JAL) {
-        io.ctrlSignals.jump := true.B
-        io.ctrlSignals.useImm := true.B
       }
     }
 
-    //---------outputs----------------
-    io.rs1 := Mux(op === OP.JAL || op === OP.LUI || op === OP.AUIPC, 0.U, io.inInst(19, 15)) // Reset rsX to 0 if JAL/LUI/AUIPC to avoid false forwarding
-    io.rs2 := Mux(op === OP.JAL || op === OP.LUI || op === OP.AUIPC || op === OP.LD, 0.U, io.inInst(24, 20)) // Reset rs2 to 0 if JAL/LUI/AUIPC/LD to avoid false forwarding
-    io.rd := io.inInst(11, 7)
+    is(OP.AR) { // Arithmetic instructions
+      io.ctrlSignals.useALU := true.B
+      switch(funct3) {
+        is(Funct3.ADDSUB) {
+          switch(funct7) {
+            is(Funct7.ADD) {
+              io.aluOp := ALUOp.ADD.asUInt
+            }
+            is(Funct7.SUB) {
+              io.aluOp := ALUOp.SUB.asUInt
+            }
+          }
+        }
+        is(Funct3.SLL) {
+          io.aluOp := ALUOp.SLL.asUInt
+        }
+        is(Funct3.SLT) {
+          io.aluOp := ALUOp.SLT.asUInt
+        }
+        is(Funct3.SLTU) {
+          io.aluOp := ALUOp.SLTU.asUInt
+        }
+        is(Funct3.XOR) {
+          io.aluOp := ALUOp.XOR.asUInt
+        }
+        is(Funct3.SR) {
+          switch(funct7) {
+            is(Funct7.SRA) {
+              io.aluOp := ALUOp.SRA.asUInt
+            }
+            is(Funct7.SRL) {
+              io.aluOp := ALUOp.SRL.asUInt
+            }
+          }
+        }
+        is(Funct3.OR) {
+          io.aluOp := ALUOp.OR.asUInt
+        }
+        is(Funct3.AND) {
+          io.aluOp := ALUOp.AND.asUInt
+        }
+      }
+    }
+
+    is(OP.LUI) {
+      io.ctrlSignals.useImm := true.B
+      io.ctrlSignals.useALU := true.B
+    }
+    is(OP.BR) {
+      io.ctrlSignals.branch := true.B
+      io.ctrlSignals.useALU := true.B
+      switch(funct3) {
+        is(Funct3.BEQ) {
+          io.aluOp := ALUOp.BEQ.asUInt
+        }
+        is(Funct3.BNE) {
+          io.aluOp := ALUOp.BNE.asUInt
+        }
+        is(Funct3.BLT) {
+          io.aluOp := ALUOp.BLT.asUInt
+        }
+        is(Funct3.BGE) {
+          io.aluOp := ALUOp.BGE.asUInt
+        }
+        is(Funct3.BLTU) {
+          io.aluOp := ALUOp.BLTU.asUInt
+        }
+        is(Funct3.BGEU) {
+          io.aluOp := ALUOp.BGEU.asUInt
+        }
+      }
+    }
+    is(OP.JALR) {
+      io.ctrlSignals.jump := true.B
+      io.ctrlSignals.useImm := true.B
+      io.ctrlSignals.changePC := true.B
+    }
+    is(OP.JAL) {
+      io.ctrlSignals.jump := true.B
+      io.ctrlSignals.useImm := true.B
+    }
+  }
+
+  //---------outputs----------------
+  io.rs1 := Mux(op === OP.JAL || op === OP.LUI || op === OP.AUIPC, 0.U, io.inInst(19, 15)) // Reset rsX to 0 if JAL/LUI/AUIPC to avoid false forwarding
+  io.rs2 := Mux(op === OP.JAL || op === OP.LUI || op === OP.AUIPC || op === OP.LD, 0.U, io.inInst(24, 20)) // Reset rs2 to 0 if JAL/LUI/AUIPC/LD to avoid false forwarding
+  io.rd := io.inInst(11, 7)
 
 }

@@ -4,6 +4,7 @@ import chisel3.{util, _}
 import chisel3.util._
 import org.joda.time.format.ISODateTimeFormat
 import ChiselRISC.utilities._
+
 class HazardControl(dataWidth: Int, addrWidth: Int) extends Module {
   val io = IO(new Bundle {
     val EXmisprediction = Input(Bool())

@@ -1,4 +1,5 @@
 package ChiselRISC.stages
+
 import chisel3._
 import ChiselRISC.utilities._
 import chisel3.util._
@@ -13,7 +14,6 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
     val out = new EX_MEM_IO(datawidth, addrWidth)
     val changePC = Output(Bool())
     val newPCValue = Output(UInt(datawidth.W))
-//    branch prediction
     val BRpredictionIn = Input(Bool())
     val BRbranching = Output(Bool())
     val BRbranchResult = Output(Bool())
@@ -24,8 +24,9 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   // Creating the ALU
   val ALU = Module(new ALU(datawidth, addrWidth))
 
-  // Initialise signals
+  // Output register
   val outReg = RegEnable(io.out, !io.stallReg)
+  // Initialise signals
   ALU.io.val1 := WireInit(0.U(datawidth.W))
   ALU.io.val2 := WireInit(0.U(datawidth.W))
   io.BRbranchResult := WireInit(0.U(datawidth.W))
@@ -73,14 +74,14 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   }
 
   // Storing
-  when(io.in.memOp === SW){ // Store word
+  when(io.in.memOp === SW) { // Store word
     outReg.wrData := io.in.val2
- }
-  when(io.in.memOp === SH){ // Store halfword
-    outReg.wrData := Cat(Fill(16,0.U), io.in.val2(15, 0))
+  }
+  when(io.in.memOp === SH) { // Store halfword
+    outReg.wrData := Cat(Fill(16, 0.U), io.in.val2(15, 0))
   }
   when(io.in.memOp === SB) { // Store byte
-    outReg.wrData := Cat(Fill(24,0.U), io.in.val2(7, 0))
+    outReg.wrData := Cat(Fill(24, 0.U), io.in.val2(7, 0))
   }
 
   when(io.in.ctrl.useALU) { // ALU operations
@@ -91,10 +92,10 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   when(io.in.ctrl.branch) {
     when(ALU.io.aluOut === 0.U) {
       io.BRbranchResult := false.B
-    } .otherwise {
+    }.otherwise {
       io.BRbranchResult := true.B
     }
-    when(!(io.BRpredictionIn === io.BRbranchResult)){
+    when(!(io.BRpredictionIn === io.BRbranchResult)) {
       io.misprediction := true.B
     }
   }

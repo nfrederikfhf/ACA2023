@@ -22,7 +22,7 @@ class ALU (bitWidth: Int = 32, addrWidth: Int) extends Module {
     // arithmetics
     is(ALUOp.ADD) {io.aluOut := io.val1 + io.val2}
     is(ALUOp.SUB) {io.aluOut := io.val1 - io.val2}
-//    // logicals
+    // logicals
     is(ALUOp.AND) {io.aluOut := io.val1 & io.val2}
     is(ALUOp.OR) {io.aluOut := io.val1 | io.val2}
     is(ALUOp.XOR) {io.aluOut := io.val1 ^ io.val2}
@@ -40,5 +40,4 @@ class ALU (bitWidth: Int = 32, addrWidth: Int) extends Module {
     is(ALUOp.BLTU) {io.aluOut := Mux(io.val1 < io.val2, 1.U, 0.U)}                    //same as SLTU
     is(ALUOp.BGEU) {io.aluOut := Mux(io.val1 >= io.val2, 1.U, 0.U)}
   }
-
 }
