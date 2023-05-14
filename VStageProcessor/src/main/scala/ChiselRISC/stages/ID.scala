@@ -16,6 +16,8 @@ class ID(datawidth: Int, addrWidth: Int, simulation: Boolean = false) extends Mo
     val hazard_IDrs1 = Output(UInt(addrWidth.W))
     val hazard_IDrs2 = Output(UInt(addrWidth.W))
     val debug = if (simulation) Some(new debugIO(datawidth, addrWidth)) else None // Debugging
+    val BRpredictionIn = Input(Bool())
+    val BRpredictionOut = Output(Bool())
   })
 
   val immGenerator = Module(new ImmGenerator(datawidth))
@@ -27,6 +29,7 @@ class ID(datawidth: Int, addrWidth: Int, simulation: Boolean = false) extends Mo
   regfile.io.wrAddr := WireInit(0.U(addrWidth.W))
   regfile.io.wrData := WireInit(0.U(datawidth.W))
   decoder.io.inInst := WireInit(0.U(datawidth.W))
+  io.BRpredictionOut := RegNext(io.BRpredictionIn)
 
   if (simulation) { // Get the register file, instruction and pc
     io.debug.get.out := DontCare // Only used in WB

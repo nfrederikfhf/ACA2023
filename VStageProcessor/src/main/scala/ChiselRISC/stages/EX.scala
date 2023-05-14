@@ -14,6 +14,12 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
     val hazardAluOut = Output(UInt(datawidth.W))
     val changePC = Output(Bool())
     val newPCValue = Output(UInt(datawidth.W))
+//    branch prediction
+    val BRpredictionIn = Input(Bool())
+    val BRbranching = Output(Bool())
+    val BRbranchResult = Output(Bool())
+    val BRbranchPC = Output(UInt(datawidth.W))
+    val misprediction = Output(Bool())
   })
 
   // Creating the ALU
@@ -24,6 +30,11 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   io.hazardAluOut := WireDefault(ALU.io.aluOut)
   ALU.io.val1 := WireInit(0.U(datawidth.W))
   ALU.io.val2 := WireInit(0.U(datawidth.W))
+  io.BRbranchResult := WireInit(0.U(datawidth.W))
+  io.BRbranchPC := WireInit(0.U(datawidth.W))
+  io.misprediction := WireInit(false.B)
+  io.BRbranching := WireInit(false.B)
+
   // Connecting the I/O through
   ALU.io.aluOp := io.in.aluOp
   outReg.aluOut := Mux(io.in.ctrl.jump, io.in.pc + 4.U, ALU.io.aluOut)
@@ -32,14 +43,19 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   outReg.rd := io.in.rd
   outReg.ctrl.writeEnable := !(io.in.ctrl.branch || io.in.ctrl.store)
   outReg.memOp := io.in.memOp
+  io.BRbranching := io.in.ctrl.branch
+  io.BRbranchPC := io.in.pc
 
   // Mux for deciding whether to use immediate value
   val usePC = Mux(io.in.ctrl.usePC, io.in.pc, io.in.val1)
   val useImm = Mux(io.in.ctrl.useImm, io.in.imm, io.in.val2)
 
   // Jumping and branching
-  val changePC = io.in.ctrl.jump || (io.in.ctrl.branch && ALU.io.aluOut === 1.U)
-  val newPCValue = Cat((Mux(io.in.ctrl.changePC, io.in.val1.asSInt, io.in.pc.asSInt) + io.in.imm.asSInt)(datawidth - 1, 1), 0.U(1.W))
+  val aluResult = Mux(ALU.io.aluOut === 0.U, false.B, true.B)
+  val misprediction = Mux(io.in.ctrl.branch, !(aluResult === io.BRpredictionIn), false.B)
+  val changePC = io.in.ctrl.jump || misprediction
+  val newPCValue = Cat(Mux(misprediction && !aluResult, io.in.pc.asSInt + 4.asSInt, Mux(io.in.ctrl.changePC, io.in.val1.asSInt, io.in.pc.asSInt) + io.in.imm.asSInt)(datawidth - 1, 1), 0.U(1.W))
+
 
   // Loading
   when(io.in.memOp === LW) { // Load word
@@ -72,6 +88,17 @@ class EX(datawidth: Int, addrWidth: Int) extends Module {
   when(io.in.ctrl.useALU) { // ALU operations
     ALU.io.val1 := usePC
     ALU.io.val2 := useImm
+  }
+
+  when(io.in.ctrl.branch) {
+    when(ALU.io.aluOut === 0.U) {
+      io.BRbranchResult := false.B
+    } .otherwise {
+      io.BRbranchResult := true.B
+    }
+    when(!(io.BRpredictionIn === io.BRbranchResult)){
+      io.misprediction := true.B
+    }
   }
 
   //-------output-------------

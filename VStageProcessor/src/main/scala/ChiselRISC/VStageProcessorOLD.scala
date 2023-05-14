@@ -1,7 +1,7 @@
 package ChiselRISC
 
 import periph.SevenSegment
-import components.{ForwardingUnit, HazardControl}
+import components.{BranchPredictor, ForwardingUnit, HazardControl}
 import stages._
 import utilities.{debugIO, memoryInterface, memoryInterfaceLight}
 import chisel3._
@@ -32,6 +32,7 @@ class VStageProcessorOLD(simulation: Boolean = false, init: Seq[BigInt] = Seq(Bi
   // Forwarding and Hazard Control units
   val forwardingUnit = Module(new ForwardingUnit(32, 5))
   val hazardControl = Module(new HazardControl(32, 5))
+  val branchPredictor = Module(new BranchPredictor(32, 4))
 
   // Connect the pipeline ChiselRISC.stages
   IF.io.out <> ID.io.in
@@ -67,6 +68,7 @@ class VStageProcessorOLD(simulation: Boolean = false, init: Seq[BigInt] = Seq(Bi
   ID.io.flush := hazardControl.io.IDFlush
   IF.io.stallReg := hazardControl.io.IFStall
   hazardControl.io.EXaluOut := EX.io.hazardAluOut
+  hazardControl.io.EXmisprediction := EX.io.misprediction
   hazardControl.io.EXctrlBranch := EX.io.in.ctrl.branch
   hazardControl.io.EXctrlJump := EX.io.in.ctrl.jump
   hazardControl.io.EXctrlLoad := EX.io.in.ctrl.load
@@ -74,7 +76,19 @@ class VStageProcessorOLD(simulation: Boolean = false, init: Seq[BigInt] = Seq(Bi
   hazardControl.io.IDrs1 := ID.io.out.rs1
   hazardControl.io.IDrs2 := ID.io.out.rs2
 
-  // Forward the data to MEM to avoid a one clock cylce delay
+  // Connect Branch Predictor
+  branchPredictor.io.pc := IF.io.out.pc
+  branchPredictor.io.inst := IF.io.out.inst
+  branchPredictor.io.EXbranchPC := EX.io.BRbranchPC
+  branchPredictor.io.EXbranchResult := EX.io.BRbranchResult
+  branchPredictor.io.EXbranching := EX.io.BRbranching
+  IF.io.BRchangePC := branchPredictor.io.changePC
+  IF.io.BRnewPCValue := branchPredictor.io.targetPC
+  ID.io.BRpredictionIn := branchPredictor.io.changePC
+  EX.io.BRpredictionIn := ID.io.BRpredictionOut
+
+
+  // Forward the data to MEM to avoid a one clock cycle delay
 
   //--------------Testing-----------------------
   io.memIO.valid := DontCare

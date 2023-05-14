@@ -12,7 +12,9 @@ class IF(datawidth: Int, depth: Int, init: Seq[BigInt] = Seq(BigInt(0))) extends
     val flush = Input(Bool())
     val out = new IF_ID_IO(datawidth)
     val newPCValue = Input(UInt(datawidth.W)) //ALU calculated Addr
+    val BRnewPCValue = Input(UInt(datawidth.W)) //BR calculated Addr
     val changePC = Input(Bool())
+    val BRchangePC = Input(Bool())
     val memIO = new Bundle {
       val ready = Input(Bool())
       val writeData = Input(UInt(datawidth.W))
@@ -44,13 +46,14 @@ class IF(datawidth: Int, depth: Int, init: Seq[BigInt] = Seq(BigInt(0))) extends
   instMem.io.memIO.valid := WireInit(false.B)
 
   // Mux for handling new PC logic when branch or jump
-  val addr = Mux(io.changePC, io.newPCValue, pc)
+  val addr = Mux(io.changePC, io.newPCValue, Mux(io.BRchangePC, io.BRnewPCValue, pc))
 
   // Program counter
   when(!instMem.io.memIO.nonEmpty && io.startPC) {
     PC.io.memIO.ready := true.B
     PC.io.in := MuxCase(pc + 4.U, Seq(
       (io.changePC, io.newPCValue + 4.U),
+      (io.BRchangePC, io.BRnewPCValue + 4.U),
       (io.stallReg, pc)
     ))
   }.otherwise {
