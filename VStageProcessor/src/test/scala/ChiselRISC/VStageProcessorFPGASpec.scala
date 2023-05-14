@@ -5,7 +5,7 @@ import chisel3._
 import chiseltest._
 import com.carlosedp.riscvassembler.RISCVAssembler
 import org.scalatest.flatspec.AnyFlatSpec
-class ChiselRISCFPGASpec extends AnyFlatSpec with ChiselScalatestTester {
+class VStageProcessorFPGASpec extends AnyFlatSpec with ChiselScalatestTester {
   // Is used to test with binary file
 //  it should "execute the program that is tested on the FPGA from the text file" in {
 //    test(new VStageProcessor(true, loadWords("C:\\Users\\Watos\\Documents\\Github\\ACA2023\\VStageProcessor\\asm\\Input.bin"))).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>

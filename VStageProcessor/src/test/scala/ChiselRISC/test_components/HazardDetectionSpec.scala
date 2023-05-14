@@ -5,7 +5,7 @@ import chiseltest._
 import ChiselRISC.components.HazardControl
 import org.scalatest.flatspec.AnyFlatSpec
 
-class HazardDetectionTest extends AnyFlatSpec with ChiselScalatestTester {
+class HazardDetectionSpec extends AnyFlatSpec with ChiselScalatestTester {
   it should "stall IF and flush ID if EXrd and IDrs1 is the same" in {
     test(new HazardControl(32, 5)) { dut =>
       dut.io.EXrd.poke(3.U(5.W))
